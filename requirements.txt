@@ -42,8 +42,6 @@ mkdocs>=1.5.0
 
 # Database (optional)
 sqlalchemy>=2.0.0
-sqlite3
 
 # Async support
 aiohttp>=3.8.0
-asyncio
