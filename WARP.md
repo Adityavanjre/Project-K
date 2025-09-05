@@ -1,6 +1,6 @@
 # WARP.md
 
-This file provides guidance to WARP (warp.dev) when working with code in this repository.
+This file provides guidance to WARP (warp.dev) when working with Project-K code in this repository.
 
 ## Development Commands
 
@@ -87,7 +87,7 @@ python setup.py sdist bdist_wheel
 
 ### Core Components
 
-The Doubt Clearing AI follows a modular architecture with three main processing layers and a web interface:
+Project-K follows a modular architecture with three main processing layers and a web interface:
 
 1. **DoubtProcessor** (`src/core/processor.py`)
    - Main orchestrator that handles question processing workflow
