@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Error {{ error_code }} - Doubt Clearing AI{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <div class="error-container">
+        <div class="error-icon mb-4">
+            {% if error_code == 404 %}
+                <i class="fas fa-search" style="font-size: 5rem; color: #6c757d;"></i>
+            {% else %}
+                <i class="fas fa-exclamation-triangle" style="font-size: 5rem; color: #dc3545;"></i>
+            {% endif %}
+        </div>
+        
+        <h1 class="display-4 mb-3">{{ error_code }}</h1>
+        
+        <h3 class="mb-4">
+            {% if error_code == 404 %}
+                Page Not Found
+            {% elif error_code == 500 %}
+                Internal Server Error
+            {% else %}
+                Oops! Something went wrong
+            {% endif %}
+        </h3>
+        
+        <p class="lead text-muted mb-4">
+            {{ error_message or "We're sorry, but something unexpected happened." }}
+        </p>
+        
+        <div class="error-actions">
+            <a href="/" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-home"></i> Go Home
+            </a>
+            
+            <button onclick="history.back()" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Go Back
+            </button>
+        </div>
+        
+        {% if error_code == 404 %}
+        <div class="mt-5">
+            <h5>Suggestions:</h5>
+            <ul class="list-unstyled">
+                <li><i class="fas fa-home text-primary"></i> <a href="/">Visit our homepage</a></li>
+                <li><i class="fas fa-question-circle text-primary"></i> Ask a question about any topic</li>
+                <li><i class="fas fa-lightbulb text-primary"></i> Get clear explanations on complex topics</li>
+            </ul>
+        </div>
+        {% elif error_code == 500 %}
+        <div class="mt-5">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>What happened?</strong> We're experiencing a temporary issue. 
+                Please try again in a few moments, or <a href="/">return to the homepage</a>.
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.error-container {
+    padding: 60px 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.error-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.error-actions .btn {
+    min-width: 150px;
+}
+
+@media (max-width: 576px) {
+    .error-container {
+        padding: 40px 15px;
+    }
+    
+    .error-actions .btn {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .error-actions .me-3 {
+        margin-right: 0 !important;
+    }
+}
+</style>
+{% endblock %}

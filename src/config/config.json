@@ -1,0 +1,27 @@
+{
+  "application": {
+    "name": "Doubt Clearing AI",
+    "version": "0.1.0",
+    "debug": false
+  },
+  "knowledge": {
+    "max_search_results": 5,
+    "confidence_threshold": 0.1,
+    "enable_domain_filtering": true
+  },
+  "explainer": {
+    "default_user_level": "intermediate",
+    "max_explanation_length": 500,
+    "include_examples": true,
+    "include_analogies": false
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  },
+  "api": {
+    "host": "localhost",
+    "port": 8000,
+    "debug": false
+  }
+}
