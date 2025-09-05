@@ -1,10 +1,10 @@
-# Doubt Clearing AI
+# Project-K
 
-An intelligent AI assistant designed to clear your doubts effortlessly across various domains and topics.
+An intelligent AI assistant designed to provide clear explanations effortlessly across various domains and topics.
 
 ## Overview
 
-This project aims to build an AI system that can understand, analyze, and provide clear explanations for any doubts or questions you might have. The AI is designed to be conversational, context-aware, and capable of breaking down complex concepts into easily understandable explanations.
+Project-K is an intelligent AI system that understands questions, analyzes them, and provides clear explanations. It is designed to be conversational, context-aware, and capable of breaking down complex concepts into easily understandable explanations.
 
 ## Features
 
@@ -18,7 +18,7 @@ This project aims to build an AI system that can understand, analyze, and provid
 ## Project Structure
 
 ```
-doubt-clearing-ai/
+project-k/
 ├── src/                    # Source code
 │   ├── __init__.py
 │   ├── main.py            # Main application entry point
@@ -46,7 +46,7 @@ doubt-clearing-ai/
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd doubt-clearing-ai
+   cd project-k
    ```
 
 2. Create a virtual environment:
@@ -90,7 +90,7 @@ python src/api/routes.py
 
 ## Configuration
 
-The AI system can be configured through `config/config.json`:
+The system can be configured through `config/config.json`:
 
 - **model_settings**: AI model parameters
 - **knowledge_base**: Knowledge source configurations
@@ -143,4 +143,4 @@ For support, please open an issue in the GitHub repository or contact the mainta
 
 ---
 
-**Note**: This is an AI assistant project designed to help with doubt clearing and learning. Always verify critical information from authoritative sources.
+**Note**: This is Project-K, an AI assistant designed to help with learning and understanding. Always verify critical information from authoritative sources.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Flask web application for Doubt Clearing AI.
+Flask web application for Project-K.
 Provides a user-friendly web interface for asking questions and getting explanations.
 """
 
@@ -157,10 +157,10 @@ def main():
     port = api_config.get("port", 8000)
     debug = api_config.get("debug", False)
     
-    print(f"🚀 Starting Doubt Clearing AI Web Interface...")
+    print(f"🚀 Starting Project-K Web Interface...")
     print(f"📍 Access the application at: http://{host}:{port}")
     print(f"🛠️  Debug mode: {'ON' if debug else 'OFF'}")
-    print(f"❓ Ready to help clear your doubts!")
+    print(f"❓ Project-K is ready to help!")
     
     app.run(host=host, port=port, debug=debug)
 

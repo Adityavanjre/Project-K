@@ -15,7 +15,7 @@ from utils.helpers import setup_logging, load_config
 def create_argument_parser() -> argparse.ArgumentParser:
     """Create and configure argument parser."""
     parser = argparse.ArgumentParser(
-        description="Doubt Clearing AI - Clear your doubts effortlessly"
+        description="Project-K - Clear explanations for your questions"
     )
 
     parser.add_argument(
@@ -42,7 +42,7 @@ def create_argument_parser() -> argparse.ArgumentParser:
 
 def interactive_mode(processor: DoubtProcessor) -> None:
     """Run the application in interactive mode."""
-    print("🤖 Doubt Clearing AI - Ready to help!")
+    print("🤖 Project-K - Ready to help!")
     print("Type 'quit', 'exit', or 'bye' to end the session.")
     print("-" * 50)
 

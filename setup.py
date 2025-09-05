@@ -7,14 +7,14 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
 
 setup(
-    name="doubt-clearing-ai",
+    name="project-k",
     version="0.1.0",
     author="Your Name",
     author_email="your.email@example.com",
-    description="An intelligent AI assistant designed to clear your doubts effortlessly",
+    description="Project-K: An intelligent AI assistant for clear explanations",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/doubt-clearing-ai",
+    url="https://github.com/yourusername/project-k",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -48,7 +48,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "doubt-clearing-ai=src.main:main",
+            "project-k=src.main:main",
         ],
     },
     include_package_data=True,
