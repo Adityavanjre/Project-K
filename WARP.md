@@ -19,6 +19,8 @@ pip install -e .[dev]
 ```
 
 ### Running the Application
+
+#### Command Line Interface
 ```bash
 # Interactive mode (default)
 python src/main.py
@@ -35,6 +37,20 @@ python src/main.py --verbose
 
 # Using as installed console script
 doubt-clearing-ai
+```
+
+#### Web Interface
+```bash
+# Start the web server
+python src/web_app.py
+
+# Access the web interface at http://localhost:8000
+# Features:
+# - Interactive question/answer interface
+# - User level selection (beginner/intermediate/advanced)
+# - Conversation history
+# - Example questions for quick start
+# - Responsive design for mobile/desktop
 ```
 
 ### Testing and Code Quality
@@ -71,7 +87,7 @@ python setup.py sdist bdist_wheel
 
 ### Core Components
 
-The Doubt Clearing AI follows a modular architecture with three main processing layers:
+The Doubt Clearing AI follows a modular architecture with three main processing layers and a web interface:
 
 1. **DoubtProcessor** (`src/core/processor.py`)
    - Main orchestrator that handles question processing workflow
@@ -90,6 +106,12 @@ The Doubt Clearing AI follows a modular architecture with three main processing 
    - Creates structured explanations with examples and analogies
    - Handles different question types (definition, procedure, explanation, etc.)
    - Formats responses with appropriate complexity and length
+
+4. **Web Interface** (`src/web_app.py`)
+   - Flask-based web application providing user-friendly interface
+   - RESTful API endpoints for question processing and history management
+   - Session-based conversation history and user preferences
+   - Responsive Bootstrap UI with real-time interaction
 
 ### Key Architectural Patterns
 
@@ -144,13 +166,15 @@ The explainer supports three user levels:
 
 ### Entry Points and Interfaces
 - **CLI Interface**: `src/main.py` with argument parsing for interactive/single-question modes
+- **Web Interface**: `src/web_app.py` - Flask-based web application with user-friendly UI
 - **Python Module**: Import `DoubtProcessor` directly for programmatic use
 - **Console Script**: `doubt-clearing-ai` command available after installation
-- **API Interface**: Mentioned in documentation but not yet implemented
+- **API Endpoints**: RESTful API available when web server is running
 
 ### Dependencies and Tech Stack
 - **Core AI**: OpenAI, Transformers, PyTorch for AI capabilities
-- **Web Framework**: Flask and FastAPI for future API development
+- **Web Framework**: Flask for web interface with session management
+- **Frontend**: Bootstrap 5 + Font Awesome for responsive UI design
 - **NLP Libraries**: NLTK, spaCy for natural language processing
 - **Testing**: pytest with coverage and async support
 - **Code Quality**: black, flake8, mypy for formatting and type checking

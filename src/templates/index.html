@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Doubt Clearing AI{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Question Form -->
+        <div class="question-form">
+            <h3><i class="fas fa-question-circle"></i> Ask Your Question</h3>
+            <p class="text-muted mb-4">Enter your question below and I'll provide a clear, detailed explanation tailored to your level.</p>
+            
+            <form id="questionForm">
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label for="question" class="form-label">Your Question</label>
+                        <textarea 
+                            class="form-control" 
+                            id="question" 
+                            name="question" 
+                            rows="3" 
+                            placeholder="e.g., What is machine learning? How does photosynthesis work? Explain the Pythagorean theorem..."
+                            required
+                        ></textarea>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <label for="userLevel" class="form-label">Explanation Level</label>
+                        <select class="form-select" id="userLevel" name="user_level">
+                            <option value="beginner">Beginner - Simple explanations with examples</option>
+                            <option value="intermediate" selected>Intermediate - Balanced detail and clarity</option>
+                            <option value="advanced">Advanced - Detailed technical explanations</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 align-items-center">
+                    <button type="submit" class="btn btn-primary" id="askBtn">
+                        <i class="fas fa-paper-plane"></i> Ask Question
+                    </button>
+                    
+                    <button type="button" class="btn btn-secondary" id="clearBtn">
+                        <i class="fas fa-eraser"></i> Clear History
+                    </button>
+                    
+                    <button type="button" class="btn btn-outline-secondary" id="historyToggle">
+                        <i class="fas fa-history"></i> Show History
+                    </button>
+                    
+                    <span id="conversationCount" class="badge bg-info ms-auto" style="display: none;">
+                        Conversations: 0
+                    </span>
+                </div>
+            </form>
+        </div>
+
+        <!-- Loading Animation -->
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner"></i>
+            <p class="mt-2">Processing your question...</p>
+        </div>
+
+        <!-- Response Section -->
+        <div class="response-section" id="responseSection">
+            <h4><i class="fas fa-lightbulb text-success"></i> Answer</h4>
+            <div class="response-content" id="responseContent"></div>
+            <div class="timestamp mt-3" id="responseTimestamp"></div>
+        </div>
+
+        <!-- Error Alert -->
+        <div class="alert alert-danger" id="errorAlert" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorMessage"></span>
+        </div>
+
+        <!-- Success Alert -->
+        <div class="alert alert-success" id="successAlert" style="display: none;">
+            <i class="fas fa-check-circle"></i>
+            <span id="successMessage"></span>
+        </div>
+
+        <!-- Conversation History -->
+        <div class="conversation-history" id="historySection" style="display: none;">
+            <div class="p-3 border-bottom bg-light">
+                <h5 class="mb-0"><i class="fas fa-history"></i> Conversation History</h5>
+            </div>
+            <div id="historyContent">
+                <div class="p-3 text-center text-muted">
+                    No conversation history yet. Ask your first question above!
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Examples -->
+        <div class="mt-4">
+            <h5><i class="fas fa-star"></i> Need inspiration? Try these example questions:</h5>
+            <div class="row mt-3">
+                <div class="col-md-4 mb-2">
+                    <button class="btn btn-outline-primary btn-sm w-100 example-btn" data-question="What is artificial intelligence?">
+                        What is artificial intelligence?
+                    </button>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <button class="btn btn-outline-primary btn-sm w-100 example-btn" data-question="How does photosynthesis work?">
+                        How does photosynthesis work?
+                    </button>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <button class="btn btn-outline-primary btn-sm w-100 example-btn" data-question="Explain the Pythagorean theorem">
+                        Explain the Pythagorean theorem
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('questionForm');
+    const questionInput = document.getElementById('question');
+    const userLevelSelect = document.getElementById('userLevel');
+    const askBtn = document.getElementById('askBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const historyToggle = document.getElementById('historyToggle');
+    const loading = document.getElementById('loading');
+    const responseSection = document.getElementById('responseSection');
+    const responseContent = document.getElementById('responseContent');
+    const responseTimestamp = document.getElementById('responseTimestamp');
+    const errorAlert = document.getElementById('errorAlert');
+    const errorMessage = document.getElementById('errorMessage');
+    const successAlert = document.getElementById('successAlert');
+    const successMessage = document.getElementById('successMessage');
+    const historySection = document.getElementById('historySection');
+    const historyContent = document.getElementById('historyContent');
+    const conversationCount = document.getElementById('conversationCount');
+    
+    // Example question buttons
+    document.querySelectorAll('.example-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            questionInput.value = this.dataset.question;
+            questionInput.focus();
+        });
+    });
+    
+    // Form submission
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const question = questionInput.value.trim();
+        const userLevel = userLevelSelect.value;
+        
+        if (!question) {
+            showError('Please enter a question');
+            return;
+        }
+        
+        // Show loading state
+        loading.style.display = 'block';
+        responseSection.style.display = 'none';
+        hideAlerts();
+        askBtn.disabled = true;
+        askBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        
+        try {
+            const response = await fetch('/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: question,
+                    user_level: userLevel
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Show response
+                showResponse(data.response, data.timestamp);
+                updateConversationCount(data.conversation_count);
+                
+                // Clear form
+                questionInput.value = '';
+                
+                // Refresh history if visible
+                if (historySection.style.display !== 'none') {
+                    loadHistory();
+                }
+            } else {
+                showError(data.error || 'An error occurred while processing your question');
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            showError('Failed to connect to the server. Please try again.');
+        } finally {
+            // Reset UI state
+            loading.style.display = 'none';
+            askBtn.disabled = false;
+            askBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Ask Question';
+        }
+    });
+    
+    // Clear history
+    clearBtn.addEventListener('click', async function() {
+        if (confirm('Are you sure you want to clear your conversation history?')) {
+            try {
+                const response = await fetch('/clear', { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess('Conversation history cleared');
+                    responseSection.style.display = 'none';
+                    conversationCount.style.display = 'none';
+                    loadHistory(); // Refresh history display
+                }
+            } catch (error) {
+                showError('Failed to clear history');
+            }
+        }
+    });
+    
+    // Toggle history
+    historyToggle.addEventListener('click', function() {
+        if (historySection.style.display === 'none') {
+            loadHistory();
+            historySection.style.display = 'block';
+            historyToggle.innerHTML = '<i class="fas fa-eye-slash"></i> Hide History';
+        } else {
+            historySection.style.display = 'none';
+            historyToggle.innerHTML = '<i class="fas fa-history"></i> Show History';
+        }
+    });
+    
+    // Helper functions
+    function showResponse(response, timestamp) {
+        // Format the response (handle markdown-like formatting)
+        const formattedResponse = formatResponse(response);
+        responseContent.innerHTML = formattedResponse;
+        
+        const date = new Date(timestamp);
+        responseTimestamp.textContent = `Answered on ${date.toLocaleString()}`;
+        
+        responseSection.style.display = 'block';
+        responseSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function formatResponse(text) {
+        // Simple formatting for better readability
+        return text
+            .replace(/\\\\\n/g, '<br>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n\n/g, '<br><br>')
+            .replace(/\n/g, '<br>');
+    }
+    
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorAlert.style.display = 'block';
+        setTimeout(() => {
+            errorAlert.style.display = 'none';
+        }, 5000);
+    }
+    
+    function showSuccess(message) {
+        successMessage.textContent = message;
+        successAlert.style.display = 'block';
+        setTimeout(() => {
+            successAlert.style.display = 'none';
+        }, 3000);
+    }
+    
+    function hideAlerts() {
+        errorAlert.style.display = 'none';
+        successAlert.style.display = 'none';
+    }
+    
+    function updateConversationCount(count) {
+        if (count > 0) {
+            conversationCount.textContent = `Conversations: ${count}`;
+            conversationCount.style.display = 'inline';
+        }
+    }
+    
+    async function loadHistory() {
+        try {
+            const response = await fetch('/history');
+            const data = await response.json();
+            
+            if (data.success && data.history.length > 0) {
+                const historyHtml = data.history.reverse().map(item => `
+                    <div class="conversation-item">
+                        <div class="question-text">
+                            <i class="fas fa-question-circle"></i> ${escapeHtml(item.question)}
+                        </div>
+                        <div class="response-text">${formatResponse(item.response)}</div>
+                        <div class="timestamp">
+                            <i class="fas fa-clock"></i> ${new Date(item.timestamp).toLocaleString()}
+                            <span class="badge bg-secondary ms-2">${item.user_level}</span>
+                        </div>
+                    </div>
+                `).join('');
+                
+                historyContent.innerHTML = historyHtml;
+            } else {
+                historyContent.innerHTML = `
+                    <div class="p-3 text-center text-muted">
+                        No conversation history yet. Ask your first question above!
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error loading history:', error);
+        }
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Auto-focus on question input
+    questionInput.focus();
+});
+</script>
+{% endblock %}
