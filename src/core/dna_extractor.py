@@ -29,11 +29,12 @@ class DNAExtractor:
         # 5. Goals
         self._extract_goals(q, user_message)
         
-        # 6. Preferences
-        self._extract_preferences(q)
+        # Identify the core concept using AI (Phase 33 Mastery logic)
+        q_clean = str(q)[:150]
+        prompt = f"Extract ONE core technical concept from this query: {q_clean}\nReturn ONLY the concept word (e.g. PWM, SQL)."
         
         # Record interaction and detect topic
-        topic = self._detect_topic(q)
+        topic = self._detect_topic(str(q))
         self.dna.record_interaction(topic=topic)
         
         # Store raw fact in vector memory for fuzzy recall

@@ -111,7 +111,8 @@ class DoubtProcessor:
 
     def process_doubt(self, query: str, context: Optional[DoubtContext] = None) -> Any:
         try:
-            self.logger.info(f"Processing doubt: {query[:100]}...")
+            q_slice = str(query)[:100]
+            self.logger.info(f"Processing doubt: {q_slice}...")
             if not self.current_session_id:
                 self.current_session_id = str(uuid.uuid4())
             

@@ -177,8 +177,10 @@ class UserDNA:
         if domains:
             lines.append(f"EXPERTISE: {', '.join(f'{d} ({l})' for d, l in domains.items())}")
             
-        known = p["expertise"]["known_concepts"]
-        if known: lines.append(f"CONCEPTS KNOWN: {', '.join(known[:10])}")
+        known = p["expertise"].get("known_concepts", {})
+        if known:
+            keys = list(known.keys())
+            lines.append(f"CONCEPTS KNOWN: {', '.join(keys[:10])}")
         
         active = p["projects"]["active"]
         if active:
