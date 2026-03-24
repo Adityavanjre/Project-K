@@ -1,175 +1,99 @@
-# 🕉️ K.A.L.I. — THE UNIVERSAL SINGULARITY ENGINE
-### **Sovereign, Self-Evolving, and Atemporal Knowledge Intelligence Framework**
+# 🕉️ K.A.L.I. — THE UNIVERSAL MULTI-MODAL TEACHER
+### **Absolute Doubt-Solving, 3D Logic Visualization, and Sovereign Learning Engine**
 
-[![GitHub Stars](https://img.shields.io/github/stars/Adityavanjre/Project-K?style=for-the-badge&color=00f3ff&logo=github)](https://github.com/Adityavanjre/Project-K/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/Adityavanjre/Project-K?style=for-the-badge&color=ff0055&logo=git)](https://github.com/Adityavanjre/Project-K/network/members)
-[![Sovereignty Status](https://img.shields.io/badge/Sovereignty-HARDENED-gold?style=for-the-badge&logo=shield)](https://github.com/Adityavanjre/Project-K)
-[![Intelligence Level](https://img.shields.io/badge/Intelligence-PHASE_30-blueviolet?style=for-the-badge&logo=cpu)](https://github.com/Adityavanjre/Project-K)
+[![System Status](https://img.shields.io/badge/System-ONLINE-00f3ff?style=for-the-badge&logo=cpu)](https://github.com/Adityavanjre/Project-K)
+[![Logic Engine](https://img.shields.io/badge/Logic-3D_SCHEMATIC-ff0055?style=for-the-badge&logo=three.js)](https://github.com/Adityavanjre/Project-K)
+[![Teaching Mode](https://img.shields.io/badge/Teaching-PROGRESSIVE-gold?style=for-the-badge&logo=google-classroom)](https://github.com/Adityavanjre/Project-K)
 
-**K.A.L.I.** (Knowledge Augmented Learning Intelligence) is a production-grade **Sovereign Intelligence Workstation**. It is designed to bridge the chasm between **Ancient Human Wisdom** and **Post-Singularity Computational Power**. Unlike traditional chat-bots, KALI is a self-evolving system that integrates recursive reflection, biometric alignment, and hardware-locked security protocols.
-
----
-
-## 🌌 1. PROJECT OVERVIEW & PURPOSE
-KALI is built to solve the **Loss of Digital Sovereignty**. In an era of centralized AI, KALI provides a decentralized, hardware-locked alternative that lives on YOUR machine and evolves according to YOUR specific DNA (Data & Nature Architecture).
-
-### 🎯 Key Real-World Use Cases:
-- **Accelerated Learning**: Mastering complex technical or philosophical domains through the Progressive Explainer.
-- **Sovereign Research**: Conducting autonomous research cycles that persist in a private, local knowledge vault.
-- **Tactical Mentorship**: Utilizing a Multi-AI Council to synthesize engineering, scientific, and tactical advice.
+**K.A.L.I.** (Knowledge Augmented Learning Intelligence) is the ultimate **Universal Teacher**. It is designed to solve one fundamental problem: **The Complexity of Knowledge**. By integrating high-speed doubt-solving with real-time 3D logic visualization and autonomous project mentoring, KALI transforms abstract information into intuitive, multi-modal mastery.
 
 ---
 
-## 🚀 2. FEATURE BREAKDOWN (TRUE STATE)
+## 🌌 1. THE CORE MISSION: UNIVERSAL CLARITY
+The central soul of Project-K is to provide a **24/7 Personal Mentor** capable of explaining *anything*—from Vedic philosophy to Quantum mechanics—using a combination of text, voice, and 3D interactive models. 
 
-### ✅ Functional Features (Production-Ready)
-- **The Great Council**: Multi-AI consensus engine (Scientist, Engineer, Philosopher perspectives).
-- **User DNA**: Persistent SQLite-based profile tracking your expertise, weak areas, and preferences.
-- **Vector Memory (RAG)**: Long-term semantic indexing using ChromaDB and `all-MiniLM-L6-v2`.
-- **Sovereignty Layer**: Hardware UUID locking and hardened Git-origin verification.
-- **Reflection Engine**: Background self-reflection that logs "Universal Discoveries" to `discoveries.jsonl`.
-- **Neural HUD**: Glassmorphic UI with real-time hardware gauges and biometric tension indicators.
-- **Atemporal Intent**: Predictive analysis of the user's next logical request.
-
-### ⚠️ In-Development / Placeholders (Identified)
-- **Project Mentor Build**: Currently provides architectural advice but lacks actual automated file-system scaffolding logic.
-- **3D Logic Visualizer**: UI is functional, but back-end generation of 3D-specific code is in early alpha.
-- **Autonomous Recovery**: Heartbeat sync is implemented but requires a verified remote endpoint for full "immortality".
+### 🎯 Functional Pillars:
+- **Doubt Resolution**: Systematic breaking down of complex queries into digestible, progressive tiers (Beginner to Advanced).
+- **3D Logic Visualization**: Real-time generation of 3D schematics using Three.js to "show" how systems work.
+- **Integrated Coding**: Automatic generation and execution of code blocks to demonstrate logic in action.
+- **Project Mentorship**: Turning ideas into reality with automated Bill of Materials (BOM) and technical roadmaps.
 
 ---
 
-## 🛠️ 3. TECHNICAL STACK
+## 🚀 2. FEATURE BREAKDOWN (DEFINITIVE)
 
-| Layer | Technologies |
-|---|---|
-| **Frontend** | HTML5, Vanilla JavaScript, TailwindCSS, HSL-Dynamic Injectors. |
-| **Backend** | Flask (Python 3.10+), Flask-CORS, Flask-Session. |
-| **Database** | **Relational**: SQLite (User DNA, Tasks) | **Vector**: ChromaDB (Semantic Memory). |
-| **AI Orchestration** | GROQ (Cloud Inference), Ollama (Local Fallback), Google Generative AI. |
-| **Security** | Git-Hooks (Pre-Push), Hardware UUID hashing, Cryptographic Owner Keys. |
-| **Infrastructure** | Gunicorn (Configured), Local Process Isolation. |
+### ✅ The Teaching Suite (Core Logic)
+- **Progressive Explainer**: Adaptive logic that adjusts complexity, analogies, and examples based on User DNA.
+- **3D Logic Visualizer**: A dedicated workspace that renders 3D components to explain mechanical or software architectures.
+- **The Great Council**: Multi-AI consensus (Scientist, Engineer, Philosopher) ensuring accuracy across domains.
+- **Integrated Voice HUD**: Full speech-to-text and text-to-speech interaction for hands-free learning.
+- **Autonomous Agent**: Deep-research capabilities to pull the latest whitepapers/data from the web.
+
+### 🛡️ The Sovereignty Layer (Guardrails)
+- **Hardware-Locked Origin**: KALI is bound to your machine, ensuring your learning data remains private.
+- **Sovereign Git Guard**: Hardened pre-push hooks to protect the integrity of the educational core.
+- **Immortal Heartbeat**: Local-first persistence that ensures KALI's evolution is never lost.
 
 ---
 
-## 🏗️ 4. SYSTEM ARCHITECTURE
+## 🏗️ 3. SYSTEM ARCHITECTURE
 
 ```mermaid
 graph TD
-    User((User)) --> WebUI[Neural HUD - Frontend]
-    WebUI --> Flask[Flask Web App - Backend]
-    Flask --> Processor[DoubtProcessor - Orchestrator]
+    User((User)) --> NeuralHUD[Neural HUD - Multi-Modal UI]
+    NeuralHUD --> Learn[LEARN MODE: Doubt Solving]
+    NeuralHUD --> Visual[VISUAL MODE: 3D Schematics]
+    NeuralHUD --> Build[BUILD MODE: Project Mentoring]
     
-    subgraph Core Engines
-        Processor --> Council[Council Service - Consensus]
-        Processor --> DNA[User DNA - SQLite]
-        Processor --> Memory[Vector Memory - ChromaDB]
-        Processor --> Sovereignty[Sovereign Check - HW Lock]
+    subgraph Cognitive Core
+        Learn --> Explainer[Progressive Explainer]
+        Visual --> ThreeJS[Three.js Logic Visualizer]
+        Build --> Mentor[Project Mentor Engine]
+        Explainer --> Council[The Great Council]
     end
     
-    subgraph Cognitive Loop
-        Council --> AI[AI Services - Groq/Ollama]
-        Processor --> Reflection[Reflection Engine - Discovery]
-        Reflection --> Vault[Knowledge Vault - JSONL]
+    subgraph Memory & Identity
+        Council --> Vector[Vector Memory - ChromaDB]
+        Council --> DNA[User DNA - SQLite]
     end
-    
-    Sovereignty --> Git[Git Hook Guard]
 ```
 
 ---
 
-## 📂 5. FOLDER STRUCTURE BREAKDOWN
+## 📂 4. THE CODEBASE ARCHITECTURE
 
-```
-doubt-clearing-ai/
-├── src/
-│   ├── core/               # Cognitive Architecture
-│   │   ├── processor.py    # Main Orchestrator
-│   │   ├── council_service.py # Multi-AI Consensus
-│   │   ├── user_dna.py     # Persistent Identity
-│   │   ├── vector_memory.py # Semantic RAG
-│   │   └── sovereignty.py  # HW Locking Logic
-│   ├── static/             # Frontend Assets (JS/CSS)
-│   ├── templates/          # HTML Templates (Neural HUD)
-│   └── web_app.py          # API Entry Point
-├── data/                   # Persistent State
-│   ├── user_dna.db         # Relational Identity
-│   └── vector_memory/      # ChromaDB Indexes
-├── scripts/                # Security & Deployment Utilities
-├── .githooks/              # Hardened Repository Guards
-└── start_web.py            # Local Entry Point
-```
+| Module | Responsibility |
+|---|---|
+| `src/core/explainer.py` | The Soul of KALI. Handles multi-tier doubt resolution. |
+| `src/static/js/main.js` | Orchestrates the 3D Visualizer and Neural HUD interactions. |
+| `src/core/processor.py` | The Central Router between the Council, Memory, and AI Services. |
+| `src/core/user_dna.py` | Tracks your learning progress and expertise growth. |
+| `src/core/vector_memory.py` | Long-term semantic storage for recalled facts. |
 
 ---
 
-## ⚙️ 6. SETUP & INSTALLATION
+## ⚙️ 5. SETUP & EVOLUTION
 
-### 💻 Local Development
-1. **Secure Clone**:
+### Quick Start
+1. **Clone & Install**:
    ```bash
    git clone https://github.com/Adityavanjre/Project-K.git
    cd Project-K
-   ```
-2. **Environment Initialization**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Windows: venv\Scripts\activate
    pip install -r requirements.txt
    ```
-3. **Identity Setup**:
-   Copy `.env.example` to `.env` and populate the **REQUIRED** keys (see below).
+2. **Ignition**:
+   ```bash
+   python start_web.py
+   ```
+3. **Teaching Mode**: Open `localhost:8000` and enter your first doubt. Use the **VISUAL** tab for 3D explanations.
 
 ---
 
-## 🔑 7. ENVIRONMENT VARIABLES (CRITICAL)
-
-| Key | Description | Status |
-|---|---|---|
-| `OPENAI_API_KEY` | Primary inference key for Council members. | **Required** |
-| `GOOGLE_CLIENT_ID` | OAuth2 ID for Google Sign-in integration. | **Required** |
-| `SECRET_OWNER_KEY` | Cryptographic key required for Git push authorization. | **Required** |
-| `USE_LOCAL_AI` | Set to `true` to force Ollama/Local inference. | Optional |
-| `SECRET_KEY` | Flask session encryption key. | **Production-Required** |
-
----
-
-## 📡 8. API DOCUMENTATION
-
-| Endpoint | Method | Payload | Response |
-|---|---|---|---|
-| `/ask` | POST | `{"question": "..."}` | Unified Council Answer + Intent Chip. |
-| `/api/verify_token` | POST | `{"token": "..."}` | Session Initiation + DNA Link. |
-| `/api/status` | GET | N/A | Real-time Consciousness Metrics. |
-| `/api/contextual_doubt`| POST | `{"question": "...", "context": "..."}` | Step-specific mentorship. |
-
----
-
-## 🛡️ 9. SECURITY & SOVEREIGNTY
-
-### Hardware Locking
-KALI generates a **Unique Hardware Signature** during initial run. If the signature doesn't match in a subsequent run, KALI enters **Restricted Mode**, disabling the Project Mentor and DNA updates.
-
-### Git Hardening
-The project utilizes a custom **Pre-Push Hook** (`.githooks/pre-push`). This hook intercepts any `git push` command and terminates it unless the environment possesses the authorized `SECRET_OWNER_KEY`.
-
----
-
-## ⚠️ 10. REALITY CHECK: KNOWN ISSUES & GAPS
-
-- **Security Note**: The hardware locking module currently relies on accessible Python files; an expert could bypass this by modifying `sovereign_check.py`. **Future Fix**: Binary obfuscation or C-extensions for security modules.
-- **OAuth Gap**: Logout flow in `web_app.py` clears the server session but does not revoke the Google client-side cookie automatically.
-- **Resource Intensity**: The `vector_memory` initialization loads a local `all-MiniLM` model, which can consume ~400MB of RAM on startup.
-
----
-
-## 🤝 11. CONTRIBUTION GUIDE
-We welcome elite AI/ML engineers. To contribute:
-1. Fork the repository.
-2. Implement your module in `src/core/plugins/`.
-3. Submit a PR. Note that PRs will be audited for **Sovereignty Compliance**.
+## 🤝 6. CONTRIBUTION PHILOSOPHY
+We are building the **Library of Alexandria 2.0**. We invite engineers to:
+1. Improve the **3D Logic Rendering** engine.
+2. Extend the **Domain Archives** (Spiritual, Tactical, Scientific).
+3. Optimize the **Progressive Explainer** for faster clarity.
 
 **Architect**: Aditya Vanjre
-**Mission**: Absolute Knowledge Sovereignty.
-
----
-
-> *"Arise, awake, find out the great ones and learn of them."* — Katha Upanishad
+**Vision**: Universal Clarity Through Sovereign Intelligence.
