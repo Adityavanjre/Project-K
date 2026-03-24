@@ -19,7 +19,7 @@ class UserDNA:
         "expertise": {
             "overall_level": "unknown",
             "domains": {},
-            "known_concepts": [],
+            "known_concepts": {}, # Changed to dict for mastery {concept: score}
             "weak_areas": []
         },
         "projects": {
@@ -141,10 +141,11 @@ class UserDNA:
         })
         self._save()
 
-    def add_known_concept(self, concept: str):
-        if concept not in self.profile["expertise"]["known_concepts"]:
-            self.profile["expertise"]["known_concepts"].append(concept)
-            self._save()
+    def add_known_concept(self, concept: str, score_delta: int = 20):
+        concept = concept.upper()
+        current = self.profile["expertise"]["known_concepts"].get(concept, 0)
+        self.profile["expertise"]["known_concepts"][concept] = min(100, current + score_delta)
+        self._save()
 
     def add_goal(self, goal: str, term: str = "short_term"):
         if term in self.profile["goals"]:

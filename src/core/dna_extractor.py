@@ -59,9 +59,10 @@ class DNAExtractor:
             self.vm.remember_project(raw[:250])
 
     def _extract_expertise(self, q: str):
-        CONCEPTS = ["pwm", "i2c", "spi", "uart", "interrupt", "pid", "mqtt"]
+        CONCEPTS = ["PWM", "I2C", "SPI", "UART", "INTERRUPT", "PID", "MQTT", "REST", "API", "JSON", "SQL"]
         for c in CONCEPTS:
-            if c in q: self.dna.add_known_concept(c.upper())
+            if c.lower() in q: 
+                self.dna.add_known_concept(c, score_delta=20)
 
     def _extract_goals(self, q: str, raw: str):
         if any(t in q for t in ["i want to", "my goal", "trying to"]):

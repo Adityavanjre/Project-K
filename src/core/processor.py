@@ -56,6 +56,10 @@ class DoubtProcessor:
         self.ingestor = DocumentIngestor(self.vector_memory)
         self.plugin_manager = PluginManager()
         self.plugin_manager.load_plugins()
+        from .manifestor import Manifestor
+        from .gap_detector import GapDetector
+        self.manifestor = Manifestor()
+        self.gap_detector = GapDetector(self.user_dna)
         self.power_mode = "TURBO" 
         
         # Singularity Components (Phases 27-30)
@@ -75,7 +79,7 @@ class DoubtProcessor:
         self.proactive_research.start(interval_hours=24)
         self.message_count = 0
         self.conversation_history = []
-        self.current_session_id = None
+        self.current_session_id: Optional[str] = None
         self.logger.info("DoubtProcessor initialized successfully")
         self._ensure_sovereign_hooks()
         self._seed_universal_knowledge()
@@ -139,9 +143,21 @@ class DoubtProcessor:
             if self.message_count % 5 == 0:
                 self.reflection_engine.reflect()
 
+            # Proactive Gap Analysis
+            gap_prompt = self.gap_detector.get_proactive_prompt(query)
+            if gap_prompt:
+                response = f"{response}\n\n---\n💡 **KALI INSIGHT**: {gap_prompt}"
+
+            # Manifestation Check
+            if "manifest" in query.lower() or "build this" in query.lower():
+                # Extract project name or use default
+                proj_name = f"project_{uuid.uuid4().hex[:6]}"
+                manifest_res = self.manifestor.manifest_project(proj_name, {"README.md": f"# {proj_name}\nCreated by KALI Manifestor."})
+                response = f"{response}\n\n✅ **MANIFESTED**: Project path: {manifest_res.get('path')}"
+
             return {
                 "text": response,
-                "can_build": "build" in query.lower(),
+                "can_build": "build" in query.lower() or "manifest" in query.lower(),
                 "power_mode": self.power_mode,
                 "report_ready": len(response) > 500,
                 "msg_id": str(uuid.uuid4()),
