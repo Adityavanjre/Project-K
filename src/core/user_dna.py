@@ -103,8 +103,8 @@ class UserDNA:
         self._save(profile)
         return profile
 
-    def _save(self, profile: dict = None):
-        p = profile or self.profile
+    def _save(self, profile: Optional[dict] = None):
+        p = profile if profile is not None else self.profile
         conn = sqlite3.connect(self.db_path)
         conn.execute("""
             INSERT INTO user_dna (user_id, profile, updated)
@@ -131,7 +131,7 @@ class UserDNA:
             self.profile["hardware"]["sensors"].append(sensor)
             self._save()
 
-    def add_active_project(self, name: str, description: str, hardware: List[str] = None):
+    def add_active_project(self, name: str, description: str, hardware: Optional[List[str]] = None):
         self.profile["projects"]["active"].append({
             "name": name,
             "description": description,
@@ -157,7 +157,7 @@ class UserDNA:
             self.profile["preferences"][key] = value
             self._save()
 
-    def record_interaction(self, topic: str = None):
+    def record_interaction(self, topic: Optional[str] = None):
         stats = self.profile["interaction_stats"]
         stats["total_conversations"] += 1
         stats["questions_asked"] += 1
