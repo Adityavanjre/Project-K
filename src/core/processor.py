@@ -150,9 +150,10 @@ class DoubtProcessor:
 
             # Manifestation Check
             if "manifest" in query.lower() or "build this" in query.lower():
-                # Extract project name or use default
-                proj_name = f"project_{uuid.uuid4().hex[:6]}"
-                manifest_res = self.manifestor.manifest_project(proj_name, {"README.md": f"# {proj_name}\nCreated by KALI Manifestor."})
+                # Extract project name from Predictive Engine if available
+                pred = self.current_predictions[0] if self.current_predictions else "logic"
+                proj_name = f"manifest_{pred}_{uuid.uuid4().hex[:4]}"
+                manifest_res = self.manifestor.manifest_project(proj_name, {"README.md": f"# {proj_name}\nManifested via Atemporal Intent."})
                 response = f"{response}\n\n✅ **MANIFESTED**: Project path: {manifest_res.get('path')}"
 
             return {
@@ -172,7 +173,12 @@ class DoubtProcessor:
             self.user_tension = min(1.0, self.user_tension + 0.1)
         else:
             self.user_tension = max(0.0, self.user_tension - 0.05)
-        return "SOOTHE" if self.user_tension > 0.8 else "STEADY"
+            
+        # Phase 34: Vedic Resonance Intervention
+        if self.user_tension > 0.85:
+            return "VEDIC_RESET_REQUIRED: Sir, your neural tension is approaching critical. I suggest a 4-7-8 Pranayama cycle before we continue."
+            
+        return "SOOTHE" if self.user_tension > 0.7 else "STEADY"
 
     def get_system_status(self):
         metrics = self.sensors.get_system_metrics()

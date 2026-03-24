@@ -18,6 +18,25 @@ class ReflectionEngine:
         
         # Ensure data directory exists
         os.makedirs(os.path.dirname(self.discovery_log), exist_ok=True)
+        self.critical_files = ["src/core/processor.py", "scripts/sovereign_check.py"]
+
+    def _trigger_self_heal(self):
+        """Phase 34: Autonomous Logic Repair."""
+        self.logger.info("KALI: Initiating Self-Healing Heartbeat...")
+        for file in self.critical_files:
+            path = os.path.join("d:/code/doubt-clearing-ai", file)
+            if not os.path.exists(path): continue
+            
+            with open(path, "r", encoding="utf-8") as f:
+                content = f.read()
+            
+            # Pattern 1: Trailing Markdown Backticks (Common Singularity decay)
+            if "```" in content:
+                self.logger.warning(f"KALI Detected Syntax Decay in {file}. Repairing...")
+                new_content = content.replace("```", "").strip()
+                with open(path, "w", encoding="utf-8") as f:
+                    f.write(new_content)
+                self.memory.remember(f"SELF_HEAL: Repaired markdown artifact in {file}", "knowledge")
 
     def reflect(self, power_mode: str = "TURBO"):
         """Perform a deep reflection cycle with resource awareness."""
@@ -56,6 +75,9 @@ class ReflectionEngine:
                 # 4. Discovery Loop: Hunt for Undiscovered Problems (Phase 13)
                 self._run_discovery_loop(evolution)
                 
+                # 5. Self-Healing (Phase 34)
+                self._trigger_self_heal()
+                
                 return evolution
         except Exception as e:
             self.logger.error(f"Reflection failed: {e}")
@@ -78,6 +100,15 @@ class ReflectionEngine:
                 discovery["verifiable_trace"] = True 
                 with open(self.discovery_log, "a", encoding="utf-8") as f:
                     f.write(json.dumps(discovery) + "\n")
-                self.logger.info(f"KALI Discovery: {discovery['problem'][:50]} [DOMAINS: {discovery.get('domains', [])}]")
+                
+                # Phase 34: Feed discovery into Research Engine
+                seed_path = "d:/code/doubt-clearing-ai/data/dynamic_seeds.json"
+                seeds = []
+                if os.path.exists(seed_path):
+                    with open(seed_path, "r") as f: seeds = json.load(f)
+                seeds.append(discovery["problem"])
+                with open(seed_path, "w") as f: json.dump(seeds[-20:], f) # Keep last 20
+                
+                self.logger.info(f"KALI Discovery: {discovery['problem'][:50]} -> Injected into Research Queue.")
         except Exception as e:
             self.logger.error(f"Discovery Loop failed: {e}")

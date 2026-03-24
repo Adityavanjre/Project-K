@@ -1,3 +1,5 @@
+import os
+import json
 import threading
 import time
 import random
@@ -58,6 +60,20 @@ class ProactiveResearchEngine:
                 
             except Exception as e:
                 self.logger.error(f"Proactive Research failed: {e}")
+            
+            # Wait for next cycle (plus some jitter)
+            time.sleep(interval_hours * 3600 + random.randint(0, 3600))
+
+    def _get_next_seed(self) -> str:
+        """Prioritize dynamic seeds over static ones."""
+        seed_path = "d:/code/doubt-clearing-ai/data/dynamic_seeds.json"
+        if os.path.exists(seed_path):
+            with open(seed_path, "r") as f: seeds = json.load(f)
+            if seeds:
+                res = seeds.pop(0)
+                with open(seed_path, "w") as f: json.dump(seeds, f)
+                return res
+        return random.choice(self.seeds)
             
             # Wait for next cycle (plus some jitter)
             time.sleep(interval_hours * 3600 + random.randint(0, 3600))
