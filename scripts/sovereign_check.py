@@ -47,4 +47,3 @@ if __name__ == "__main__":
     checker = SovereignCheck()
     status, msg = checker.check_origin()
     print(f"[KALI_SOVEREIGNTY] Status: {status} | Message: {msg}")
-```
