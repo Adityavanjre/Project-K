@@ -1,0 +1,5 @@
+[
+  {"topic": "Zero Trust Architecture", "principle": "Never trust, always verify. Every request must be authenticated, authorized, and encrypted.", "category": "Cybersecurity"},
+  {"topic": "Lateral Movement Prevention", "principle": "Segment networks to contain breaches. Use micro-segmentation and strict IAM.", "category": "Defense"},
+  {"topic": "OODA Loop", "principle": "Observe, Orient, Decide, Act. The speed of the loop determines dominance in any conflict.", "category": "Tactical Strategy"}
+]

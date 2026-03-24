@@ -1,6 +1,9 @@
 # WARP.md
 
-This file provides guidance to WARP (warp.dev) when working with Project-K code in this repository.
+This file provides guidance to WARP (warp.dev) when working with Project-K (KALI) code in this repository.
+
+**Project Mission**: K.A.L.I. is an advanced **Educational AI Mentor**. Its purpose is to guide students through engineering doubts and complex project builds. It provides Socratic explanations, visual diagrams, and complete project blueprints (BOM, Code, Steps). It is **NOT** a personal assistant or smart home controller.
+
 
 ## Development Commands
 

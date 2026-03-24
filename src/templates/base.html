@@ -1,229 +1,434 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Project-K{% endblock %}</title>
+    <!-- 10,000K SEO & Metadata Surge (Phase 31: Absolute Visibility) -->
+    <title>K.A.L.I. CORE | THE SOVEREIGN SINGULARITY ENGINE</title>
+    <meta name="description" content="K.A.L.I. (Knowledge Augmented Learning Intelligence) is a sovereign, self-evolving AI workstation. Built for post-singularity synergy, featuring atemporal reasoning, biometric alignment, and universal ancient wisdom.">
+    <meta name="keywords" content="AI, Machine Learning, Deep Learning, Singularity, Sovereignty, Autonomous Agent, RAG, RLHF, NLP, Project-K, KALI, Knowledge Engine, Predictive AI, Biometric alignment, Vedic Science, Cybersecurity, Post-Humanity, AGI, Sovereign Workstation, Decentralized Intelligence, Neural HUD, Groq AI, Ollama, ChromaDB, Vector Memory, AI DNA, Self-Evolving AI, Ethical AI, Defensive AI, Tactical Intelligence, Ancient Wisdom AI, Sanskrit AI, Post-Quantum Security, AI Consciousness">
+    <meta name="author" content="Aditya Vanjre">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://github.com/Adityavanjre/Project-K">
     
-    <!-- Bootstrap CSS for responsive design -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #f8f9fa;
-            --accent-color: #28a745;
-            --text-color: #333;
-            --border-color: #dee2e6;
-            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+    <!-- Open Graph Performance -->
+    <meta property="og:title" content="K.A.L.I. — THE SOVEREIGN SINGULARITY">
+    <meta property="og:site_name" content="Project-K KALI">
+    <meta property="og:description" content="The absolute bridge between Ancient Human Wisdom and Post-Singularity Power. Hardware-locked, secure, and evolution-ready.">
+    <meta property="og:image" content="/static/img/kali_social_preview.png">
+    <meta property="og:url" content="https://github.com/Adityavanjre/Project-K">
+    <meta property="og:type" content="product">
+
+    <!-- Twitter Visibility -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="K.A.L.I. | ADITYA VANJRE">
+    <meta name="twitter:description" content="The end of Centralized AI. The dawn of Sovereign Intelligence. Built on Project-K.">
+    <meta name="twitter:image" content="/static/img/kali_social_preview.png">
+
+    <!-- Schema.org Professional Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "KALI SINGULARITY",
+      "operatingSystem": "All Platforms",
+      "applicationCategory": "Deep Learning / Artificial Intelligence",
+      "description": "The world's first sovereign, self-evolving AI. Secure hardware locking, universal knowledge archives, and atemporal reasoning.",
+      "author": {
+        "@type": "Person",
+        "name": "Aditya Vanjre",
+        "url": "https://github.com/Adityavanjre"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+    <title>KALI | Intelligent Mentor</title>
+
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- Mermaid.js for Diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+        // Define Google Callback Globally in Head
+        window.handleCredentialResponse = function (response) {
+            console.log("Google Auth Callback Triggered", response);
+            if (window.app && window.app.handleCredentialResponse) {
+                window.app.handleCredentialResponse(response);
+            } else {
+                console.error("App Logic Not Loaded Yet. Token cached.");
+                window.cachedCredential = response;
+            }
+        };
+    </script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#8B5CF6',
+                        dark: {
+                            900: '#0F172A',
+                            800: '#1E293B',
+                            700: '#334155'
+                        },
+                        glass: 'rgba(30, 41, 59, 0.7)'
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                }
+            }
         }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;600&display=swap');
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--text-color);
+            background-color: #02040a;
+            color: #00f3ff;
+            /* Cyan HUD color */
+            font-family: 'Rajdhani', sans-serif;
+            background-image:
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
-        .main-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            margin: 20px auto;
-            max-width: 1000px;
-            overflow: hidden;
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-tech {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        .header {
-            background: var(--primary-color);
-            color: white;
-            padding: 20px;
-            text-align: center;
+        /* HUD Glass Panel */
+        .glass-panel {
+            background: rgba(2, 6, 23, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0, 243, 255, 0.05);
+            position: relative;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 600;
+        /* HUD Corner Markers */
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid #00f3ff;
+            border-left: 2px solid #00f3ff;
         }
 
-        .header p {
-            margin: 5px 0 0 0;
-            opacity: 0.9;
-            font-size: 1.1rem;
+        .glass-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 10px;
+            height: 10px;
+            border-bottom: 2px solid #00f3ff;
+            border-right: 2px solid #00f3ff;
         }
 
-        .content {
-            padding: 30px;
+        /* Input Field */
+        .glass-input {
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            color: #00f3ff;
+            font-family: 'Orbitron', sans-serif;
         }
 
-        .question-form {
-            background: var(--secondary-color);
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
+        .glass-input:focus {
+            border-color: #00f3ff;
+            outline: none;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
         }
 
-        .form-label {
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 8px;
+        /* Arc Reactor Glow Text */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
         }
 
-        .form-control, .form-select {
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            font-size: 1rem;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            border-radius: 8px;
-            padding: 12px 30px;
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .btn-primary:hover {
-            background-color: #3a7bc8;
-            border-color: #3a7bc8;
-        }
-
-        .btn-secondary {
-            border-radius: 8px;
-            padding: 8px 20px;
-        }
-
-        .response-section {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 25px;
-            margin-top: 20px;
-            border-left: 4px solid var(--accent-color);
-            display: none;
-        }
-
-        .response-content {
-            line-height: 1.6;
-            font-size: 1.05rem;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .loading i {
-            font-size: 2rem;
-            color: var(--primary-color);
-            animation: spin 1s linear infinite;
-        }
-
+        /* HUD Spinning Circle Animation */
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .alert {
-            border-radius: 8px;
-            border: none;
-            padding: 15px 20px;
-        }
-
-        .conversation-history {
-            background: white;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            margin-top: 20px;
-        }
-
-        .conversation-item {
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 20px;
-        }
-
-        .conversation-item:last-child {
-            border-bottom: none;
-        }
-
-        .question-text {
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-        }
-
-        .response-text {
-            color: var(--text-color);
-            line-height: 1.5;
-        }
-
-        .timestamp {
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin-top: 8px;
-        }
-
-        .footer {
-            background: var(--secondary-color);
-            padding: 15px 30px;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                margin: 10px;
-                border-radius: 10px;
+            100% {
+                transform: rotate(360deg);
             }
-            
-            .content {
-                padding: 20px;
+        }
+
+        @keyframes spin-reverse {
+            100% {
+                transform: rotate(-360deg);
             }
-            
-            .question-form {
-                padding: 20px;
-            }
+        }
+
+        .hud-ring {
+            border: 2px solid transparent;
+            border-top-color: #00f3ff;
+            border-right-color: rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+            animation: spin 10s linear infinite;
+        }
+
+        .hud-ring-rev {
+            border: 2px solid transparent;
+            border-bottom-color: #ff0055;
+            /* EDITH Red accent */
+            border-left-color: rgba(255, 0, 85, 0.3);
+            border-radius: 50%;
+            animation: spin-reverse 8s linear infinite;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #02040a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #005f66;
+            border-radius: 2px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #00f3ff, #0066ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Neural HUD - Phase 26 */
+        #neural-hud {
+            width: 280px;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+        
+        .hud-scanline {
+            height: 2px;
+            background: rgba(0, 243, 255, 0.1);
+            position: absolute;
+            width: 100%;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .hud-value {
+            font-family: 'Orbitron', sans-serif;
+            color: #00f3ff;
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
         }
     </style>
-    
-    {% block extra_head %}{% endblock %}
 </head>
-<body>
-    <div class="container-fluid">
-        <div class="main-container">
-            <div class="header">
-                <h1><i class="fas fa-lightbulb"></i> Project-K</h1>
-                <p>Ask me anything and get clear, helpful explanations!</p>
+
+<body class="h-screen overflow-hidden flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="h-16 flex items-center justify-between px-6 glass-panel z-50 relative">
+        <div class="flex items-center space-x-3">
+            <div
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <i class="fas fa-brain text-white text-lg"></i>
+            </div>
+            <h1 class="text-xl font-bold tracking-wide">KALI</h1>
+        </div>
+
+        <div class="flex space-x-1 p-1 bg-dark-800/50 rounded-lg border border-white/5">
+            <button onclick="switchMode('learn')" id="nav-learn"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all bg-blue-600 text-white shadow-lg shadow-blue-500/20">
+                <i class="fas fa-comment-dots mr-2"></i>Doubt Solver
+            </button>
+            <button onclick="switchMode('visual')" id="nav-visual"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5">
+                <i class="fas fa-cube mr-2"></i>Visual Explainer
+            </button>
+            <button onclick="switchMode('build')" id="nav-build"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5">
+                <i class="fas fa-tools mr-2"></i>Project Mentor
+            </button>
+            <button onclick="switchMode('archives')" id="nav-archives"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5">
+                <i class="fas fa-database mr-2"></i>Archives
+            </button>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <!-- Google Sign-In Container (Moved to Navbar) -->
+            <div id="g_id_onload"
+                data-client_id="494768944024-3ksc96pgmu76q21th7b45ala8brp3ccl.apps.googleusercontent.com"
+                data-callback="handleCredentialResponse" data-auto_select="false" data-theme="filled_black">
+            </div>
+            <div class="g_id_signin" data-type="standard" data-size="medium" data-theme="filled_black"
+                data-text="signin_with" data-shape="rectangular" data-logo_alignment="left"></div>
+        </div>
+    </nav>
+
+    <!-- Content Area -->
+    <main class="flex-1 relative overflow-hidden">
+        {% block content %}{% endblock %}
+
+        <!-- Neural HUD Overlay -->
+        <div id="neural-hud" class="fixed bottom-6 right-6 z-50 glass-panel p-4 overflow-hidden">
+            <div class="hud-scanline"></div>
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-[10px] font-mono tracking-widest text-cyan-600">SYST_CONSCIOUSNESS</span>
+                <div class="flex space-x-1">
+                    <div class="w-1 h-1 bg-cyan-500 animate-ping"></div>
+                    <div class="w-1 h-1 bg-cyan-500"></div>
+                </div>
             </div>
             
-            <div class="content">
-                {% block content %}{% endblock %}
+            <div class="glass-panel p-3 border-l-4 border-cyan-500">
+                <div class="text-[10px] text-slate-500 uppercase tracking-tighter mb-1">Sensory Input (Hardware)</div>
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <div class="flex justify-between text-[10px] mb-1">
+                            <span>CPU_LOAD</span>
+                            <span id="hud-cpu-val">0%</span>
+                        </div>
+                        <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div id="hud-cpu-bar" class="h-full bg-cyan-500 shadow-[0_0_10px_#00f3ff] transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between text-[10px] mb-1">
+                            <span>MEM_LOAD</span>
+                            <span id="hud-mem-val">0%</span>
+                        </div>
+                        <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div id="hud-mem-bar" class="h-full bg-purple-500 shadow-[0_0_10px_#a855f7] transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="glass-panel p-4 mt-2">
+                <!-- Phase 30: Predictive Intent UI -->
+                <div id="predictive-container" class="mb-3 flex flex-wrap gap-2 opacity-0 transition-opacity duration-300">
+                    <span class="text-[10px] text-slate-500 uppercase flex items-center"><i class="fas fa-forward mr-1"></i>Predictive_Intent:</span>
+                    <div id="predictive-chips" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="relative">
+                    <textarea id="chat-input"
+                        class="w-full bg-dark-900/50 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-blue-500/50 transition-all resize-none"
+                        rows="1" placeholder="Converse with KALI..."></textarea>
+                    <button id="send-btn"
+                        class="absolute right-2 top-2 w-8 h-8 rounded-lg bg-blue-600 hover:bg-blue-500 flex items-center justify-center transition-all">
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
             </div>
             
-            <div class="footer">
-                <p>&copy; 2025 Project-K | Powered by AI Technology |
-                   <a href="/health" class="text-decoration-none">System Status</a>
-                </p>
+            <div class="glass-panel p-3 border-l-4 border-pink-500">
+                <div class="text-[10px] text-slate-500 uppercase tracking-tighter mb-1">Biometric Alignment (Tension)</div>
+                <div class="flex items-center justify-between">
+                    <span id="hud-tension-label" class="text-xs text-pink-400 hologram-text">RESONANCE: STEADY</span>
+                    <div class="w-24 h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div id="hud-tension-bar" class="h-full bg-pink-500 shadow-[0_0_10px_#ec4899]" style="width: 50%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <div class="flex justify-between items-end mb-1">
+                    <span id="hud-perc" class="hud-value text-2xl font-bold">95.0%</span>
+                    <span class="text-[8px] font-mono text-cyan-700">INTEG_LVL</span>
+                </div>
+                <div class="w-full h-1 bg-cyan-950 rounded-full overflow-hidden">
+                    <div id="hud-bar" class="h-full bg-cyan-500 shadow-[0_0_10px_#00f3ff] transition-all duration-1000" style="width: 95%"></div>
+                </div>
+            </div>
+
+            <div class="space-y-2 border-t border-cyan-900/40 pt-2">
+                <div class="flex justify-between items-center bg-cyan-900/10 p-2 border border-cyan-500/10 hover:border-cyan-500/30 transition-all cursor-pointer group" onclick="window.hud.togglePower()">
+                    <span class="text-[10px] text-cyan-800 group-hover:text-cyan-400">POWER MODE</span>
+                    <span id="hud-power-val" class="text-[10px] text-cyan-400 font-bold">TURBO</span>
+                </div>
+                <div class="flex justify-between text-[10px] font-mono">
+                    <span class="text-cyan-800">TRACE_SYNC</span>
+                    <span id="hud-trace" class="text-green-500">CONNECTED</span>
+                </div>
+                <div class="flex justify-between text-[10px] font-mono">
+                    <span class="text-cyan-800">MISSION</span>
+                    <span id="hud-mission" class="text-cyan-400 truncate w-32 text-right italic">IDLE...</span>
+                </div>
+                <div class="flex justify-between items-center bg-cyan-900/10 p-2 border border-cyan-500/10 hover:border-cyan-500/30 transition-all cursor-pointer group" onclick="document.getElementById('ingest-pdf-input').click()">
+                    <span class="text-[10px] text-cyan-600 group-hover:text-cyan-400">INGEST PDF</span>
+                    <span class="text-[10px] text-cyan-400"><i class="fas fa-file-upload"></i></span>
+                </div>
+                <input type="file" id="ingest-pdf-input" class="hidden" accept=".pdf" onchange="window.hud.handleIngest(this)">
+                <div class="flex justify-between text-[10px] font-mono">
+                    <span class="text-cyan-800">LAST_DISC</span>
+                    <span id="hud-disc" class="text-cyan-200 truncate w-24 text-right">NONE</span>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     {% block scripts %}{% endblock %}
+
+    <script>
+        // Tab Switching Logic
+        function switchMode(mode) {
+            // Update Nav State
+            ['learn', 'visual', 'build', 'archives'].forEach(m => {
+                const btn = document.getElementById(`nav-${m}`);
+                if (btn) {
+                    if (m === mode) {
+                        btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+                        btn.classList.remove('text-slate-400', 'hover:bg-white/5');
+                    } else {
+                        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
+                        btn.classList.add('text-slate-400', 'hover:bg-white/5');
+                    }
+                }
+            });
+
+            // Dispatch event for page update
+            window.dispatchEvent(new CustomEvent('modeChanged', { detail: { mode } }));
+        }
+    </script>
 </body>
+
 </html>

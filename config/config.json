@@ -23,5 +23,10 @@
     "host": "localhost",
     "port": 8000,
     "debug": false
+  },
+  "openai": {
+    "ai_model": "gpt-3.5-turbo",
+    "max_tokens": 800,
+    "temperature": 0.7
   }
 }

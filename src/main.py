@@ -15,7 +15,7 @@ from utils.helpers import setup_logging, load_config
 def create_argument_parser() -> argparse.ArgumentParser:
     """Create and configure argument parser."""
     parser = argparse.ArgumentParser(
-        description="Project-K - Clear explanations for your questions"
+        description="KALI - Clear explanations for your questions"
     )
 
     parser.add_argument(

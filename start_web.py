@@ -26,16 +26,16 @@ def is_port_available(port):
 def main():
     """Start the web server on an available port."""
     # Try different ports
-    ports_to_try = [8000, 8080, 5000, 3000, 8888, 9000]
+    ports_to_try = [5000, 8000, 8080, 3000, 8888, 9000]
     
     app = create_app()
     config = load_config("config/config.json")
     
     for port in ports_to_try:
         if is_port_available(port):
-            print(f"🚀 Starting Project-K Web Interface...")
+            print(f"🚀 Starting KALI Web Interface...")
             print(f"📍 Access the application at: http://localhost:{port}")
-            print(f"❓ Project-K is ready to help!")
+            print(f"❓ KALI is ready to help!")
             print(f"💡 Press CTRL+C to stop the server")
             print("-" * 50)
             
