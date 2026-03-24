@@ -88,7 +88,7 @@ def create_default_config() -> Dict[str, Any]:
     """
     return {
         "application": {
-            "name": "Project-K",
+            "name": "KALI",
             "version": "0.1.0",
             "debug": False,
         },

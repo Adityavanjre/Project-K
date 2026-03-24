@@ -1,0 +1,1 @@
+const breadboardGeometry = new THREE.BoxGeometry(4, 0.2, 2); const breadboardMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF }); const breadboard = new THREE.Mesh(breadboardGeometry, breadboardMaterial); breadboard.position.set(0, 0, 0); scene.add(breadboard);

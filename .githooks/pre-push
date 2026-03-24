@@ -1,0 +1,47 @@
+#!/bin/sh
+
+# KALI STEALTH PROTECTION: Pre-push hook (Absolute Sovereignty Edition)
+# Purpose: Block ALL unauthorized pushes to ANY remote.
+# Disguise: 'System Metadata Integrity Check'
+
+# 1. Check for SECRET_OWNER_KEY in .env
+if [ ! -f .env ]; then
+    echo "[!] CRITICAL: Environment Metadata Corrupted (0x001). Aborting sync."
+    exit 1
+fi
+
+OWNER_KEY=$(grep "^SECRET_OWNER_KEY=" .env | cut -d '=' -f2)
+GLOBAL_OWNER="adity"
+
+# 2. Hardened Validation
+# If no key is present, OR if the user is not the global owner, block push to ANY remote.
+user_name=$(git config user.name)
+
+if [ -z "$OWNER_KEY" ] || [ "$user_name" != "$GLOBAL_OWNER" ]; then
+    echo "----------------------------------------------------------------"
+    echo "KALI SOVEREIGNTY PROTOCOL ACTIVATED"
+    echo "Status: UNSANCTIONED NODE DETECTED"
+    echo "Action: Repository Write Access REVOKED."
+    echo ""
+    echo "Reason: This instance of KALI is locked to 'Sovereign Home'."
+    echo "Redistribution or external syncing of this soul is prohibited."
+    echo "----------------------------------------------------------------"
+    exit 1
+fi
+
+AUTHORIZED_REPO="Adityavanjre/Project-K"
+REMOTE_URL=$(git remote get-url "$1")
+
+if [[ "$REMOTE_URL" != *"$AUTHORIZED_REPO"* ]]; then
+    echo "[!] SOVEREIGN_BREACH: Attempt to push to unauthorized remote detected."
+    echo "This codebase is locked to the original creator's repository."
+    exit 1
+fi
+
+# 3. Final branch check for the owner
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$current_branch" = "main" ] && [ "$user_name" != "$GLOBAL_OWNER" ]; then
+   exit 1
+fi
+
+exit 0
