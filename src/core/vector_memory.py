@@ -42,8 +42,6 @@ class VectorMemory:
         return self._collections[name]
 
     def _embed(self, text: str) -> List[float]:
-
-    def _embed(self, text: str) -> List[float]:
         if not self.embedder:
             return []
         return self.embedder.encode(text).tolist()
@@ -61,7 +59,7 @@ class VectorMemory:
                     ids=[str(uuid.uuid4())]
                 )
         except Exception as e:
-            self.logger.error(f"Recall failed in {collection_name}: {e}")
+            self.logger.error(f"Remember failed in {collection_name}: {e}")
 
     def recall(self, query: str, collection_name: str = "knowledge", n: int = 5) -> List[str]:
         if not self.client:
@@ -86,6 +84,16 @@ class VectorMemory:
 
     def recall_projects(self, query: str) -> List[str]:
         return self.recall(query, "projects", n=3)
+
+    def cache_answer(self, query: str, answer: str):
+        """Semantic cache for AI responses."""
+        self.remember(answer, "cache", {"query": query})
+
+    def get_cached_answer(self, query: str) -> Optional[str]:
+        """Retrieve cached answer if semantically similar."""
+        results = self.recall(query, "cache", n=1)
+        return results[0] if results else None
+
 
     def get_context_for_query(self, question: str) -> str:
         """Build a rich context string from relevant memories."""

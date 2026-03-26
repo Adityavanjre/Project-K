@@ -34,12 +34,13 @@ class LocalAIService:
         # Re-check connection occasionally or just return the initial status
         return self.is_connected
 
-    def ask_question(self, question: str, system_prompt: str = "", temperature: float = 0.7) -> str:
+    def ask_question(self, question: str, context: str = "", temperature: float = 0.7) -> str:
         messages = []
-        if system_prompt:
-            messages.append({"role": "system", "content": system_prompt})
+        if context:
+            messages.append({"role": "system", "content": f"You are KALI, an advanced AI Assistant. Context: {context}"})
         messages.append({"role": "user", "content": question})
         return self._call(messages, temperature=temperature)
+
 
     def ask_json(self, system_prompt: str, user_prompt: str, temperature: float = 0.2) -> Dict[str, Any]:
         messages = [

@@ -427,17 +427,17 @@ class Chat {
             // Appending "Build This" action only if intent matches
             if (canBuild) {
                 const btnId = 'btn-' + id;
-                `;
+                // Logic for building could go here
             }
 
             if (reportReady) {
                 div.innerHTML += `
-                    <div class="mt-2 flex flex-wrap gap-2 justify-start">
-                        <button onclick="window.app.chat.downloadReport(\`${text}\`)" 
+                    <div class="mt-2 flex flex-wrap gap-2 justify-start" data-msg="${text.replace(/"/g, '&quot;')}">
+                        <button onclick="window.app.chat.downloadReport(this.parentElement.dataset.msg)" 
                                 class="text-[10px] bg-cyan-900/50 hover:bg-cyan-500 hover:text-black border border-cyan-500/50 rounded px-2 py-1 transition-all">
                             <i class="fas fa-file-pdf"></i> GENERATE PDF REPORT
                         </button>
-                        <button onclick="let c=prompt('Enter Ground Truth Correction:'); if(c) window.submitCorrection(\`${text}\`, '...', c)" 
+                        <button onclick="let c=prompt('Enter Ground Truth Correction:'); if(c) window.submitCorrection(this.parentElement.dataset.msg, '...', c)" 
                                 class="text-[10px] bg-red-900/20 hover:bg-red-500 hover:text-black border border-red-500/30 rounded px-2 py-1 transition-all">
                             <i class="fas fa-brain"></i> CORRECT KALI
                         </button>
@@ -445,8 +445,8 @@ class Chat {
                 `;
             } else if (type === 'ai') {
                 div.innerHTML += `
-                    <div class="mt-2 text-right">
-                        <button onclick="let c=prompt('Enter Ground Truth Correction:'); if(c) window.submitCorrection(\`${text}\`, '...', c)" 
+                    <div class="mt-2 text-right" data-msg="${text.replace(/"/g, '&quot;')}">
+                        <button onclick="let c=prompt('Enter Ground Truth Correction:'); if(c) window.submitCorrection(this.parentElement.dataset.msg, '...', c)" 
                                 class="text-[8px] opacity-30 hover:opacity-100 hover:text-red-400 transition-all font-mono">
                             [CORRECT_KALI]
                         </button>
@@ -524,6 +524,7 @@ class Visualizer {
         this.audio = new Audio();
 
         this.initThreeJS();
+        this.parts = new PartsLibrary(this.scene, THREE);
         this.setupBindings();
     }
 
@@ -590,8 +591,12 @@ class Visualizer {
         if (btn) btn.addEventListener('click', () => this.startExplanation());
 
         document.getElementById('btn-ask-context').addEventListener('click', () => {
-            alert("Contextual Interruption Protocol Initiated.");
-            // Future: Open modal
+            const q = prompt("Interruption Protocol: Enter your doubt based on this visual context:");
+            if (q) {
+                // Future: Send to api/contextual_doubt
+                window.app.chat.addMessage(q.toUpperCase(), 'user');
+                window.app.chat.handleSubmit(new Event('submit'), q);
+            }
         });
     }
 
@@ -704,10 +709,11 @@ class Visualizer {
 
             const scene = this.scene;
             const THREE = window.THREE;
+            const parts = this.parts;
 
             // Execute
             console.log("Run Visual Code:", code);
-            new Function('scene', 'THREE', code)(scene, THREE);
+            new Function('scene', 'THREE', 'parts', code)(scene, THREE, parts);
 
         } catch (e) {
             console.error("Visual Code Error:", e);
@@ -1040,6 +1046,60 @@ class ProjectMentor {
     }
 }
 
+class AgentMode {
+    constructor() {
+        this.input = document.getElementById('agent-goal');
+        this.btn = document.getElementById('btn-agent-execute');
+        this.output = document.getElementById('agent-output');
+        
+        if (this.btn) {
+            this.btn.addEventListener('click', () => this.runMission());
+        }
+    }
+
+    async runMission() {
+        const goal = this.input.value ? this.input.value.trim() : "";
+        if (!goal) return;
+
+        this.output.innerHTML = `
+            <div class="flex flex-col items-center justify-center pt-10 animate-pulse">
+                <i class="fas fa-satellite-dish text-4xl mb-4 text-purple-500"></i>
+                <p class="text-xs uppercase tracking-[0.3em] font-bold text-purple-400">INITIATING DEEP RESEARCH PROTOCOL</p>
+                <p class="text-[10px] text-purple-900 mt-2">> TARGET: "${goal.substring(0, 30)}..."</p>
+                <p class="text-[10px] text-purple-900">> ANALYZING RELEVANT WHITEPAPERS...</p>
+            </div>
+        `;
+
+        try {
+            const res = await fetch('/api/agent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ goal })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                this.renderResult(data.data);
+            } else {
+                this.output.innerHTML = `<div class="text-red-500 font-mono text-center pt-10">MISSION FAILED: ${data.error}</div>`;
+            }
+        } catch (e) {
+            this.output.innerHTML = `<div class="text-red-500 font-mono text-center pt-10">CORE ERROR: ${e.message}</div>`;
+        }
+    }
+
+    renderResult(result) {
+        // Markdown-ish result parsing
+        const html = result.replace(/\n/g, '<br>').replace(/### (.*)/g, '<h3 class="text-purple-400 font-bold mt-4 mb-2">$1</h3>');
+        this.output.innerHTML = `
+            <div class="border-l-2 border-purple-500 pl-4 py-2 bg-purple-900/10">
+                <div class="text-[10px] text-purple-500 font-bold mb-4">>>> MISSION ACCOMPLISHED</div>
+                <div class="leading-relaxed text-sm text-purple-100">${html}</div>
+            </div>
+        `;
+    }
+}
+
 class SmartHome {
     constructor() {
         this.isPartyMode = false;
@@ -1060,6 +1120,16 @@ class SmartHome {
             if (window.app && window.app.voice) {
                 window.app.voice.speak(btnLock.innerText === 'DISENGAGE' ? "Lockdown engaged. Directing power to perimeter defense." : "Lockdown disengaged. Returning to standard security protocols.");
             }
+        });
+
+        // Sponsor Evolution
+        const btnSponsor = document.getElementById('btn-sponsor');
+        if (btnSponsor) btnSponsor.addEventListener('click', () => {
+             const modal = document.getElementById('sponsor-modal');
+             if (modal) modal.classList.remove('hidden');
+             if (window.app && window.app.voice) {
+                 window.app.voice.speak("Sponsorship protocol initiated. Sir, the community can now fuel our evolution via GitHub, Ko-fi, or Patreon.");
+             }
         });
     }
 
@@ -1279,9 +1349,7 @@ class HUDController {
                     this.trace.classList.add('text-green-500');
                 } else {
                     this.trace.classList.add('text-red-500');
-                    this.trace.classList.remove('text-green-500');
                 }
-            }
             }
         } catch (e) {
             console.warn("HUD Update Failed:", e);
@@ -1339,6 +1407,45 @@ class HUDController {
     }
 }
 
+class VoiceModule {
+    constructor() {
+        this.synth = window.speechSynthesis;
+        this.isSpeaking = false;
+        this.currentUtterance = null;
+    }
+
+    speak(text) {
+        if (!text) return;
+        
+        // Stop current if any (Point 4: State-Aware Interruption)
+        this.stop();
+
+        this.currentUtterance = new SpeechSynthesisUtterance(text);
+        
+        // KALI's Voice Characteristics
+        this.currentUtterance.rate = 1.0;
+        this.currentUtterance.pitch = 0.9; // Slightly deeper, authoritative
+        this.currentUtterance.volume = 1.0;
+
+        this.currentUtterance.onstart = () => { this.isSpeaking = true; };
+        this.currentUtterance.onend = () => { this.isSpeaking = false; };
+        this.currentUtterance.onerror = (e) => { 
+            console.error("Vocal failure:", e);
+            this.isSpeaking = false; 
+        };
+
+        this.synth.speak(this.currentUtterance);
+    }
+
+    stop() {
+        if (this.synth.speaking) {
+            this.synth.cancel();
+            this.isSpeaking = false;
+            console.log("KALI Vocal Flow Interrupted.");
+        }
+    }
+}
+
 // Check for cached credential on boot
 document.addEventListener('DOMContentLoaded', () => {
     try {
@@ -1354,6 +1461,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         console.log("K.A.L.I. Frontend Initialized Successfully.");
+        
+        // Phase 15: Sync Cycle Initiation
+        fetch('/api/sync', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(`Sync Cycle Complete: Phase ${data.phase}`);
+                    window.app.voice.speak(`Sync Cycle Complete, Sir. Objective persistence confirmed for Phase ${data.phase}.`);
+                }
+            })
+            .catch(e => console.error("Sync Cycle Failed:", e));
     } catch (e) {
         console.error("Critical Initialization Error:", e);
     }

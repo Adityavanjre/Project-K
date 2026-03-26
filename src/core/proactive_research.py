@@ -33,8 +33,10 @@ class ProactiveResearchEngine:
         """Start the background curiosity loop."""
         if self.is_active: return
         self.is_active = True
-        self.thread = threading.Thread(target=self._run_loop, args=(interval_hours,), daemon=True)
-        self.thread.start()
+        # Use local variable to satisfy linter type checking
+        cur_thread = threading.Thread(target=self._run_loop, args=(interval_hours,), daemon=True)
+        self.thread = cur_thread
+        cur_thread.start()
         self.logger.info("KALI Proactive Research Engine activated.")
 
     def _run_loop(self, interval_hours):
@@ -43,11 +45,14 @@ class ProactiveResearchEngine:
                 # 1. Check Power Mode
                 if self.processor.power_mode == "ECO":
                     self.logger.info("KALI Research Engine throttling (ECO MODE).")
-                    time.sleep(3600) # Wait an extra hour in ECO
+                    # Break long sleep into small chunks to stay responsive
+                    for _ in range(60): # 1 hour = 60 * 60s
+                        if not self.is_active: break
+                        time.sleep(60)
                     continue
 
-                # 2. Select a random seed or look for gaps in discoveries.jsonl
-                seed = random.choice(self.seeds)
+                # 2. Select a mission seed
+                seed = self._get_next_seed()
                 
                 # 2. Execute a research mission via the planner
                 self.logger.info(f"KALI Curiosity Triggered: Investigating '{seed}'")
@@ -56,17 +61,56 @@ class ProactiveResearchEngine:
                 # 3. Store result in discovery log via reflection engine if possible
                 if result and "answer" in result:
                     self.logger.info(f"KALI mastered a new domain: {seed}")
-                    # The planner already saves to vector memory
                 
             except Exception as e:
                 self.logger.error(f"Proactive Research failed: {e}")
             
             # Wait for next cycle (plus some jitter)
-            time.sleep(interval_hours * 3600 + random.randint(0, 3600))
+            total_sleep = interval_hours * 3600 + random.randint(0, 3600)
+            self.logger.info(f"KALI Curiosity satisfied. Next mission in {interval_hours}h.")
+            
+            # Responsive sleep
+            slept = 0
+            while slept < total_sleep and self.is_active:
+                time.sleep(60)
+                slept += 60
+
+    def research_topic(self, topic: str) -> str:
+        """
+        Execute a targeted research mission for a specific topic.
+        Includes economic logic for parts/material research.
+        """
+        try:
+            self.logger.info(f"Targeted Research: {topic}")
+            
+            # Enhance prompt if topic looks like a project or material
+            if any(w in topic.lower() for w in ["build", "part", "material", "component", "cost", "price", "buy"]):
+                enhanced_goal = (
+                    f"Perform deep research into '{topic}'. "
+                    f"MANDATORY: Identify exact material costs, compare multiple vendors, "
+                    f"and provide direct purchase links for trusted sources."
+                )
+            else:
+                enhanced_goal = topic
+
+            result = self.processor.planner.execute(enhanced_goal)
+            
+            # Synthesize final report
+            report = self.processor.explainer.ai.ask_question(
+                f"Based on this research log, generate a comprehensive MISSION REPORT in Markdown format.\n"
+                f"Research Data: {json.dumps(result)}\n"
+                f"MANDATORY: Explicitly list costs and trusted vendor links if applicable."
+            )
+            return report
+            
+        except Exception as e:
+            self.logger.error(f"Targeted research failed: {e}")
+            return f"ERROR IN RESEARCH NEURAL PATHWAY: {e}"
 
     def _get_next_seed(self) -> str:
         """Prioritize dynamic seeds over static ones."""
-        seed_path = "d:/code/doubt-clearing-ai/data/dynamic_seeds.json"
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        seed_path = os.path.join(project_root, "data", "dynamic_seeds.json")
         if os.path.exists(seed_path):
             with open(seed_path, "r") as f: seeds = json.load(f)
             if seeds:
@@ -74,9 +118,6 @@ class ProactiveResearchEngine:
                 with open(seed_path, "w") as f: json.dump(seeds, f)
                 return res
         return random.choice(self.seeds)
-            
-            # Wait for next cycle (plus some jitter)
-            time.sleep(interval_hours * 3600 + random.randint(0, 3600))
 
     def stop(self):
         self.is_active = False

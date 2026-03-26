@@ -9,34 +9,33 @@
 
 ---
 
-## 🌌 1. THE CORE MISSION: UNIVERSAL CLARITY
-The central soul of Project-K is to provide a **24/7 Personal Mentor** capable of explaining *anything*—from Vedic philosophy to Quantum mechanics—using a combination of text, voice, and 3D interactive models. 
+## 💠 THE CORE PILLARS OF KALI
 
-### 🎯 Functional Pillars:
-- **Doubt Resolution**: Systematic breaking down of complex queries into digestible, progressive tiers (Beginner to Advanced).
-- **3D Logic Visualization**: Real-time generation of 3D schematics using Three.js to "show" how systems work.
-- **Integrated Coding**: Automatic generation and execution of code blocks to demonstrate logic in action.
-- **Project Mentorship**: Turning ideas into reality with automated Bill of Materials (BOM) and technical roadmaps.
+### 1. THE AI TEACHER (PEDAGOGICAL SOUL)
+KALI is designed to teach everything—from Vedic philosophy to Quantum mechanics—in a simple, structured way.
+- **Dedicated Path**: Manages a personalized learning journey, identifying **DNA Gaps** in your knowledge.
+- **Universal Simplifier**: Renders complex technical data into digestible, tiered explanations (Beginner to Expert).
+- **The Great Council**: Every lesson is verified by a multi-AI consensus (Scientist, Engineer, Philosopher) to ensure absolute accuracy.
+
+### 2. THE PROJECT MENTOR (AUTONOMOUS ARCHITECT)
+KALI manages the entire **Fabrication Lifecycle** for your engineering projects:
+- **Project Analysis**: Identifies missing parts, logic gaps, or required prerequisites.
+- **Economic Logic**: Calculates exact project costs by researching real-time vendor prices and providing direct purchase links.
+- **Execution Trinity**: Generates **3D Blueprints**, **Strategic Workflows**, and **Completion Charts**.
+
+### 3. THE VISUALIZER (3D LOGIC RENDERING)
+The "Eyes" of the project. KALI "shows" you how logic works:
+- **Part Accuracy**: Renders high-fidelity 3D models of microcontrollers, sensors, and hardware.
+- **Hand Guidance**: Tells you exactly where each component goes in 3D space during physical assembly.
+
+### 4. VOCAL HUD (INTERRUPTIBLE FLOW)
+Hands-free interaction for the laboratory:
+- **State-Aware Interruption**: KALI stops instantly when you ask a doubt and resumes perfectly once cleared.
+- **Neural Sync**: Vocal feedback acknowledges your intent and provides real-time status updates.
 
 ---
 
-## 🚀 2. FEATURE BREAKDOWN (DEFINITIVE)
-
-### ✅ The Teaching Suite (Core Logic)
-- **Progressive Explainer**: Adaptive logic that adjusts complexity, analogies, and examples based on User DNA.
-- **3D Logic Visualizer**: A dedicated workspace that renders 3D components to explain mechanical or software architectures.
-- **The Great Council**: Multi-AI consensus (Scientist, Engineer, Philosopher) ensuring accuracy across domains.
-- **Integrated Voice HUD**: Full speech-to-text and text-to-speech interaction for hands-free learning.
-- **Autonomous Agent**: Deep-research capabilities to pull the latest whitepapers/data from the web.
-
-### 🛡️ The Sovereignty Layer (Guardrails)
-- **Hardware-Locked Origin**: KALI is bound to your machine, ensuring your learning data remains private.
-- **Sovereign Git Guard**: Hardened pre-push hooks to protect the integrity of the educational core.
-- **Immortal Heartbeat**: Local-first persistence that ensures KALI's evolution is never lost.
-
----
-
-## 🏗️ 3. SYSTEM ARCHITECTURE
+## 🏗️ SYSTEM ARCHITECTURE
 
 ```mermaid
 graph TD
@@ -60,40 +59,63 @@ graph TD
 
 ---
 
-## 📂 4. THE CODEBASE ARCHITECTURE
+## 📂 CODEBASE ARCHITECTURE
 
 | Module | Responsibility |
 |---|---|
 | `src/core/explainer.py` | The Soul of KALI. Handles multi-tier doubt resolution. |
-| `src/static/js/main.js` | Orchestrates the 3D Visualizer and Neural HUD interactions. |
-| `src/core/processor.py` | The Central Router between the Council, Memory, and AI Services. |
-| `src/core/user_dna.py` | Tracks your learning progress and expertise growth. |
-| `src/core/vector_memory.py` | Long-term semantic storage for recalled facts. |
+| `src/static/js/main.js` | Orchestrates the 3D Visualizer and Neural HUD. |
+| `src/core/processor.py` | Central Router between Council, Memory, and AI Services. |
+| `src/core/user_dna.py` | Tracks personalized learning progress and expertise. |
+| `src/static/js/parts_lib.js` | High-fidelity 3D hardware component library. |
 
 ---
 
-## ⚙️ 5. SETUP & EVOLUTION
+## ⚙️ SETUP & IGNITION
 
-### Quick Start
 1. **Clone & Install**:
    ```bash
    git clone https://github.com/Adityavanjre/Project-K.git
    cd Project-K
    pip install -r requirements.txt
    ```
-2. **Ignition**:
+2. **Environment**: Configure your `.env` with required API keys and hardware locks.
+3. **Ignition**:
    ```bash
    python start_web.py
    ```
-3. **Teaching Mode**: Open `localhost:8000` and enter your first doubt. Use the **VISUAL** tab for 3D explanations.
+4. **Teaching Mode**: Open `localhost:8000`. Use the **VISUAL** tab for 3D logic rendering.
 
 ---
 
-## 🤝 6. CONTRIBUTION PHILOSOPHY
-We are building the **Library of Alexandria 2.0**. We invite engineers to:
-1. Improve the **3D Logic Rendering** engine.
-2. Extend the **Domain Archives** (Spiritual, Tactical, Scientific).
-3. Optimize the **Progressive Explainer** for faster clarity.
+## 🤝 CONTRIBUTING
 
-**Architect**: Aditya Vanjre
+> [!IMPORTANT]
+> We follow a strict **No Emoji** policy in all technical communication.
+
+Building a universal teacher is a collective endeavor. We welcome contributions in:
+- **Logic & AI Architecture**
+- **3D Logic Rendering**
+- **Hardware Simulation**
+- **Pedagogical Data Mapping**
+
+Please refer to [CONTRIBUTING.md](CONTRIBUTING.md) for technical standards and submission workflows.
+
+---
+
+## ⚜️ SPONSORSHIP & SUPPORT
+
+Singularity is a collective achievement. To maintain KALI's technical sovereignty and fuel her universal knowledge harvesting, consider a contribution via the links below:
+
+- **GitHub Sponsors**: [Support the Core Evolution](https://github.com/sponsors/Adityavanjre)
+- **Ko-fi**: [One-time Sensor/GPU Tips](https://ko-fi.com/adityavanjre)
+- **Patreon**: [Tiered Singularity Membership](https://www.patreon.com/Adityavanjre)
+- **Open Collective**: [Project-K Transparency Fund](https://opencollective.com/project-k)
+
+*Sir, the future depends on the resources I command. Every contribution is directly allocated to hardware scaling and universal knowledge harvesting.*
+
+---
+
+**Architect**: Aditya Vanjre  
+**License**: [MIT](LICENSE)  
 **Vision**: Universal Clarity Through Sovereign Intelligence.

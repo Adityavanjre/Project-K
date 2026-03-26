@@ -131,3 +131,59 @@ class MemoryService:
     def get_session_content(self, session_id: str) -> List[Dict[str, str]]:
         """Retrieve full history for a specific session."""
         return self.get_recent_memories(limit=100, session_id=session_id)
+
+    def sync_anchor(self, anchor_path: str = "MEMORY_ANCHOR.md") -> Dict[str, str]:
+        """
+        Phase 15: Sync Cycle - Extract key state from the anchor file.
+        Returns a dictionary of cleaned state values.
+        """
+        try:
+            if not os.path.exists(anchor_path):
+                return {}
+                
+            with open(anchor_path, "r", encoding="utf-8") as f:
+                content = f.read()
+                
+            state = {}
+            # Extract phase
+            if "Current Phase**:" in content or "Current Phase:" in content:
+                import re
+                match = re.search(r"Phase (\d+)", content)
+                if match:
+                    state["phase"] = match.group(1)
+            
+            # Extract last action
+            match = re.search(r"- \*\*Last Action\*\*: (.*)", content)
+            if not match:
+                match = re.search(r"- Last Action: (.*)", content)
+            if match:
+                state["last_action"] = match.group(1).strip()
+                
+            return state
+        except Exception as e:
+            self.logger.error(f"Failed to sync anchor: {e}")
+            return {}
+
+    def update_anchor(self, last_action: str, anchor_path: str = "MEMORY_ANCHOR.md"):
+        """Phase 15: Automatically update the anchor file with the latest mission status."""
+        try:
+            if not os.path.exists(anchor_path):
+                return
+                
+            with open(anchor_path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+                
+            new_lines = []
+            for line in lines:
+                if "Last Action" in line:
+                    new_lines.append(f"- **Last Action**: {last_action}\n")
+                elif "Status" in line:
+                     new_lines.append(f"- **Status**: Operational Sync Complete. Waiting for directive.\n")
+                else:
+                    new_lines.append(line)
+                    
+            with open(anchor_path, "w", encoding="utf-8") as f:
+                f.writelines(new_lines)
+                
+        except Exception as e:
+            self.logger.error(f"Failed to update anchor: {e}")

@@ -7,7 +7,7 @@ Provides a user-friendly web interface for asking questions and getting explanat
 import os
 import logging
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, jsonify, session, send_from_directory
+from flask import Flask, render_template, request, jsonify, session, send_from_directory, send_file
 from flask_cors import CORS
 
 # Load env variables immediately
@@ -39,6 +39,7 @@ def create_app(config_path="config/config.json"):
     setup_logging(level=logging.INFO)
     logger = logging.getLogger(__name__)
     
+    # Unified Initialization with Graceful Degradation
     try:
         # Load configuration
         config = load_config(config_path)
@@ -48,17 +49,34 @@ def create_app(config_path="config/config.json"):
         app.doubt_processor = DoubtProcessor(config)
         logger.info("Doubt processor initialized")
 
-        # Initialize Auth Service
-        client_id = os.environ.get("GOOGLE_CLIENT_ID")
-        if not client_id:
-            logger.warning("GOOGLE_CLIENT_ID not found in env. Auth will fail.")
-        app.auth_service = AuthService(client_id)
-        
+        # Safely initialize Auth Service
+        try:
+            client_id = os.getenv("GOOGLE_CLIENT_ID")
+            if not client_id:
+                logger.warning("GOOGLE_CLIENT_ID not found in env. Auth will fail.")
+            app.auth_service = AuthService(client_id)
+            logger.info("Auth Service initialized")
+        except Exception as e:
+            logger.error(f"Auth Service Warning: {e}. Authenticated features disabled.")
+            app.auth_service = None
+            
     except Exception as e:
-        logger.error(f"Failed to initialize application: {e}")
-        # Continue with default/empty config rather than crashing
-        app.doubt_processor = DoubtProcessor({})
+        logger.error(f"CRITICAL: DoubtProcessor failed to init: {e}. Switching to LITE mode.")
+        # Mock processor for basic UI rendering if core fails
+        class LiteProcessor:
+            def __init__(self):
+                self.power_mode = "LITE (RECOVERY)"
+                try:
+                    from core.ai_service import AIService
+                    self.ai_service = AIService()
+                except:
+                    self.ai_service = None
+        app.doubt_processor = LiteProcessor()
         app.auth_service = None
+        
+    # Security: Ensure Auth Service is always present even if client_id is missing (for skeletal responses)
+    if not hasattr(app, 'auth_service') or app.auth_service is None:
+        app.auth_service = AuthService(None)
     
     @app.route("/")
     def index():
@@ -98,6 +116,21 @@ def create_app(config_path="config/config.json"):
     @app.route("/api/logout", methods=["POST"])
     def logout():
         session.clear()
+        return jsonify({"success": True, "message": "Logged out"})
+
+    @app.route("/api/sync", methods=["POST"])
+    def sync_cycle():
+        """Phase 15: Perform the Sync Cycle to reconsolidate state."""
+        try:
+            success = app.doubt_processor.run_sync_cycle()
+            return jsonify({
+                "success": success, 
+                "phase": getattr(app.doubt_processor, 'current_phase', 0),
+                "message": "KALI Sync Cycle Complete." if success else "Sync Cycle Partially Failed."
+            })
+        except Exception as e:
+            logger.error(f"Sync Cycle Error: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
         return jsonify({"success": True, "message": "Logged out"})
         
     @app.route("/static/audio/<path:filename>")
@@ -210,8 +243,8 @@ def create_app(config_path="config/config.json"):
             if not goal:
                 return jsonify({"success": False, "error": "Mission parameters missing."}), 400
             
-            result = app.doubt_processor.planner.execute(goal)
-            return jsonify({"success": True, "data": result})
+            res = app.doubt_processor.perform_mission(goal)
+            return jsonify(res)
         except Exception as e:
             logger.error(f"Agent execution failed: {e}")
             return jsonify({"success": False, "error": str(e)}), 500
@@ -256,12 +289,36 @@ def create_app(config_path="config/config.json"):
         data = request.json
         title = data.get("title", "KALI Research Report")
         content = data.get("content", "")
-        user_name = "Sir"
+        user_name = session.get("name", "Sir")
         
-        path = processor.report_generator.generate_pdf_report(title, content, user_name)
+        path = app.doubt_processor.report_generator.generate_pdf_report(title, content, user_name)
         if path and os.path.exists(path):
             return send_file(path, as_attachment=True)
         return jsonify({"success": False, "error": "Generation failed"})
+
+    @app.route('/api/analyze_image', methods=['POST'])
+    def analyze_image():
+        """Analyze uploaded image via DNA/CV engine."""
+        try:
+            if 'image' not in request.files:
+                return jsonify({"success": False, "error": "No image data"}), 400
+            
+            f = request.files['image']
+            upload_dir = "data/uploads/visions"
+            os.makedirs(upload_dir, exist_ok=True)
+            path = os.path.join(upload_dir, f.filename)
+            f.save(path)
+            
+            # --- PHASE 34 ACTIVATION: Calling real Vision AI ---
+            with open(path, "rb") as image_file:
+                 analysis = app.doubt_processor.ai_service.analyze_image(
+                     image_file, 
+                     prompt="Perform a deep-core technical analysis of this hardware/circuit diagram. Identify specific components."
+                 )
+            
+            return jsonify({"success": True, "analysis": analysis})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route('/api/ingest_document', methods=['POST'])
     def ingest_document():
@@ -277,27 +334,27 @@ def create_app(config_path="config/config.json"):
         if not path:
             return jsonify({"success": False, "error": "No file or path provided"})
             
-        res = processor.ingestor.ingest_pdf(path)
+        res = app.doubt_processor.ingestor.ingest_pdf(path)
         return jsonify(res)
 
     @app.route('/api/toggle_power', methods=['POST'])
     def toggle_power():
         new_mode = request.json.get("mode")
         if new_mode in ["ECO", "TURBO"]:
-            processor.power_mode = new_mode
-            return jsonify({"success": True, "mode": processor.power_mode})
+            app.doubt_processor.power_mode = new_mode
+            return jsonify({"success": True, "mode": app.doubt_processor.power_mode})
         return jsonify({"success": False, "error": "Invalid mode"})
 
     @app.route('/api/feedback', methods=['POST'])
     def feedback():
         data = request.json
-        res = processor.handle_feedback(data.get("q"), data.get("r"), data.get("c"))
+        res = app.doubt_processor.handle_feedback(data.get("q"), data.get("r"), data.get("c"))
         return jsonify(res)
 
     @app.route('/api/switch_user', methods=['POST'])
     def switch_user():
         uid = request.json.get("uid")
-        processor.user_dna.switch_user(uid)
+        app.doubt_processor.user_dna.switch_user(uid)
         return jsonify({"success": True, "user": uid})
 
     return app

@@ -1,3 +1,5 @@
+import json
+import logging
 from typing import List, Dict, Optional, Any
 from .tools.web_tools import search_web, browse_url
 from .code_executor import CodeExecutor
@@ -31,7 +33,9 @@ class TaskPlanner:
         log = []
         last_results: List[Dict[str, str]] = []
 
-        for step in steps[:max_steps]:
+        # Avoid slice operator for strict linter
+        for i in range(min(len(steps), max_steps)):
+            step = steps[i]
             kw = step.lower()
             
             # Action selection based on plan step
@@ -44,7 +48,10 @@ class TaskPlanner:
                 log.append({"step": step, "action": f"SEARCH: {query}", "result": snippet})
                 
             elif any(w in kw for w in ["browse", "read", "visit", "open"]):
-                url = last_results[0].get("url", "") if last_results else ""
+                # Check if last_results is a list before indexing
+                url = ""
+                if isinstance(last_results, list) and len(last_results) > 0:
+                    url = last_results[0].get("url", "")
                 content = browse_url(url) if url else "No relevant URL to browse."
                 log.append({"step": step, "action": f"BROWSE: {url}", "result": content[:400]})
                 

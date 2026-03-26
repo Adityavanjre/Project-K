@@ -15,13 +15,14 @@ class CouncilService:
         """
         Queries multiple AI 'perspectives' and merges them.
         """
-        self.logger.info(f"Convening The Great Council for: {query[:50]}...")
+        self.logger.info(f"Convening KALI Council for: {query.splitlines()[0]}...")
         
-        # Define Council Members (Perspectives)
+        # Define Council Members (Perspectives) with specialized NVIDIA models
         perspectives = [
-            {"role": "The Scientist", "prompt": "Focus on facts, physics, and empirical data. Be extremely critical."},
-            {"role": "The Engineer", "prompt": "Focus on practical implementation, BOM, and assembly steps."},
-            {"role": "The Philosopher", "prompt": "Focus on the 'why', the ethics, and the broader context."}
+            {"role": "The Scientist", "prompt": "Focus on facts, physics, and empirical data. Be extremely critical.", "model": "mistralai/mistral-large-3-675b-instruct-2512"},
+            {"role": "The Engineer", "prompt": "Focus on practical implementation, BOM, and assembly steps.", "model": "nvidia/usdcode-llama-3.1-70b-instruct"}, 
+            {"role": "The Philosopher", "prompt": "Focus on the 'why', the ethics, and the broader context.", "model": "microsoft/phi-3-medium-128k-instruct"},
+            {"role": "The Researcher", "prompt": "Focus on deep-dive knowledge retrieval and link generation.", "model": "google/gemma-7b"}
         ]
         
         responses = []
@@ -29,8 +30,8 @@ class CouncilService:
         # 1. Gather outputs from council members
         for member in perspectives:
             sys_msg = f"{member['prompt']}\nYou are part of KALI's Council. Context: {context}"
-            # We vary temperature slightly per member to get diverse views
-            response = self.ai.ask_question(query, context=sys_msg, temperature=0.6)
+            # Ask the specific model for each expert
+            response = self.ai.ask_question(query, context=sys_msg, temperature=0.6, query_model=member["model"])
             if response:
                 responses.append({"member": member["role"], "content": response})
 

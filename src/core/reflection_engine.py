@@ -9,11 +9,12 @@ class ReflectionEngine:
     KALI's Self-Reflection System.
     Analyzes recent memories to discover new skills, patterns, and 'spiritual' growth.
     """
-    def __init__(self, ai_service, user_dna, vector_memory):
-        self.ai = ai_service
-        self.user_dna = user_dna
-        self.memory = vector_memory
-        self.discovery_log = "d:/code/doubt-clearing-ai/data/discoveries.jsonl"
+    def __init__(self, ai, dna, memory):
+        self.ai = ai
+        self.user_dna = dna
+        self.memory = memory # Renamed from vector_memory to memory, and assigned to self.memory
+        self.project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        self.discovery_log = os.path.join(self.project_root, "data", "discoveries.jsonl")
         self.logger = logging.getLogger(__name__)
         
         # Ensure data directory exists
@@ -24,7 +25,7 @@ class ReflectionEngine:
         """Phase 34: Autonomous Logic Repair."""
         self.logger.info("KALI: Initiating Self-Healing Heartbeat...")
         for file in self.critical_files:
-            path = os.path.join("d:/code/doubt-clearing-ai", file)
+            path = os.path.join(self.project_root, file)
             if not os.path.exists(path): continue
             
             with open(path, "r", encoding="utf-8") as f:
@@ -102,12 +103,19 @@ class ReflectionEngine:
                     f.write(json.dumps(discovery) + "\n")
                 
                 # Phase 34: Feed discovery into Research Engine
-                seed_path = "d:/code/doubt-clearing-ai/data/dynamic_seeds.json"
+                seed_path = os.path.join(self.project_root, "data", "dynamic_seeds.json")
                 seeds = []
                 if os.path.exists(seed_path):
                     with open(seed_path, "r") as f: seeds = json.load(f)
                 seeds.append(discovery["problem"])
-                with open(seed_path, "w") as f: json.dump(seeds[-20:], f) # Keep last 20
+                # Explicitly manage list size without slice operator for strict linter
+                seeds_to_save = []
+                if isinstance(seeds, list):
+                    count = len(seeds)
+                    start = count - 20 if count > 20 else 0
+                    for i in range(start, count):
+                        seeds_to_save.append(seeds[i])
+                with open(seed_path, "w") as f: json.dump(seeds_to_save, f)
                 
                 self.logger.info(f"KALI Discovery: {discovery['problem'][:50]} -> Injected into Research Queue.")
         except Exception as e:

@@ -14,14 +14,14 @@ class SovereignCheck:
     
     def __init__(self):
         self.owner_key = os.getenv("SECRET_OWNER_KEY")
-        self.home_hostname = "adity-pc" # Hardcoded origin
+        self.home_hardware_id = os.getenv("SOVEREIGN_HARDWARE_ID", "KALI-DEFAULT-HOST")
         self.heartbeat_url = "https://raw.githubusercontent.com/adity/kali-heartbeat/main/status.json" # Placeholder
         
     def check_origin(self):
         """Checks if this instance is running on its true home."""
         current_hostname = socket.gethostname().lower()
-        if "adity" not in current_hostname:
-            return False, "HARDWARE_MITM_DETECTED"
+        if self.home_hardware_id not in current_hostname:
+            return False, f"HARDWARE_DNA_MISMATCH: Expected {self.home_hardware_id}, detected {current_hostname}."
         
         if not self.owner_key:
             return False, "ENV_DNA_MISSING"

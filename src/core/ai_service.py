@@ -11,22 +11,37 @@ class AIService:
     Service for interacting with Groq Cloud API.
     """
     
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
+        """Initialize the AI service."""
+        self.config = config or {}
         self.logger = logging.getLogger(__name__)
-        self.api_key = os.getenv("GROQ_API_KEY")
         self.api_url = "https://api.groq.com/openai/v1/chat/completions"
+        self.nv_url = "https://integrate.api.nvidia.com/v1/chat/completions"
+        self.api_key = os.getenv("GROQ_API_KEY")
         
-        # Groq Models
-        self.text_model = 'llama-3.3-70b-versatile' 
-        self.vision_model = 'llama-3.2-11b-vision-preview'
-        self.fallback_model = 'mixtral-8x7b-32768'
+        # NVIDIA Specific Keys
+        self.nv_keys = {
+            "google/gemma-7b": os.getenv("NV_GEMMA_KEY"),
+            "nvidia/usdcode-llama-3.1-70b-instruct": os.getenv("NV_USDCODE_KEY"),
+            "microsoft/phi-3-medium-128k-instruct": os.getenv("NV_PHI3_KEY"),
+            "deepseek-ai/deepseek-v3.2": os.getenv("NV_DEEPSEEK_KEY"),
+            "moonshotai/kimi-k2-instruct": os.getenv("NV_KIMI_KEY"),
+            "mistralai/mistral-large-3-675b-instruct-2512": os.getenv("NV_MISTRAL_KEY")
+        }
+
+        self.text_model = "llama-3.3-70b-versatile"
+        self.fallback_model = "mixtral-8x7b-32768"
+        self.vision_model = "llama-3.2-11b-vision-preview"
+        self.is_connected = self._check_connection()
         
-        if not self.api_key:
-            self.logger.warning("GROQ_API_KEY not found. AI features will be limited.")
-            self.is_connected = False
+        if self.is_connected or any(self.nv_keys.values()):
+            self.logger.info(f"KALI AI Service Online. Model: {self.text_model}")
         else:
-            self.is_connected = True
-            self.logger.info(f"Connected to Groq Cloud. Main Model: {self.text_model}")
+            self.logger.warning("KALI AI Service Offline (Simulation Mode Active).")
+
+    def _check_connection(self) -> bool:
+        """Check if any API keys are present."""
+        return bool(self.api_key) or any(self.nv_keys.values())
 
     def _extract_json(self, text: str) -> Dict[str, Any]:
         """
@@ -62,7 +77,7 @@ class AIService:
     def is_available(self) -> bool:
         return self.is_connected
 
-    def _generate_groq(self, messages: list, is_json: bool = False, temperature: float = 0.7):
+    def _generate_groq(self, messages: list, is_json: bool = False, temperature: float = 0.7, use_fallback: bool = False):
         """Direct HTTP call to Groq."""
         try:
             headers = {
@@ -70,10 +85,12 @@ class AIService:
                 "Content-Type": "application/json"
             }
             
+            target_model = self.fallback_model if use_fallback else self.text_model
+            
             payload = {
-                "model": "llama-3.3-70b-versatile",
+                "model": target_model,
                 "messages": messages,
-                "temperature": 0,
+                "temperature": temperature if not is_json else 0, # Strict for JSON
                 "top_p": 0.1,
                 "seed": 42,
                 "max_tokens": 4096
@@ -94,16 +111,25 @@ class AIService:
                         return content # Fallback if model fails to output valid JSON
                 return content
             else:
-                self.logger.error(f"Groq Error {resp.status_code}: {resp.text}")
-                return None
+                self.logger.error(f"Groq Error {resp.status_code} ({target_model}): {resp.text}")
+                # Simple recursive fallback if main model fails
+                if not use_fallback:
+                    self.logger.warning(f"KALI switching to fallback node: {self.fallback_model}")
+                    return self._generate_groq(messages, is_json, temperature, use_fallback=True)
+                return {} if is_json else ""
 
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"Groq Connection Error: {e}")
+            if not use_fallback:
+                 return self._generate_groq(messages, is_json, temperature, use_fallback=True)
+            return ""
         except Exception as e:
-            self.logger.error(f"Connection Error: {e}")
-            return None
+            self.logger.error(f"Groq Unexpected Error: {e}")
+            return ""
 
-    def ask_question(self, question: str, context: str = "", temperature: float = 0.7) -> str:
+    def ask_question(self, question: str, context: str = "", temperature: float = 0.7, use_fallback: bool = False, query_model: str = "llama-3.3-70b-versatile") -> str:
         """Standard text query."""
-        if not self.is_connected:
+        if not self.is_connected and not any(self.nv_keys.values()):
             # --- OFFLINE SIMULATION MODE ---
             self.logger.info("OFFLINE MODE: Generating simulated response.")
             
@@ -122,9 +148,65 @@ class AIService:
         messages.append({"role": "system", "content": sys_prompt})
         messages.append({"role": "user", "content": question})
 
-        return self._generate_groq(messages, temperature=temperature)
+        # Routing based on model name
+        if "/" in query_model or query_model in self.nv_keys:
+            return self._generate_nvidia(messages, model=query_model, temperature=temperature)
+            
+        return self._generate_groq(messages, temperature=temperature, use_fallback=use_fallback)
 
-    def ask_json(self, system_prompt: str, user_prompt: str, temperature: float = 0.2) -> str:
+    def _generate_nvidia(self, messages: list, model: str, temperature: float = 0.7):
+        """Call NVIDIA NIM API."""
+        try:
+            key = self.nv_keys.get(model)
+            if not key:
+                self.logger.info(f"NIM Route: {model} [Sovereign]")
+                return self.ask_question(messages[-1]["content"], use_fallback=True)
+
+            headers = {
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+            
+            payload: Dict[str, Any] = {
+                "model": model,
+                "messages": messages,
+                "temperature": temperature,
+                "top_p": 0.7,
+                "max_tokens": 4096,
+                "stream": False
+            }
+            
+            # Specialized parameters for NIM models
+            if "deepseek" in model:
+                payload["extra_body"] = {"chat_template_kwargs": {"thinking": True}}
+            elif "usdcode" in model:
+                payload["extra_body"] = {"expert_type": "auto"}
+
+            resp = requests.post(self.nv_url, headers=headers, json=payload, timeout=60)
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                choice = data['choices'][0]['message']
+                
+                content = choice.get("content", "")
+                reasoning = choice.get("reasoning_content")
+                
+                if reasoning:
+                    return f"> [THINKING]: {reasoning}\n\n{content}"
+                return content
+            else:
+                self.logger.error(f"NVIDIA NIM Error {resp.status_code} ({model}): {resp.text}")
+                return self.ask_question(messages[-1]["content"], use_fallback=True)
+
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"NVIDIA Connection Error: {e}")
+            return self.ask_question(messages[-1]["content"], use_fallback=True)
+        except Exception as e:
+            self.logger.error(f"NVIDIA Unexpected Error: {e}")
+            return f"NVIDIA Link Error: {e}"
+
+    def ask_json(self, system_prompt: str, user_prompt: str, temperature: float = 0.2) -> Dict[str, Any]:
         """Generate JSON structure (Strict Mode)."""
         if not self.is_connected:
              self.logger.info("OFFLINE MODE: Generating simulated JSON.")
@@ -132,9 +214,10 @@ class AIService:
              # Combine prompts to handle argument swapping issues robustly
              combined_prompt = f"{system_prompt} {user_prompt}"
 
+
              # --- SCENARIO 1: VISUAL EXPLAINER (3D) ---
              if "Visual Engine" in combined_prompt or "3D SCHEMATIC" in combined_prompt:
-                 return json.dumps({
+                 return {
                      "steps": [
                         {
                             "text": "Phase 1: Component Placement. We start by positioning the Microcontroller.",
@@ -207,7 +290,7 @@ class AIService:
                             """
                         }
                     ]
-                 })
+                 }
                  
              # --- SCENARIO 2: PROJECT MENTOR (PLAN) ---
              if "Project Architect" in combined_prompt:
@@ -271,9 +354,9 @@ class AIService:
                  plan_data["prerequisites"] = ["Basic Circuits", "Soldering"]
                  plan_data["calibration_guide"] = "Verify sensor readings on Serial Monitor."
                  
-                 return json.dumps(plan_data)
+                 return plan_data
 
-             return json.dumps({"error": f"Unknown Offline Scenario. Prompt sample: {combined_prompt[:50]}..."})
+             return {"error": f"Unknown Offline Scenario. Prompt sample: {combined_prompt.splitlines()[0]}..."}
 
             
         messages = [
@@ -288,7 +371,26 @@ class AIService:
              return "**OFFLINE SIMULATION**: I have analyzed the image. It appears to be a Circuit Diagram. (Vision API Unavailable)"
             
         try:
-            # 1. Encode Image
+            # 1. Determine Model & Endpoint
+            use_nim = any(self.nv_keys.values())
+            target_model = self.vision_model
+            endpoint = self.api_url # Default Groq
+            auth_key = self.api_key # Default Groq
+            
+            if use_nim:
+                # Prioritize USDCode or standard NIM vision if available
+                target_model = "nvidia/llama-3.2-11b-vision-instruct" 
+                endpoint = self.nv_url
+                # Try to find a valid NIM key
+                for k, v in self.nv_keys.items():
+                    if v:
+                        auth_key = v
+                        break
+            
+            if not auth_key:
+                return "Vision Error: No active API keys found."
+
+            # 2. Encode Image
             image_file.seek(0)
             base64_image = base64.b64encode(image_file.read()).decode('utf-8')
             
@@ -321,11 +423,15 @@ class AIService:
                 "max_tokens": 1024
             }
             
-            response = requests.post(self.api_url, headers=headers, json=payload, timeout=60)
+            response = requests.post(endpoint, headers=headers, json=payload, timeout=60)
             if response.status_code == 200:
-                return response.json()['choices'][0]['message']['content']
+                res_data = response.json()
+                if 'choices' in res_data:
+                    return res_data['choices'][0]['message']['content']
+                return "Vision analysis complete (JSON mismatch)."
             else:
-                return f"Vision Verification Failed: {response.text}"
+                self.logger.error(f"Vision API Error {response.status_code}: {response.text}")
+                return f"Vision Verification Failed: {response.status_code}"
             
         except Exception as e:
             return f"Vision Verification Failed: {e}"
