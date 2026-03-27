@@ -1,0 +1,17 @@
+{
+  "biometrics": {
+    "neural_tension": 6.93,
+    "status": "STABLE",
+    "reset_suggested": false,
+    "logic_load": 23.1,
+    "session_duration_min": 0.0
+  },
+  "hardware": {
+    "cpu_usage": 100.0,
+    "memory_usage": 80.6,
+    "disk_usage": 65.5,
+    "timestamp": 1774605069.2670949
+  },
+  "timestamp": 1774605069.2670949,
+  "status": "SOVEREIGN_CONNECTED"
+}

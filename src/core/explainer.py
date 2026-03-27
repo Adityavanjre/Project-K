@@ -40,7 +40,8 @@ class Explainer:
         self,
         question: str,
         context: Optional[str] = "",
-        style: str = "intermediate"
+        style: str = "intermediate",
+        bypass_cache: bool = False
     ) -> str:
         """
         AI-Enhanced structured explanation.
@@ -54,7 +55,7 @@ class Explainer:
             f"Requirements: Use analogies for beginners, include examples if appropriate, be concise but deep."
         )
         
-        return self.ai.ask_question(prompt, context=context)
+        return self.ai.ask_question(prompt, context=context, bypass_cache=bypass_cache)
 
     def _create_fallback_explanation(self, question: str) -> str:
         """Create a fallback explanation when everything else fails."""

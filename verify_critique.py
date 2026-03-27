@@ -3,14 +3,13 @@ import requests
 import json
 import time
 
-url = 'http://127.0.0.1:8000/api/project_plan'
+url = 'http://127.0.0.1:5000/api/project_plan'
 payload = {
-    "project_name": "Drone",
-    "project_description": "I want to build a drone that flies really fast."
+    "idea": "I want to build a drone that flies really fast."
 }
 
 try:
-    print(f"Submitting Vague Idea: '{payload['project_description']}'...")
+    print(f"Submitting Vague Idea: '{payload['idea']}'...")
     start = time.time()
     response = requests.post(url, json=payload)
     end = time.time()

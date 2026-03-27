@@ -91,15 +91,40 @@ class UserDNA:
         conn.commit()
         conn.close()
 
+    def _get_hardware_uid(self) -> str:
+        """Fetches a unique hardware ID (CPU + Motherboard) to lock the DNA."""
+        try:
+            import subprocess
+            cpu = subprocess.check_output("wmic cpu get processorid", shell=True).decode().split("\n")[1].strip()
+            base = subprocess.check_output("wmic baseboard get serialnumber", shell=True).decode().split("\n")[1].strip()
+            return f"{cpu}-{base}"
+        except:
+            return "UNKNOWN-HW-ID"
+
     def _load(self) -> dict:
         conn = sqlite3.connect(self.db_path)
         row = conn.execute("SELECT profile FROM user_dna WHERE user_id=?", (self.user_id,)).fetchone()
         conn.close()
+        
+        hw_id = self._get_hardware_uid()
+        
         if row:
-            return json.loads(row[0])
+            profile = json.loads(row[0])
+            # Hardware Lock Verification
+            stored_hw = profile.get("security", {}).get("hardware_anchor")
+            if stored_hw and stored_hw != hw_id:
+                self.logger.critical(f"DNA HW LOCK VIOLATION: Expected {stored_hw}, got {hw_id}. Security Interlock Engaged.")
+                # We still load but mark as UNVERIFIED/POTENTIALLY_SPOOFED
+                profile["security"]["hw_verified"] = False
+            else:
+                if "security" not in profile: profile["security"] = {}
+                profile["security"]["hardware_anchor"] = hw_id
+                profile["security"]["hw_verified"] = True
+            return profile
         
         profile = json.loads(json.dumps(self.DEFAULT_PROFILE))
         profile["interaction_stats"]["first_seen"] = datetime.now().isoformat()
+        profile["security"] = {"hardware_anchor": hw_id, "hw_verified": True}
         self._save(profile)
         return profile
 
@@ -165,6 +190,14 @@ class UserDNA:
         if topic:
             stats["favorite_topics"][topic] = stats["favorite_topics"].get(topic, 0) + 1
         self._save()
+
+    def save_dna_fact(self, key: str, value: str):
+        """Generalized method to anchor new DNA facts."""
+        if "identity_extensions" not in self.profile:
+            self.profile["identity_extensions"] = {}
+        self.profile["identity_extensions"][key] = value
+        self._save()
+        self.logger.info(f"DNA Fact Anchored: {key} -> {value[:50]}...")
 
     def get_dna_context(self) -> str:
         p = self.profile

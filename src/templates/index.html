@@ -7,8 +7,21 @@
     <div
         class="absolute top-0 w-full px-6 py-2 flex justify-between text-[10px] text-cyan-600 font-mono z-40 pointer-events-none">
         <div>SYS.STATUS: <span class="text-cyan-400">NOMINAL</span></div>
+        <div class="flex gap-4">
+            <div id="hud-tension">NEURAL.TENSION: <span class="text-cyan-400">CALCULATING...</span></div>
+            <div id="hud-dna">DNA.LEVEL: <span class="text-cyan-400">9/50</span></div>
+        </div>
         <div>KALI.PROTOCOL: <span class="text-cyan-400">ACTIVE</span></div>
-        <div>CPU: <span class="text-cyan-400">OPT.EFFICIENCY</span></div>
+    </div>
+
+    <!-- Cognitive Alert Overlay -->
+    <div id="cognitive-alert" class="hidden absolute top-12 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <div class="bg-red-900/40 border border-red-500/50 px-4 py-2 rounded-sm backdrop-blur-md animate-pulse">
+            <div class="flex items-center gap-3 text-red-400 text-xs font-bold tracking-widest">
+                <i class="fas fa-brain text-sm"></i>
+                <span>NEURAL RESET SUGGESTED: COGNITIVE TENSION CRITICAL</span>
+            </div>
+        </div>
     </div>
 
     <!-- MODE: LEARN (Chat) -->
@@ -17,6 +30,13 @@
         <div id="chat-messages" class="flex-1 overflow-y-auto mb-6 pr-4 space-y-4">
             <!-- Boot Sequence / Overlay (REMOVED FOR DEBUGGING) -->
             <!-- <div id="boot-sequence" ... ></div> -->
+        </div>
+
+        <!-- Predictive Intent Chips (Phase 30) -->
+        <div id="predictive-container" class="mb-2 opacity-0 transition-opacity duration-500 overflow-x-auto whitespace-nowrap scrollbar-none py-1">
+            <div id="predictive-chips" class="flex gap-2">
+                <!-- Chips Injected Here -->
+            </div>
         </div>
 
         <!-- Input Area -->

@@ -3,14 +3,13 @@ import requests
 import json
 import time
 
-url = 'http://127.0.0.1:8000/api/project_plan'
+url = 'http://127.0.0.1:5000/api/project_plan'
 payload = {
-    "project_name": "Overkill Home",
-    "project_description": "I want to automate my entire house using AI cameras in every room with a custom fusion reactor power supply."
+    "idea": "I want to automate my entire house using AI cameras in every room with a custom fusion reactor power supply."
 }
 
 try:
-    print(f"Submitting Over-Engineered Idea: '{payload['project_description']}'...")
+    print(f"Submitting Over-Engineered Idea: '{payload['idea']}'...")
     start = time.time()
     response = requests.post(url, json=payload)
     end = time.time()

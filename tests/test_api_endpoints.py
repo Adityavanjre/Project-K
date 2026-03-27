@@ -46,8 +46,8 @@ def test_project_plan_endpoint(client):
     assert data["success"] is True
     plan = data["data"]
     
-    # Check for keys we expect
-    expected_keys = ["project_name", "bom", "roadmap"]
+    # Check for keys we expect from processor.process_project_mentor
+    expected_keys = ["response", "can_build", "research_steps"]
     for key in expected_keys:
-        assert key in plan or "error" in plan
+        assert key in plan
 

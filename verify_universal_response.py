@@ -2,7 +2,7 @@
 import requests
 import json
 
-url = 'http://127.0.0.1:8000/ask'
+url = 'http://127.0.0.1:5000/ask'
 
 queries = [
     # Should trigger Universal Smart Response (Senior Architect) + No Button

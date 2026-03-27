@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Dict, Optional, Any
 
 @dataclass
@@ -22,7 +22,9 @@ class ProjectPlan:
 class DoubtContext:
     """Context for understanding user's doubt."""
     question: str
-    conversation_history: list = None
+    user_level: str = "intermediate"
+    domain: Optional[str] = None
+    conversation_history: list = field(default_factory=list)
     current_step: Optional[int] = None
     current_topic: Optional[str] = None
     image_url: Optional[str] = None

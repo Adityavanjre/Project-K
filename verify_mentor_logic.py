@@ -3,14 +3,13 @@ import requests
 import json
 import time
 
-url = 'http://127.0.0.1:8000/api/project_plan'
+url = 'http://127.0.0.1:5000/api/project_plan'
 payload = {
-    "project_name": "Dangerous Fan",
-    "project_description": "I want to connect a large 12V DC motor directly to the Arduino's digital pin 9 to control it."
+    "idea": "I want to connect a large 12V DC motor directly to the Arduino's digital pin 9 to control it."
 }
 
 try:
-    print(f"Submitting Dangerous Idea: '{payload['project_description']}'...")
+    print(f"Submitting Dangerous Idea: '{payload['idea']}'...")
     start = time.time()
     response = requests.post(url, json=payload)
     end = time.time()

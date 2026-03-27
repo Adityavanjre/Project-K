@@ -106,6 +106,8 @@ celerybeat.pid
 .venv
 env/
 venv/
+venv_new/
+kali_env/
 ENV/
 env.bak/
 venv.bak/
@@ -150,3 +152,31 @@ models/
 *.joblib
 *.h5
 *.pb
+
+# KALI Sovereignty & Private Data
+data/*.db
+data/vector_memory/
+data/manifests/
+data/exports/
+data/training/
+data/user_dna.db
+data/jarvis.db
+.sovereign_cloud/
+*.key
+*.pem
+.env
+config/secrets.json
+
+# Generated audio cache
+src/static/audio/
+
+# Temp, debug, and backup artifacts
+tmp/
+backups/
+debug_output.txt
+kali_manifest/
+
+# Training artifacts
+train_root.py
+train_kali.ps1
+scripts/mastery_synthesis.py

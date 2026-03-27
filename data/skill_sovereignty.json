@@ -1,0 +1,182 @@
+{
+  "Ultimate Mentor": {
+    "pass_count": 0,
+    "fail_count": 3,
+    "partial_count": 9,
+    "sovereignty_level": 0.0,
+    "status": "PARTIAL_REMEDIATION_NEEDED",
+    "last_checked": "2026-03-27T12:29:40.783415",
+    "best_score": 66.7
+  },
+  "Universal Teacher": {
+    "pass_count": 0,
+    "fail_count": 3,
+    "partial_count": 9,
+    "sovereignty_level": 0.0,
+    "status": "PARTIAL_REMEDIATION_NEEDED",
+    "last_checked": "2026-03-27T12:29:58.381252",
+    "best_score": 66.7
+  },
+  "Fabrication Partner": {
+    "pass_count": 3,
+    "fail_count": 3,
+    "partial_count": 0,
+    "sovereignty_level": 100.0,
+    "status": "SOVEREIGN",
+    "last_checked": "2026-03-27T12:30:05.612560",
+    "best_score": 100.0
+  },
+  "Council Verifier": {
+    "pass_count": 3,
+    "fail_count": 3,
+    "partial_count": 0,
+    "sovereignty_level": 100.0,
+    "status": "SOVEREIGN",
+    "last_checked": "2026-03-27T12:30:09.863913",
+    "best_score": 100.0
+  },
+  "Economic Researcher": {
+    "pass_count": 0,
+    "fail_count": 3,
+    "partial_count": 9,
+    "sovereignty_level": 0.0,
+    "status": "PARTIAL_REMEDIATION_NEEDED",
+    "last_checked": "2026-03-27T12:30:24.489698",
+    "best_score": 66.7
+  },
+  "Hardware Engineer": {
+    "pass_count": 0,
+    "fail_count": 3,
+    "partial_count": 9,
+    "sovereignty_level": 0.0,
+    "status": "PARTIAL_REMEDIATION_NEEDED",
+    "last_checked": "2026-03-27T12:30:42.144829",
+    "best_score": 66.7
+  },
+  "Biometric Coach": {
+    "pass_count": 0,
+    "fail_count": 3,
+    "partial_count": 9,
+    "sovereignty_level": 0.0,
+    "status": "PARTIAL_REMEDIATION_NEEDED",
+    "last_checked": "2026-03-27T12:30:59.718121",
+    "best_score": 33.3
+  },
+  "Security Guardian": {
+    "pass_count": 3,
+    "fail_count": 3,
+    "partial_count": 0,
+    "sovereignty_level": 100.0,
+    "status": "SOVEREIGN",
+    "last_checked": "2026-03-27T12:31:06.949949",
+    "best_score": 100.0
+  },
+  "DNA Architect": {
+    "pass_count": 0,
+    "fail_count": 3,
+    "partial_count": 9,
+    "sovereignty_level": 0.0,
+    "status": "PARTIAL_REMEDIATION_NEEDED",
+    "last_checked": "2026-03-27T12:31:21.543096",
+    "best_score": 66.7
+  },
+  "Dream Engine": {
+    "pass_count": 0,
+    "fail_count": 3,
+    "partial_count": 9,
+    "sovereignty_level": 0.0,
+    "status": "PARTIAL_REMEDIATION_NEEDED",
+    "last_checked": "2026-03-27T12:31:39.086010",
+    "best_score": 33.3
+  },
+  "Ultimate Mentor — Bridging theory to hands-on fabrication": {
+    "pass_count": 1,
+    "fail_count": 3,
+    "partial_count": 11,
+    "sovereignty_level": 33.33333333333333,
+    "best_score": 100.0,
+    "status": "FAILED_PINNED",
+    "last_checked": "2026-03-27T15:02:49.752510"
+  },
+  "Universal Teacher — Socratic explanation and concept anchoring": {
+    "pass_count": 2,
+    "fail_count": 7,
+    "partial_count": 6,
+    "sovereignty_level": 66.66666666666666,
+    "best_score": 100.0,
+    "status": "FAILED_PINNED",
+    "last_checked": "2026-03-27T15:07:37.903601"
+  },
+  "Fabrication Partner — Cost, BOM, 3D blueprint generation": {
+    "pass_count": 1,
+    "fail_count": 9,
+    "partial_count": 5,
+    "sovereignty_level": 33.33333333333333,
+    "best_score": 100.0,
+    "status": "FAILED_PINNED",
+    "last_checked": "2026-03-27T15:09:23.673241"
+  },
+  "Council Verifier — Multi-AI truth verification and scoring": {
+    "pass_count": 2,
+    "fail_count": 2,
+    "partial_count": 9,
+    "sovereignty_level": 66.66666666666666,
+    "best_score": 100.0,
+    "status": "FAILED_PINNED",
+    "last_checked": "2026-03-27T15:14:31.842882"
+  },
+  "Economic Intel — Real-time vendor/BOM research": {
+    "pass_count": 2,
+    "fail_count": 4,
+    "partial_count": 2,
+    "sovereignty_level": 66.66666666666666,
+    "best_score": 100.0,
+    "status": "FAILED_PINNED",
+    "last_checked": "2026-03-27T15:19:15.943037"
+  },
+  "Hardware Engineer — HITL, sensors, serial uplink": {
+    "pass_count": 0,
+    "fail_count": 5,
+    "partial_count": 6,
+    "sovereignty_level": 0.0,
+    "best_score": 66.7,
+    "status": "FAILED_PINNED",
+    "last_checked": "2026-03-27T15:24:27.648434"
+  },
+  "Biometric Coach — Physiological telemetry and performance": {
+    "pass_count": 0,
+    "fail_count": 4,
+    "partial_count": 6,
+    "sovereignty_level": 0.0,
+    "best_score": 66.7,
+    "status": "PARTIAL_REMEDIATION_NEEDED",
+    "last_checked": "2026-03-27T15:30:08.793341"
+  },
+  "Security Guardian — BIOS integrity, encryption, hardening": {
+    "pass_count": 0,
+    "fail_count": 0,
+    "partial_count": 8,
+    "sovereignty_level": 0.0,
+    "best_score": 66.7,
+    "status": "PARTIAL_REMEDIATION_NEEDED",
+    "last_checked": "2026-03-27T15:32:18.692459"
+  },
+  "DNA Architect — UserDNA profiling and self-update logic": {
+    "pass_count": 0,
+    "fail_count": 0,
+    "partial_count": 7,
+    "sovereignty_level": 0.0,
+    "best_score": 33.3,
+    "status": "PARTIAL_REMEDIATION_NEEDED",
+    "last_checked": "2026-03-27T14:31:57.646719"
+  },
+  "Dream Engine — Full corpus sweep and wisdom compaction": {
+    "pass_count": 0,
+    "fail_count": 1,
+    "partial_count": 1,
+    "sovereignty_level": 0.0,
+    "best_score": 66.7,
+    "status": "FAILED_PINNED",
+    "last_checked": "2026-03-27T14:35:52.887819"
+  }
+}

@@ -1,0 +1,257 @@
+[
+  {
+    "topic": "SKILL_SYNTHESIS [Sensor Fusion + Power Electronics + Autonomous Mission Planning]: A project requires expertise in combining IMU, GPS, and optical flow for drone state estimation, designing buck conve",
+    "timestamp": "2026-03-27T10:14:07.407007",
+    "score": 4.8,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What sensors are used for state estimation in the drone system?' (score: 0.0/100). Expected: 'IMU, GPS, and optical flow'. KALI answered: '**State Estimation Sensors**\n==========================\n\nThe drone system utilizes a combination of '",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What sensors are used for state estimation in the drone system?",
+        "score": 0.0
+      },
+      {
+        "q": "What domains of expertise are required for this project?",
+        "score": 14.3
+      },
+      {
+        "q": "What type of project roadmap needs to be generated?",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "topic": "TEST_TOPIC_ANCHOR: The engine uses Python and JSON.",
+    "timestamp": "2026-03-27T10:15:36.882529",
+    "score": 100.0,
+    "status": "PASSED",
+    "questions_count": 1,
+    "qa_summary": [
+      {
+        "q": "What tools?",
+        "score": 100
+      }
+    ]
+  },
+  {
+    "topic": "Deep Research: Robotic Kinematics",
+    "timestamp": "2026-03-27T10:28:39.618185",
+    "score": 47.2,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What was the outcome of the initial web search for robotic kinematics basics?' (score: 25.0/100). Expected: 'No results were yielded.'. KALI answered: '**Initial Web Search Outcome: Robotic Kinematics Basics**\n\nThe initial web search yielded a comprehe'",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What was the outcome of the initial web search for robotic kinematics basics?",
+        "score": 25.0
+      },
+      {
+        "q": "What was the status of the attempted browsing of URLs related to robotic kinemat",
+        "score": 66.7
+      },
+      {
+        "q": "What was the outcome of the code execution related to robotic kinematics?",
+        "score": 50.0
+      }
+    ]
+  },
+  {
+    "topic": "SKILL_SYNTHESIS [Embedded Firmware + Market Research + Economic Risk Analysis]: Design a complete working system that simultaneously applies writing interrupt-driven C firmware for microcontrollers, a",
+    "timestamp": "2026-03-27T10:29:35.474077",
+    "score": 50.0,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What is the primary goal of the SCRCO system?' (score: 0.0/100). Expected: 'Enhance the resilience of electronic product development'. KALI answered: '**SCRCO System Overview**\n==========================\n\nThe primary goal of the SCRCO (Self-Configurin'",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What is the primary goal of the SCRCO system?",
+        "score": 0.0
+      },
+      {
+        "q": "What type of microcontroller is used in the SCRCO system?",
+        "score": 50.0
+      },
+      {
+        "q": "What type of simulation is used to model project cost overruns?",
+        "score": 100.0
+      }
+    ]
+  },
+  {
+    "topic": "CRITICAL KNOWLEDGE GAP DETECTED. Provide a comprehensive, detailed explanation of: SKILL_SYNTHESIS [Sensor Fusion + Power Electronics + Autonomous Mission Planning]: A project requires expertise in co",
+    "timestamp": "2026-03-27T10:31:12.725112",
+    "score": 16.7,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What is essential for achieving robust and reliable state estimation in drone systems?' (score: 0.0/100). Expected: 'The combination of various sensors'. KALI answered: '**State Estimation in Drone Systems**\n=====================================\n\nRobust and reliable sta'",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What is the primary purpose of state estimation in autonomous drone systems?",
+        "score": 50.0
+      },
+      {
+        "q": "What is essential for achieving robust and reliable state estimation in drone sy",
+        "score": 0.0
+      },
+      {
+        "q": "What criteria must be considered when selecting sensors for state estimation?",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "topic": "CRITICAL KNOWLEDGE GAP DETECTED. Provide a comprehensive, detailed explanation of: Deep Research: Robotic Kinematics. Focus especially on: Weakest area: 'What was the outcome of the initial web search",
+    "timestamp": "2026-03-27T10:31:55.643313",
+    "score": 72.2,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What is essential to understand in robotic kinematics?' (score: 33.3/100). Expected: 'Kinematic relationships between joints, links, and end-effectors.'. KALI answered: '**Robotic Kinematics Fundamentals**\n=====================================\n\nTo grasp robotic kinemati'",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What is robotic kinematics?",
+        "score": 83.3
+      },
+      {
+        "q": "What is essential to understand in robotic kinematics?",
+        "score": 33.3
+      },
+      {
+        "q": "What is the purpose of studying robotic kinematics?",
+        "score": 100.0
+      }
+    ]
+  },
+  {
+    "topic": "INITIALIZE PROJECT: Research and define the scope for 'Autonomous evolution mission: Deep Core Singularity Training'.",
+    "timestamp": "2026-03-27T10:35:30.286598",
+    "score": 11.1,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What was the Python script used for in the research log?' (score: 0.0/100). Expected: 'Defined scope'. KALI answered: '**Research Log Review**\nThe Python script was utilized for data analysis and visualization in the re'",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What was the outcome of the web search for 'autonomous evolution mission'?",
+        "score": 33.3
+      },
+      {
+        "q": "What was the Python script used for in the research log?",
+        "score": 0.0
+      },
+      {
+        "q": "How long did the Python script (`define_scope.py`) run before timing out?",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "topic": "Elaborate on this engineering insight for high-fidelity training: Integrate low-latency gate verification with high-voltage protection in all future manifests.",
+    "timestamp": "2026-03-27T10:36:11.083254",
+    "score": 24.4,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What is the scope of this integration in project manifests?' (score: 0.0/100). Expected: 'All future manifests.'. KALI answered: '**Integration Scope**\nThe scope of this integration in project manifests is to synchronize data exch'",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What is the purpose of gate-level circuit analysis in this integration?",
+        "score": 40.0
+      },
+      {
+        "q": "What tools are used for modeling and analyzing the circuit's behavior?",
+        "score": 33.3
+      },
+      {
+        "q": "What is the scope of this integration in project manifests?",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "topic": "SKILL_SYNTHESIS [PID Control Theory + CAD Assembly + Market Research]: A project requires expertise in implementing proportional-integral-derivative feedback loops, designing physical mounting bracket",
+    "timestamp": "2026-03-27T10:37:22.387189",
+    "score": 38.9,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What is critical in the project's system performance?' (score: 0.0/100). Expected: 'Optimal results'. KALI answered: '**System Performance Criticality**\n=====================================\n\nIn the project's system pe'",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What type of controller is a fundamental component of control systems?",
+        "score": 33.3
+      },
+      {
+        "q": "What is the purpose of a PID controller in control systems?",
+        "score": 83.3
+      },
+      {
+        "q": "What is critical in the project's system performance?",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "topic": "CRITICAL KNOWLEDGE GAP DETECTED. Provide a comprehensive, detailed explanation of: SKILL_SYNTHESIS [Embedded Firmware + Market Research + Economic Risk Analysis]: Design a complete working system that",
+    "timestamp": "2026-03-27T10:38:29.420046",
+    "score": 0.0,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What is the primary goal of the SCRCO system?' (score: 0.0/100). Expected: 'Enhance the resilience of electronic product development'. KALI answered: 'The primary goal of the SCRCO (Self-Configuring Robust Control Optimization) system is to achieve op'",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What is the primary goal of the SCRCO system?",
+        "score": 0.0
+      },
+      {
+        "q": "What are the three primary components of the SCRCO system?",
+        "score": 0.0
+      },
+      {
+        "q": "What does the SCRCO system aim to optimize?",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "topic": "CRITICAL KNOWLEDGE GAP DETECTED. Provide a comprehensive, detailed explanation of: CRITICAL KNOWLEDGE GAP DETECTED. Provide a comprehensive, detailed explanation of: SKILL_SYNTHESIS [Sensor Fusion + P",
+    "timestamp": "2026-03-27T10:39:11.858506",
+    "score": 33.3,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What is essential for achieving robust and reliable autonomous mission planning?' (score: 0.0/100). Expected: 'State estimation.'. KALI answered: '**Autonomous Mission Planning Essentials**\n=============================================\n\nTo achieve'",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What is the primary purpose of state estimation in drone systems?",
+        "score": 50.0
+      },
+      {
+        "q": "What is the critical component that enables state estimation in drone systems?",
+        "score": 50.0
+      },
+      {
+        "q": "What is essential for achieving robust and reliable autonomous mission planning?",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "topic": "CRITICAL KNOWLEDGE GAP DETECTED. Provide a comprehensive, detailed explanation of: CRITICAL KNOWLEDGE GAP DETECTED. Provide a comprehensive, detailed explanation of: Deep Research: Robotic Kinematics.",
+    "timestamp": "2026-03-27T10:41:30.516073",
+    "score": 38.9,
+    "status": "FAILED",
+    "gap": "Weakest area: 'What is the main concern of robotic kinematics?' (score: 16.7/100). Expected: 'Description, analysis, and synthesis of robotic system motion.'. KALI answered: '**Robotic Kinematics Overview**\n================================\n\nThe primary concern of robotic kin'",
+    "questions_count": 3,
+    "qa_summary": [
+      {
+        "q": "What is the primary focus of robotic kinematics?",
+        "score": 66.7
+      },
+      {
+        "q": "What is the main concern of robotic kinematics?",
+        "score": 16.7
+      },
+      {
+        "q": "What is essential for designing, developing, and controlling robots?",
+        "score": 33.3
+      }
+    ]
+  }
+]

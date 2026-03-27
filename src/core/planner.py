@@ -44,7 +44,7 @@ class TaskPlanner:
                 query = self.ai.ask_question(f"Extract ONLY a search query from this step: '{step}'").strip().strip('"')
                 results = search_web(query, 3)
                 last_results = results
-                snippet = results[0]["snippet"] if results else "No results found."
+                snippet = results[0].get("body", results[0].get("snippet", "No results found.")) if results else "No results found."
                 log.append({"step": step, "action": f"SEARCH: {query}", "result": snippet})
                 
             elif any(w in kw for w in ["browse", "read", "visit", "open"]):
@@ -74,11 +74,21 @@ class TaskPlanner:
         
         answer = self.ai.ask_question(final_prompt)
         
+        # Phase 33.1: Conclusion Manifest Synthesis
+        # We try to extract a manifest structure for the Manifestor
+        manifest = {
+            "title": goal.split(":")[ -1].strip()[:30],
+            "summary": answer[:500],
+            "materials": last_results if isinstance(last_results, list) else [],
+            "structure": ["README.md", "src/", "docs/"]
+        }
+        
         # Store in long-term memory
         self.memory.remember(f"RESEARCH MISSION: {goal}\nSUMMARY: {answer[:1000]}", "tasks")
         
         return {
             "goal": goal,
             "steps": log,
-            "answer": answer
+            "answer": answer,
+            "manifest": manifest
         }

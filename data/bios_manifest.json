@@ -1,0 +1,5 @@
+{
+  "src/core/processor.py": "3b4d61a5f8f659dc74ca9b17653dbce51d317f4e5bea294039be57babac5eed2",
+  "src/core/ai_service.py": "db47932fa4f8287dee0d6706fe58bdbec2aed9af75763371562a86eccad81bc6",
+  "src/core/vector_memory.py": "2c58089dc71a885a99cb7f010261878c7d9066388673f79608f042a056b3b433"
+}

@@ -26,7 +26,8 @@ def is_port_available(port):
 def main():
     """Start the web server on an available port."""
     # Try different ports
-    ports_to_try = [5000, 8000, 8080, 3000, 8888, 9000]
+    # Try port 5000 for verification stability
+    ports_to_try = [5000]
     
     app = create_app()
     config = load_config("config/config.json")
@@ -40,10 +41,11 @@ def main():
             print("-" * 50)
             
             try:
-                app.run(host='localhost', port=port, debug=False)
+                from waitress import serve
+                serve(app, host='0.0.0.0', port=port, threads=4)
                 break
-            except OSError as e:
-                print(f"Port {port} failed: {e}")
+            except Exception as e:
+                print(f"Server on port {port} failed: {e}")
                 continue
         else:
             print(f"Port {port} is not available, trying next...")

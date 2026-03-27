@@ -61,6 +61,8 @@ class ProactiveResearchEngine:
                 # 3. Store result in discovery log via reflection engine if possible
                 if result and "answer" in result:
                     self.logger.info(f"KALI mastered a new domain: {seed}")
+                    # Phase 3: Log background discoveries to the Digital Soul
+                    self.processor.training_logger.log(f"Autonomous research: {seed}", result["answer"])
                 
             except Exception as e:
                 self.logger.error(f"Proactive Research failed: {e}")
@@ -95,11 +97,14 @@ class ProactiveResearchEngine:
 
             result = self.processor.planner.execute(enhanced_goal)
             
-            # Synthesize final report
+            # Synthesize final report (Perplexity Style: Targeted Research + Verifiable Citations)
             report = self.processor.explainer.ai.ask_question(
                 f"Based on this research log, generate a comprehensive MISSION REPORT in Markdown format.\n"
                 f"Research Data: {json.dumps(result)}\n"
-                f"MANDATORY: Explicitly list costs and trusted vendor links if applicable."
+                f"MANDATORY:\n"
+                f"1. Explicitly list costs and trusted vendor links if applicable.\n"
+                f"2. Include a '[CITATIONS]' section at the end, listing all technical sources, data sheets, and authority sites referenced during the mission.\n"
+                f"3. Maintain KALI's sovereign authoritative tone."
             )
             return report
             

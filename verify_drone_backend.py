@@ -3,7 +3,7 @@ import requests
 import json
 import time
 
-url = "http://127.0.0.1:8000/api/project_plan"
+url = "http://127.0.0.1:5000/api/project_plan"
 
 # Simulate the "Enriched Prompt" that comes after Consultation
 payload = {

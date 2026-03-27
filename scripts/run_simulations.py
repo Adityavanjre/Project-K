@@ -17,6 +17,13 @@ def test_simulations():
     
     # 1. Initialize AI without keys to force simulation
     os.environ["GROQ_API_KEY"] = "" # Force offline
+    os.environ["NV_GEMMA_KEY"] = ""
+    os.environ["NV_USDCODE_KEY"] = ""
+    os.environ["NV_PHI3_KEY"] = ""
+    os.environ["NV_DEEPSEEK_KEY"] = ""
+    os.environ["NV_KIMI_KEY"] = ""
+    os.environ["NV_MISTRAL_KEY"] = ""
+    
     ai = AIService()
     print(f"[STATUS] AI Connected: {ai.is_connected} (Expected: False)")
     

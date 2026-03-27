@@ -61,6 +61,16 @@ class Manifestor:
             with open(os.path.join(project_dir, "README.md"), "w", encoding="utf-8") as f:
                 f.write(readme_content)
                 
+            # Phase 28 Fabrication Hub additions
+            if "blueprint" in plan:
+                with open(os.path.join(project_dir, "BLUEPRINT.md"), "w", encoding="utf-8") as f:
+                    f.write(plan["blueprint"])
+            
+            if "cad_metadata" in plan:
+                import json
+                with open(os.path.join(project_dir, "CAD_PARAMS.json"), "w", encoding="utf-8") as f:
+                    json.dump(plan["cad_metadata"], f, indent=4)
+
             # 2. Structure Manifestation
             structure = plan.get("structure", [])
             if isinstance(structure, dict):

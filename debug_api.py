@@ -4,7 +4,7 @@ import json
 import sys
 
 def debug_project_plan():
-    url = "http://localhost:8000/api/project_plan"
+    url = "http://127.0.0.1:5000/api/project_plan"
     payload = {"idea": "Gesture Controlled Car"}
     try:
         response = requests.post(url, json=payload)

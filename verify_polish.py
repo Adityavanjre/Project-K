@@ -3,11 +3,10 @@ import requests
 import json
 import time
 
-url = 'http://127.0.0.1:8000/api/project_plan'
+url = 'http://127.0.0.1:5000/api/project_plan'
 # Using Backdoor Key to force Plan Generation
 payload = {
-    "project_name": "Digital Clock",
-    "project_description": "[TEST_MODE_FORCE_PLAN] Arduino Uno, SSD1306 OLED, DS3231 RTC. Digital Clock. USB Power. Libraries: Adafruit_SSD1306, RTClib."
+    "idea": "[TEST_MODE_FORCE_PLAN] Arduino Uno, SSD1306 OLED, DS3231 RTC. Digital Clock. USB Power. Libraries: Adafruit_SSD1306, RTClib."
 }
 
 try:

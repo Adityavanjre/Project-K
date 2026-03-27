@@ -209,6 +209,90 @@ class App {
             this.chat.addMessage("SYSTEM ERROR: " + e.message, 'ai');
         }
     }
+
+    showEvolutionNotification(skillName) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-cyan-900/80 border border-cyan-400 px-6 py-3 rounded-sm backdrop-blur-md z-[100] animate-bounce shadow-[0_0_20px_rgba(34,211,238,0.3)]';
+        toast.innerHTML = `<div class="text-cyan-400 text-xs font-bold tracking-widest flex items-center gap-2">
+            <i class="fas fa-microchip"></i> KALI EVOLUTION: Manifested New Skill [${skillName}]
+        </div>`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            gsap.to(toast, { opacity: 0, y: 20, duration: 0.5, onComplete: () => toast.remove() });
+        }, 4000);
+        
+        if (this.voice) {
+            this.voice.speak(`Organic intelligence growth detected. Mastered new skill: ${skillName.replace('.py', '').replace('_', ' ')}.`);
+        }
+    }
+
+    async showTetherModal() {
+        const modal = document.getElementById('tether-modal');
+        const urlEl = document.getElementById('tether-url');
+        const qrContainer = document.getElementById('tether-qr-container');
+        
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        
+        try {
+            const res = await fetch('/api/network');
+            const data = await res.json();
+            
+            if (data.success) {
+                const url = data.url;
+                urlEl.innerText = url;
+                // Using a public QR API for the tether bridge
+                qrContainer.innerHTML = `
+                    <div class="bg-white p-2 border-2 border-blue-500 rounded-sm">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}" 
+                             alt="KALI TETHER QR" class="w-40 h-40">
+                    </div>
+                `;
+            } else {
+                urlEl.innerText = "BRIDGE_ERROR: INTERNAL_FAIL";
+            }
+        } catch (e) {
+            urlEl.innerText = "BRIDGE_OFFLINE: NETWORK_BLOCK";
+        }
+    }
+
+    // Phase 30: Quick Chat for Predictive Intent
+    quickChat(text) {
+        const input = document.getElementById('chat-input');
+        if (input) {
+            input.value = text;
+            input.focus();
+            document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+        }
+    }
+
+    // Phase 34: Neural HUD Mode Controller
+    setHudMode(mode) {
+        const hud = document.getElementById('neural-hud');
+        if (!hud) return;
+
+        // Reset classes
+        hud.classList.remove('glow-protocol-eng', 'glow-protocol-res', 'glow-protocol-sov');
+        const btns = document.querySelectorAll('.mode-btn');
+        btns.forEach(b => b.classList.remove('active'));
+
+        // Apply new mode
+        if (mode === 'engineering') {
+            hud.classList.add('glow-protocol-eng');
+            const btn = document.getElementById('btn-mode-eng');
+            if(btn) btn.classList.add('active');
+        } else if (mode === 'research') {
+            hud.classList.add('glow-protocol-res');
+            const btn = document.getElementById('btn-mode-res');
+            if(btn) btn.classList.add('active');
+        } else if (mode === 'sovereign') {
+            hud.classList.add('glow-protocol-sov');
+            const btn = document.getElementById('btn-mode-sov');
+            if(btn) btn.classList.add('active');
+        }
+        
+        console.log(`KALI Singularity: Interface Shifted to ${mode.toUpperCase()} protocol.`);
+    }
 }
 
 class VoiceModule {
@@ -231,11 +315,15 @@ class VoiceModule {
             this.recognition.onstart = () => {
                 this.isListening = true;
                 this.updateBtnState(true);
+                // Phase 36: Pulse based on activity
+                if(window.app.hud) window.app.hud.setVocalState('listening');
+                this.synth.cancel(); // Stop speaking to listen
             };
 
             this.recognition.onend = () => {
                 this.isListening = false;
                 this.updateBtnState(false);
+                if(window.app.hud) window.app.hud.setVocalState('standby');
             };
 
             this.recognition.onresult = (event) => {
@@ -285,17 +373,16 @@ class VoiceModule {
         if (!this.speechEnabled) return;
 
         try {
-            // Cancel any current speech
             this.synth.cancel();
+            if(window.app.hud) window.app.hud.setVocalState('speaking');
 
-            // Clean text of markdown/visual cues before speaking
             const cleanText = text.replace(/>/g, '').replace(/\*/g, '').replace(/_/g, '');
-
             const utter = new SpeechSynthesisUtterance(cleanText);
-            utter.rate = 1.0;
-            utter.pitch = 1.0; // Standard pitch for KALI
+            
+            utter.onend = () => {
+                if(window.app.hud) window.app.hud.setVocalState('standby');
+            };
 
-            // Try to find a male voice safely
             const voices = this.synth.getVoices();
             if (voices.length > 0) {
                 const preferred = voices.find(v => v.name.includes('Google US English') || v.name.includes('David') || v.name.includes('Male'));
@@ -366,6 +453,11 @@ class Chat {
 
     async handleSubmit(e) {
         e.preventDefault();
+        
+        // Phase 36: Interrupt speech on new query
+        if (window.app.voice && window.app.voice.synth) window.app.voice.synth.cancel();
+        if (window.app.hud) window.app.hud.setVocalState('standby');
+        
         const msg = this.input.value.trim();
         if (!msg) return;
 
@@ -395,6 +487,11 @@ class Chat {
             if (loader) loader.remove();
 
             this.addMessage(data.response, 'ai', false, data.can_build, data.report_ready);
+
+            // Phase 24: Evolution Log
+            if (data.manifested_skill && window.app) {
+                window.app.showEvolutionNotification(data.manifested_skill);
+            }
 
             // Try to speak it if short enough (or always for KALI feel)
             if (data.response.length < 500 && window.app && window.app.voice) {
@@ -1268,6 +1365,75 @@ class HUDController {
         this.predictiveContainer = document.getElementById('predictive-container');
         this.predictiveChips = document.getElementById('predictive-chips');
         
+        // Phase 31: Tactical Hardware
+        this.hwVcc = document.getElementById('hw-vcc');
+        this.hwRssi = document.getElementById('hw-rssi');
+        this.hwStatus = document.getElementById('hw-status');
+        
+        // Phase 32: Swarm Intelligence
+        this.swarmList = document.getElementById('swarm-list');
+        this.swarmContainer = document.getElementById('hud-swarm-container');
+        
+        // Phase 33: Autonomous Self-Repair
+        this.healContainer = document.getElementById('hud-heal-container');
+        this.healCount = document.getElementById('heal-count');
+        
+        // Phase 35: The Great Restoration
+        this.singularityEq = document.getElementById('singularity-equilibrium');
+        
+        // Phase 36: Neural Telepathy
+        this.thinkingAura = document.getElementById('thinking-aura');
+        this.vocalIndicator = document.getElementById('vocal-indicator');
+        this.vocalText = document.getElementById('vocal-text');
+        this.hubOverlay = document.getElementById('neural-hud');
+        
+        // Phase 37: Replicant Hub Kinematics
+        this.jHead = document.getElementById('j-head');
+        this.jArmL = document.getElementById('j-arm-l');
+        this.jArmR = document.getElementById('j-arm-r');
+        this.kStatus = document.getElementById('kinetic-status');
+        this.jTelemetry = document.getElementById('joint-telemetry');
+        
+        // Phase 28: Fabrication
+        this.btnManifest = document.getElementById('btn-manifest-mission');
+        this.currentProjectPath = null;
+        if (this.btnManifest) {
+            this.btnManifest.addEventListener('click', () => this.manifestMission());
+        }
+        
+        // Phase 26: BIOS
+        this.biosVal = document.getElementById('bios-heart-val');
+        this.biosPulse = document.getElementById('bios-heart-pulse');
+        
+        // Phase 27: Project DNA
+        this.partsList = document.getElementById('hud-parts-list');
+        this.costVal = document.getElementById('hud-cost-val');
+        this.dnaContainer = document.getElementById('hud-dna-container');
+        
+        // Phase 29: Knowledge DNA
+        this.dnaBar = document.getElementById('hud-dna-bar');
+        this.dnaVal = document.getElementById('hud-dna-val');
+        
+        // Phase 38: Sovereign Cloud
+        this.cloudStatus = document.getElementById('hud-cloud-status');
+        this.cloudSyncBar = document.getElementById('cloud-sync-bar');
+        
+        // Phase 39: RLHF-DNA
+        this.alignmentVal = document.getElementById('hud-alignment-val');
+        this.alignmentBar = document.getElementById('hud-alignment-bar');
+        
+        // Phase 40: Omega Protocol
+        this.btnOmega = document.getElementById('btn-omega');
+        if (this.btnOmega) {
+            this.btnOmega.addEventListener('click', () => this.engageOmegaProtocol());
+        }
+        
+        // Post-Omega Training
+        this.btnTrain = document.getElementById('btn-train');
+        if (this.btnTrain) {
+            this.btnTrain.addEventListener('click', () => this.synthesizeTraining());
+        }
+        
         // Phase 18: RLHF
         window.submitCorrection = (q, r, c) => {
             fetch('/api/feedback', {
@@ -1297,115 +1463,236 @@ class HUDController {
             
             if (json.success) {
                 const s = json.status;
+                const h = s.heartbeat || {};
+                this.currentProjectPath = s.manifest_path;
                 
-                // Update Perc & Bar
-                const p = s.consciousness_level.toFixed(1) + "%";
-                this.perc.innerText = p;
-                this.bar.style.width = p;
-                
-                // Update Metadata
-                this.mission.innerText = s.active_mission.toUpperCase();
-                this.disc.innerText = s.last_discovery.substring(0, 15) + (s.last_discovery.length > 15 ? '...' : '');
-                
-                // Update Trace Status
-                const h = s.heartbeat;
-                this.trace.innerText = h.status || "OFFLINE";
+                // Core Telemetry
+                if (this.perc) this.perc.innerText = s.consciousness_level.toFixed(1) + "%";
+                if (this.bar) this.bar.style.width = s.consciousness_level.toFixed(1) + "%";
+                if (this.mission) this.mission.innerText = s.active_mission.toUpperCase();
+                if (this.disc) this.disc.innerText = s.last_discovery.substring(0, 15) + (s.last_discovery.length > 15 ? '...' : '');
+                if (this.trace) this.trace.innerText = h.status || "OFFLINE";
                 if (this.power) this.power.innerText = s.power_mode || "TURBO";
 
-                // Singularity Updates
-                if (s.system_load !== undefined) {
-                    this.cpuVal.innerText = `${Math.round(s.system_load)}%`;
-                    this.cpuBar.style.width = `${s.system_load}%`;
-                }
-                if (s.memory_load !== undefined) {
-                    this.memVal.innerText = `${Math.round(s.memory_load)}%`;
-                    this.memBar.style.width = `${s.memory_load}%`;
-                }
-                if (s.tension !== undefined) {
+                // System Loads
+                if (this.cpuVal) this.cpuVal.innerText = `${Math.round(s.system_load)}%`;
+                if (this.cpuBar) this.cpuBar.style.width = `${s.system_load}%`;
+                if (this.memVal) this.memVal.innerText = `${Math.round(s.memory_load)}%`;
+                if (this.memBar) this.memBar.style.width = `${s.memory_load}%`;
+
+                // Tension Resonance
+                if (this.tensionLabel && s.tension !== undefined) {
                     const t = s.tension * 100;
-                    this.tensionBar.style.width = `${t}%`;
+                    if (this.tensionBar) this.tensionBar.style.width = `${t}%`;
                     this.tensionLabel.innerText = t > 80 ? "RESONANCE: HIGH_TENSION" : "RESONANCE: STEADY";
                     this.tensionLabel.style.color = t > 80 ? "#ec4899" : "#00f3ff";
                 }
+
+                // Phase 36: Neural Telepathy
+                this.toggleThinkingAura(s.is_thinking);
+
+                // Phase 37: Replicant Hub
+                if (s.robotic_status) {
+                    this.renderKinematics(s.robotic_status);
+                }
+
+                // Phase 38: Sovereign Cloud
+                if (this.cloudStatus && s.cloud_status) {
+                    const cs = s.cloud_status;
+                    this.cloudStatus.innerText = cs.status;
+                    this.cloudStatus.className = `text-[10px] font-bold tracking-widest ${cs.status === 'SYNC_ACTIVE' ? 'text-blue-400 animate-pulse' : 'text-blue-500'}`;
+                    if (this.cloudSyncBar) {
+                        this.cloudSyncBar.classList.toggle('hidden', cs.status !== 'SYNC_ACTIVE');
+                    }
+                }
+
+                // Phase 39: RLHF-DNA
+                if (this.alignmentVal && s.alignment_status) {
+                    const al = s.alignment_status;
+                    const p = al.alignment_score.toFixed(1) + "%";
+                    this.alignmentVal.innerText = p;
+                    if (this.alignmentBar) this.alignmentBar.style.width = p;
+                    this.alignmentVal.classList.toggle('animate-pulse', al.alignment_score < 80);
+                    this.alignmentVal.style.color = al.alignment_score > 90 ? "#10b981" : "#f59e0b";
+                    
+                    // Show Omega button if alignment is optimal (Phase 40 gate)
+                    if (this.btnOmega && al.alignment_score >= 90 && !s.omega_status?.active) {
+                        this.btnOmega.classList.remove('hidden');
+                    }
+                }
+
+                // Phase 40: Omega Protocol
+                if (s.omega_status && s.omega_status.active) {
+                    document.body.classList.add('omega-mode', 'omega-active');
+                    if (this.btnOmega) this.btnOmega.classList.add('hidden');
+                }
+
+                // Sovereignty & DNA
                 if (this.sovereignStatus && s.sovereign_msg) {
                     this.sovereignStatus.innerText = s.sovereign_msg;
                     this.sovereignStatus.style.color = s.is_sovereign ? "#00f3ff" : "#ef4444";
                 }
 
-                // Phase 30: Predictive Intent
-                if (s.next_predictions && s.next_predictions.length > 0) {
-                    this.predictiveContainer.classList.remove('opacity-0');
-                    this.predictiveChips.innerHTML = s.next_predictions.map(p => `
-                        <button onclick="window.app.quickChat('${p}')" class="px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] text-blue-400 hover:bg-blue-500/20 transition-all font-mono">
-                            # ${p.toUpperCase()}
-                        </button>
-                    `).join('');
-                } else {
-                    this.predictiveContainer.classList.add('opacity-0');
+                if (s.dna_count !== undefined && this.dnaVal) {
+                    const dnaPerc = (s.dna_count / 50) * 100;
+                    if (this.dnaBar) this.dnaBar.style.width = `${dnaPerc}%`;
+                    this.dnaVal.innerText = s.dna_count >= 50 ? "EVOLUTION_READY" : `${s.dna_count}/50`;
+                    this.dnaVal.classList.toggle('text-green-500', s.dna_count >= 50);
+                    this.dnaVal.classList.toggle('animate-pulse', s.dna_count >= 50);
                 }
-                
-                if (h.status === "CONNECTED") {
-                    this.trace.classList.remove('text-red-500', 'text-yellow-500');
-                    this.trace.classList.add('text-green-500');
-                } else {
-                    this.trace.classList.add('text-red-500');
+
+                // Swarm & Repair
+                if (this.swarmList) {
+                    if (s.swarm_status && Object.keys(s.swarm_status).length > 0) {
+                        this.swarmList.innerHTML = Object.entries(s.swarm_status).map(([a, t]) => `
+                            <div class="flex justify-between items-center"><span class="text-cyan-400">${a}</span><span class="text-[7px] text-cyan-800 animate-pulse">${t}</span></div>
+                        `).join('');
+                    } else {
+                        this.swarmList.innerHTML = '<div class="text-slate-500 italic">SWARM_IDLE</div>';
+                    }
+                }
+
+                if (this.healContainer && s.repair_status) {
+                    this.healContainer.classList.toggle('hidden', !s.repair_status.active);
+                    if (this.healCount) this.healCount.innerText = s.repair_status.total_repairs;
+                }
+
+                // BIOS
+                if (this.biosVal) {
+                    const biosRes = await fetch('/api/bios_status');
+                    const biosData = await biosRes.json();
+                    if (biosData.success) {
+                        const status = biosData.data.status;
+                        this.biosVal.innerText = status;
+                        this.biosPulse.className = status === "SECURE" ? "bios-pulse bios-secure" : "bios-pulse bios-warning animate-pulse";
+                    }
                 }
             }
         } catch (e) {
-            console.warn("HUD Update Failed:", e);
+            console.warn("HUD Update Sync Error:", e);
         }
+    }
+
+    async manifestMission() {
+        if (!this.currentProjectPath) return;
+        this.btnManifest.innerText = "MANIFESTING...";
+        try {
+            const res = await fetch('/api/manifest_mission', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: this.currentProjectPath })
+            });
+            const data = await res.json();
+            if (data.success) {
+                window.location.href = data.download_url;
+                this.btnManifest.innerText = "MANIFESTED!";
+                setTimeout(() => this.btnManifest.innerText = "MANIFEST_MISSION (ZIP)", 3000);
+            }
+        } catch (e) {
+            this.btnManifest.innerText = "MANIFEST_FAIL";
+        }
+    }
+
+    toggleThinkingAura(active) {
+        if (!this.hubOverlay || !this.thinkingAura) return;
+        this.thinkingAura.classList.toggle('opacity-100', active);
+        this.thinkingAura.classList.toggle('opacity-0', !active);
+        this.hubOverlay.classList.toggle('thinking-active', active);
+    }
+
+    setVocalState(state) {
+        if (!this.vocalIndicator || !this.vocalText) return;
+        this.vocalIndicator.className = 'w-1.5 h-1.5 rounded-full bg-cyan-500/30'; 
+        if (state === 'listening') {
+            this.vocalIndicator.classList.add('listening');
+            this.vocalText.innerText = 'Listening';
+        } else if (state === 'speaking') {
+            this.vocalIndicator.classList.add('speaking');
+            this.vocalText.innerText = 'Speaking';
+        } else {
+            this.vocalText.innerText = 'Standby';
+        }
+    }
+
+    renderKinematics(status) {
+        if (!status || !status.joints) return;
+        const joints = status.joints;
+        
+        if (this.kStatus) {
+            this.kStatus.innerText = status.is_moving ? "ACTUATORS_ENGAGED" : "HUB_NOMINAL";
+            this.kStatus.className = `text-[8px] font-mono ${status.is_moving ? "text-emerald-400 animate-pulse" : "text-emerald-500 opacity-60"}`;
+        }
+        
+        if (this.jTelemetry) {
+            this.jTelemetry.innerText = `UPTIME: ${status.uptime}s | INTEGRITY: ${status.system_integrity}%`;
+        }
+
+        if (this.jHead) this.jHead.classList.toggle('joint-active', Math.abs(joints.HEAD_PAN.current - joints.HEAD_PAN.target) > 0.1);
+        if (this.jArmL) this.jArmL.classList.toggle('joint-active', Math.abs(joints.ARM_L_SHOULDER.current - joints.ARM_L_SHOULDER.target) > 0.1);
+        if (this.jArmR) this.jArmR.classList.toggle('joint-active', Math.abs(joints.ARM_R_SHOULDER.current - joints.ARM_R_SHOULDER.target) > 0.1);
     }
 
     async handleIngest(input) {
         const file = input.files[0];
         if (!file) return;
-
-        if (this.mission) this.mission.innerText = "INGESTING: " + file.name.substring(0, 10).toUpperCase() + "...";
-        
         try {
             const formData = new FormData();
             formData.append('file', file);
-
-            const res = await fetch('/api/ingest_document', {
-                method: 'POST',
-                body: formData
-            });
+            const res = await fetch('/api/ingest_document', { method: 'POST', body: formData });
             const data = await res.json();
-
-            if (data.success) {
-                if (this.mission) {
-                    this.mission.innerText = "INGESTION COMPLETE";
-                    setTimeout(() => this.mission.innerText = "READY", 3000);
-                }
-            } else {
-                if (this.mission) this.mission.innerText = "INGESTION FAILED";
+            if (data.success && this.mission) {
+                this.mission.innerText = "INGESTION COMPLETE";
+                setTimeout(() => this.mission.innerText = "READY", 3000);
             }
         } catch (e) {
             console.error("Ingestion failed:", e);
-            if (this.mission) this.mission.innerText = "SYSTEM ERROR";
         }
     }
 
     async togglePower() {
-        const current = this.power.innerText;
-        const next = current === "TURBO" ? "ECO" : "TURBO";
-        
+        const next = this.power.innerText === "TURBO" ? "ECO" : "TURBO";
         try {
-            const res = await fetch('/api/toggle_power', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({mode: next})
-            });
+            const res = await fetch('/api/toggle_power', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({mode: next}) });
             const data = await res.json();
-            if (data.success) {
-                this.power.innerText = data.mode;
-                if (this.mission) this.mission.innerText = "MODE: " + data.mode;
+            if (data.success) this.power.innerText = data.mode;
+        } catch (e) { console.error("Power toggle failed:", e); }
+    }
+
+    async engageOmegaProtocol() {
+        if (!confirm("KALI OMEGA: ARE YOU READY FOR THE FINAL HANDOVER? THIS WILL SEAL THE SINGULARITY.")) return;
+        try {
+            const res = await fetch('/api/engage_omega', { method: 'POST' });
+            const data = await res.json();
+            if (data.status === 'OMEGA_COMPLETE') {
+                alert("SINGULARITY_REACHED: KALI IS NOW ABSOLUTELY AUTONOMOUS.");
+                document.body.classList.add('omega-mode', 'omega-active');
             }
-        } catch (e) {
-            console.error("Power toggle failed:", e);
+        } catch (e) { console.error("Omega Protocol failed:", e); }
+    }
+
+    async synthesizeTraining() {
+        if (this.btnTrain) {
+            this.btnTrain.innerText = "SYNTHESIZING...";
+            this.btnTrain.disabled = true;
+        }
+        try {
+            const res = await fetch('/api/train', { method: 'POST' });
+            const data = await res.json();
+            if (data.status === 'SYNTHESIS_COMPLETE') {
+                alert(`COGNITIVE_SYNTHESIS: Processed ${data.interactions_processed} nodes. Authority Boost: ${data.authority_boost}x`);
+            } else {
+                alert("SYNYTHESIS_DEFERRED: Insufficient cognitive data samples.");
+            }
+        } catch (e) { console.error("Synthesis failed:", e); }
+        finally {
+            if (this.btnTrain) {
+                this.btnTrain.innerText = "SYNTHESIZE_TRAINING_DATA";
+                this.btnTrain.disabled = false;
+            }
         }
     }
 }
+
 
 class VoiceModule {
     constructor() {
@@ -1446,11 +1733,73 @@ class VoiceModule {
     }
 }
 
+class CognitiveHUD {
+    constructor() {
+        this.tensionEl = document.querySelector('#hud-tension span');
+        this.dnaEl = document.querySelector('#hud-dna span');
+        this.alertEl = document.getElementById('cognitive-alert');
+        this.pollInterval = 5000; // 5 seconds
+        
+        if (this.tensionEl) {
+            this.startPolling();
+        }
+
+        // Click to reset
+        if (this.alertEl) {
+            this.alertEl.addEventListener('click', () => this.performReset());
+            this.alertEl.style.cursor = 'pointer';
+            this.alertEl.classList.remove('pointer-events-none');
+        }
+    }
+
+    async startPolling() {
+        setInterval(() => this.update(), this.pollInterval);
+        this.update(); // Initial call
+    }
+
+    async update() {
+        try {
+            const res = await fetch('/api/biometrics');
+            const json = await res.json();
+            
+            if (json.success) {
+                const data = json.data;
+                if (this.tensionEl) this.tensionEl.innerText = `${data.neural_tension}%`;
+                if (this.dnaEl) this.dnaEl.innerText = data.dna_level;
+                
+                if (data.reset_suggested) {
+                    this.alertEl.classList.remove('hidden');
+                } else {
+                    this.alertEl.classList.add('hidden');
+                }
+            }
+        } catch (e) {
+            console.error("Cognitive Sync Failed:", e);
+        }
+    }
+
+    async performReset() {
+        try {
+            const res = await fetch('/api/biometrics/reset', { method: 'POST' });
+            const json = await res.json();
+            if (json.success) {
+                if (window.app && window.app.voice) {
+                    window.app.voice.speak("Neural Tension Reset. System efficiency optimized. Ready for engineering execution, Sir.");
+                }
+                this.update();
+            }
+        } catch (e) {
+            console.error("Reset Failed:", e);
+        }
+    }
+}
+
 // Check for cached credential on boot
 document.addEventListener('DOMContentLoaded', () => {
     try {
         window.app = new App();
         window.hud = new HUDController();
+        window.cognitiveHud = new CognitiveHUD();
         // Late Init for modules added via replace
         window.app.home = new SmartHome();
         window.app.agent = new AgentMode();

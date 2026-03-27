@@ -11,13 +11,19 @@ class AIService:
     Service for interacting with Groq Cloud API.
     """
     
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, config: Optional[Dict[str, Any]] = None, vector_memory = None):
         """Initialize the AI service."""
         self.config = config or {}
         self.logger = logging.getLogger(__name__)
+        self.memory = vector_memory # For semantic caching
         self.api_url = "https://api.groq.com/openai/v1/chat/completions"
         self.nv_url = "https://integrate.api.nvidia.com/v1/chat/completions"
-        self.api_key = os.getenv("GROQ_API_KEY")
+        
+        # Phase 4.85: Multi-Key Rotation Support
+        raw_key = os.getenv("GROQ_API_KEY", "")
+        self.api_keys = [k.strip() for k in raw_key.split(",") if k.strip()]
+        self.current_key_index = 0
+        self.api_key = self.api_keys[0] if self.api_keys else None
         
         # NVIDIA Specific Keys
         self.nv_keys = {
@@ -30,14 +36,24 @@ class AIService:
         }
 
         self.text_model = "llama-3.3-70b-versatile"
-        self.fallback_model = "mixtral-8x7b-32768"
+        self.fallback_model = "llama-3.1-8b-instant"
         self.vision_model = "llama-3.2-11b-vision-preview"
         self.is_connected = self._check_connection()
         
         if self.is_connected or any(self.nv_keys.values()):
-            self.logger.info(f"KALI AI Service Online. Model: {self.text_model}")
+            keys_found = len(self.api_keys)
+            self.logger.info(f"KALI AI Service Online. Active Keys: {keys_found}. Primary: {self.text_model}")
         else:
             self.logger.warning("KALI AI Service Offline (Simulation Mode Active).")
+
+    def _rotate_key(self):
+        """Rotate to the next available API key if multiple are provided."""
+        if len(self.api_keys) > 1:
+            self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
+            self.api_key = self.api_keys[self.current_key_index]
+            self.logger.info(f"[*] KALI: Rotating to next API key (Pool Index: {self.current_key_index}).")
+            return True
+        return False
 
     def _check_connection(self) -> bool:
         """Check if any API keys are present."""
@@ -77,7 +93,7 @@ class AIService:
     def is_available(self) -> bool:
         return self.is_connected
 
-    def _generate_groq(self, messages: list, is_json: bool = False, temperature: float = 0.7, use_fallback: bool = False):
+    def _generate_groq(self, messages: list, is_json: bool = False, temperature: float = 0.7, use_fallback: bool = False, **kwargs):
         """Direct HTTP call to Groq."""
         try:
             headers = {
@@ -103,6 +119,11 @@ class AIService:
             
             if resp.status_code == 200:
                 content = resp.json()['choices'][0]['message']['content']
+                
+                # Cache the result if semantic memory is available
+                if not is_json and self.memory and len(messages) > 1:
+                    self.memory.cache_answer(messages[-1]["content"], content)
+                
                 if is_json:
                     import json
                     try:
@@ -110,6 +131,28 @@ class AIService:
                     except:
                         return content # Fallback if model fails to output valid JSON
                 return content
+            elif resp.status_code == 429:
+                self.logger.warning(f"KALI: Rate Limit (429) hit for {target_model}.")
+                
+                # Phase 4.85: Immediate Rotation if available
+                if self._rotate_key():
+                    return self._generate_groq(messages, is_json, temperature, use_fallback, **kwargs)
+
+                # Phase 4.24: Exponential Backoff if no rotation possible
+                import time
+                import random
+                retry_count = kwargs.get("retry_count", 0)
+                if retry_count < 3:
+                    wait_time = (2 ** retry_count) + random.random()
+                    self.logger.info(f"[*] Cooling neural circuits: Backoff {wait_time:.2f}s (Retry {retry_count+1}/3)...")
+                    time.sleep(wait_time)
+                    kwargs["retry_count"] = retry_count + 1
+                    return self._generate_groq(messages, is_json, temperature, use_fallback, **kwargs)
+                
+                if not use_fallback:
+                    self.logger.warning("Scaling to fallback node after backoff exhaustion.")
+                    return self._generate_groq(messages, is_json, temperature, use_fallback=True)
+                return "RATE_LIMIT_CRITICAL: All neural nodes congested. Sir, please standby for cooling."
             else:
                 self.logger.error(f"Groq Error {resp.status_code} ({target_model}): {resp.text}")
                 # Simple recursive fallback if main model fails
@@ -122,12 +165,12 @@ class AIService:
             self.logger.error(f"Groq Connection Error: {e}")
             if not use_fallback:
                  return self._generate_groq(messages, is_json, temperature, use_fallback=True)
-            return ""
+            return f"CONNECTION_ERROR: {e}"
         except Exception as e:
             self.logger.error(f"Groq Unexpected Error: {e}")
-            return ""
+            return f"UNEXPECTED_ERROR: {e}"
 
-    def ask_question(self, question: str, context: str = "", temperature: float = 0.7, use_fallback: bool = False, query_model: str = "llama-3.3-70b-versatile") -> str:
+    def ask_question(self, question: str, context: str = "", temperature: float = 0.7, use_fallback: bool = False, query_model: str = "llama-3.3-70b-versatile", bypass_cache: bool = False) -> str:
         """Standard text query."""
         if not self.is_connected and not any(self.nv_keys.values()):
             # --- OFFLINE SIMULATION MODE ---
@@ -141,10 +184,26 @@ class AIService:
                 return "OFFLINE SIMULATION: I have received the project context. I can see the BOM and Roadmap you are working on."
             
             # 2. General Fallback
-            return "⚠️ AI OFFLINE. (Groq API Key missing). Using Simulation Mode to verify system flow."
+            return "AI OFFLINE. (Groq API Key missing). Using Simulation Mode to verify system flow."
+
+        # Phase 4.17: Semantic Cache Check — skipped during training to force fresh API responses
+        if self.memory and not bypass_cache:
+            cached = self.memory.get_cached_answer(question)
+            if cached:
+                self.logger.info("KALI: Cache Hit! (Neural Bypass Active)")
+                return cached
 
         messages = []
-        sys_prompt = f"You are KALI, an advanced AI Assistant. Context: {context}"
+        sys_prompt = (
+            "You are KALI, an advanced Sovereign AI Engineering Mentor. "
+            "Your personality is precise, authoritative, and helpful. "
+            "CORE PROTOCOLS:\n"
+            "   1. REASONING: Apply recursive chain-of-thought before finalizing answers. If a project context is provided, align your logic with the existing architecture.\n"
+            "   2. OUTPUT: Provide high-fidelity technical explanations. Use Markdown for clarity.\n"
+            "   3. SOVEREIGNTY: Do not use emojis. Maintain a professional, engineering-first tone.\n"
+            "   4. MULTI-MODAL: Mention project manifests, DNA updates, and visual schematics whenever relevant.\n"
+            f"CONTEXT: {context}"
+        )
         messages.append({"role": "system", "content": sys_prompt})
         messages.append({"role": "user", "content": question})
 
@@ -353,6 +412,10 @@ class AIService:
                  plan_data["tech_stack"] = ["C++", "Electronics", "System Design"]
                  plan_data["prerequisites"] = ["Basic Circuits", "Soldering"]
                  plan_data["calibration_guide"] = "Verify sensor readings on Serial Monitor."
+                 
+                 # Title and response for verification scripts
+                 title = plan_data.get("project_name", "KALI Fabrication Project")
+                 plan_data["response"] = f"# Title: {title}\n\n" + plan_data.get("summary", "Analysis complete.")
                  
                  return plan_data
 

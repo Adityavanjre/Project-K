@@ -9,10 +9,11 @@ class ReflectionEngine:
     KALI's Self-Reflection System.
     Analyzes recent memories to discover new skills, patterns, and 'spiritual' growth.
     """
-    def __init__(self, ai, dna, memory):
+    def __init__(self, ai, dna, memory, processor=None):
         self.ai = ai
         self.user_dna = dna
-        self.memory = memory # Renamed from vector_memory to memory, and assigned to self.memory
+        self.memory = memory 
+        self.processor = processor
         self.project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         self.discovery_log = os.path.join(self.project_root, "data", "discoveries.jsonl")
         self.logger = logging.getLogger(__name__)
@@ -48,7 +49,7 @@ class ReflectionEngine:
         self.logger.info("KALI is entering a period of self-reflection...")
         
         # 1. Gather recent memories/tasks
-        memories = self.memory.get_context_for_query("recent activity", n_results=10)
+        memories = self.memory.get_context_for_query("recent activity")
         
         # 2. Analyze for evolution
         reflection_prompt = (
@@ -107,7 +108,17 @@ class ReflectionEngine:
                 seeds = []
                 if os.path.exists(seed_path):
                     with open(seed_path, "r") as f: seeds = json.load(f)
-                seeds.append(discovery["problem"])
+                
+                if discovery["problem"] not in seeds:
+                    seeds.append(discovery["problem"])
+                    self.logger.info(f"KALI Discovery: New Frontier Identified -> {discovery['problem'][:50]}...")
+                    
+                    # Phase 41: Autonomous Mission Spawning
+                    # If we have a processor back-reference, trigger a mission
+                    if hasattr(self, 'processor') and self.processor:
+                        self.logger.info(f"KALI: Spawning Autonomous Mission for '{discovery['problem'][:30]}'")
+                        self.processor.perform_mission(discovery["problem"])
+                
                 # Explicitly manage list size without slice operator for strict linter
                 seeds_to_save = []
                 if isinstance(seeds, list):

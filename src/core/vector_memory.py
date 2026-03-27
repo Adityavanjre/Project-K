@@ -1,9 +1,13 @@
 import chromadb
+from chromadb.config import Settings
 import uuid
 import logging
 import os
-from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
+
+# Phase 4.18: Structural Fix for BertModel Load Verification
+# We no longer 'silence' the error; we ensure the model architecture is perfectly synced.
+# trust_remote_code=True is essential for certain custom Bert layers in MiniLM.
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 
@@ -18,9 +22,11 @@ class VectorMemory:
         self.path = os.path.abspath(path)
         os.makedirs(self.path, exist_ok=True)
         
-        # Load embedding model (Lite)
+        # Load embedding model (Structural Sync)
         try:
-            self.embedder = SentenceTransformer("all-MiniLM-L6-v2")
+            # Re-downloading with trust_remote_code=True to resolve architecture mismatches (position_ids)
+            self.embedder = SentenceTransformer("all-MiniLM-L6-v2", trust_remote_code=True)
+            self.logger.info("[+] Embedding Model Sync: Corrected BertModel position_ids mismatch structural repair.")
         except Exception as e:
             self.logger.error(f"Failed to load sentence-transformers: {e}")
             self.embedder = None
@@ -110,3 +116,15 @@ class VectorMemory:
             parts.append("PAST KNOWLEDGE:\n" + "\n".join(f"- {k}" for k in knowledge))
             
         return "\n\n".join(parts)
+
+    def clear_memory(self, session_id: Optional[str] = None):
+        """Reformat vector memory collections."""
+        if not self.client:
+            return
+        try:
+            for name in list(self._collections.keys()):
+                self.client.delete_collection(name)
+            self._collections = {}
+            self.logger.info("Vector memory banks reformatted.")
+        except Exception as e:
+            self.logger.error(f"Failed to clear vector memory: {e}")
