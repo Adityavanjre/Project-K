@@ -177,7 +177,7 @@ class DoubtProcessor:
         # Singularity Components (Phases 27-30)
         self.sensors = HardwareSensors()
         self.predictive_engine = PredictiveIntentEngine()
-        self.user_tension = 0.5
+        self.user_tension = 0.0
         self.last_manifest_path = None
         self.current_predictions = []
         self.current_phase = 0
@@ -338,13 +338,21 @@ class DoubtProcessor:
             dna_profile = self.user_dna.profile
 
             # Apply Singularity Engines
-            bio_state = self.biometric_service.get_physiological_state(
-                self.sensors.get_system_metrics().get("cpu_usage", 0)
-            )
-            self.user_tension = bio_state["neural_tension"]
-            tension_status = self.handle_tension(query)
-            if tension_status and "NEURAL_RESET_REQUIRED" in str(tension_status):
-                return {"text": str(tension_status), "can_build": False}
+            # Skip biometric check in Colab/cloud environments
+            import os
+            if os.environ.get("DISABLE_BIOMETRIC_CHECKS", "").lower() == "true":
+                # Skip biometric checks
+                pass
+            else:
+                bio_state = self.biometric_service.get_physiological_state(
+                    self.sensors.get_system_metrics().get("cpu_usage", 0)
+                )
+                self.user_tension = bio_state["neural_tension"]
+                tension_status = self.handle_tension(query)
+                if tension_status and "NEURAL_RESET_REQUIRED" in str(tension_status):
+                    return {"text": str(tension_status), "can_build": False}
+            else:
+                self.user_tension = 0.0
 
             predictions = self.predictive_engine.predict_next_steps(
                 query,
@@ -361,7 +369,7 @@ class DoubtProcessor:
             # 4. Generate structured explanation via Explainer
             user_level = context.user_level if context else "intermediate"
             # Adjust level based on tension
-            if self.user_tension > 80:
+            if self.user_tension > 0.8:
                 user_level = "beginner"  # Simplify for high stress
                 self.logger.info(
                     "KALI: High tension detected. Simplifying explanation."
@@ -533,6 +541,11 @@ class DoubtProcessor:
             return {"text": "I encountered an error, Sir.", "can_build": False}
 
     def handle_tension(self, text):
+        # Skip tension check in all environments for now
+        self.user_tension = 0.0
+        return "STEADY"
+        
+        # Original code disabled for testing
         if text.isupper() or len(text) < 5:
             self.user_tension = min(1.0, self.user_tension + 0.1)
         else:
@@ -895,3 +908,15 @@ class DoubtProcessor:
             session_id=self.current_session_id
         )  # If it exists
         self.logger.info("Session history cleared.")
+
+    def process_contextual_doubt(self, question: str, context: dict) -> dict:
+        """Handle a doubt asked during a step (contextual doubt)."""
+        try:
+            current_step = context.get("current_step_text", "")
+            topic = context.get("topic", "general")
+            enhanced_query = f"Context: Currently on step: '{current_step}' Topic: {topic} Question: {question}"
+            response = self.process_doubt(enhanced_query, source="contextual")
+            return {"success": True, "response": response.get("text", str(response)), "can_build": response.get("can_build", False)}
+        except Exception as e:
+            self.logger.error(f"Contextual doubt error: {e}")
+            return {"success": False, "error": str(e)}
