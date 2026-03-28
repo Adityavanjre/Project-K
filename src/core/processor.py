@@ -313,16 +313,25 @@ class DoubtProcessor:
 
             self.logger.info(f"KALI Research Loop: {query.splitlines()[0]}...")
 
-            # Phase 4.14+: Greeting Interceptor (Stop academic hallucinations for causal conversation)
+            # Phase 4.14+: Intelligence Hardening (Greeting Interceptor & Auto-Routing)
             greetings = ["hi", "hello", "hey", "hola", "greetings", "yo", "morning", "evening", "night"]
+            sovereign_keywords = ["fix", "ui", "responsive", "layout", "code", "rewrite", "update", "frontend", "design"]
+            
             clean_query = query.lower().strip("?!. ")
+            
+            # 1. Greeting Check
             if clean_query in greetings or len(clean_query) < 3:
                 self.logger.info("KALI: Casual Greeting Detected. Bypassing Explainer.")
                 return {
-                    "text": "Greetings, Commander. KALI Sovereignty is online and awaiting your strategic instructions.",
+                    "text": "Greetings, Commander. KALI Sovereignty is online. Use TAB: CORE for evolution missions or ask a technical doubt here.",
                     "can_build": False,
                     "source": "conversational_shield"
                 }
+            
+            # 2. Sovereign Intent Auto-Route
+            if any(kw in clean_query for kw in sovereign_keywords):
+                self.logger.info("KALI: Sovereign Intent Detected in Doubt Mode. Auto-Routing.")
+                return self.sovereign_intel.process_command(query)
 
             # Cache check
             if not bypass_cache:
