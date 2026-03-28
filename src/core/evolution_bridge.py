@@ -117,7 +117,7 @@ class EvolutionBridge:
         2. DO NOT return markdown. DO NOT return explanations. 
         3. Do not omit any core functionality from the original file unless instructed.
         4. Strictly follow the NoEmojiPolicy.
-        5. If this is HTML, ensure all template tags (e.g. {{ ... }} or {% ... %}) are preserved correctly.
+        5. If this is HTML, ensure all template tags (e.g. {{{{ ... }}}} or {{% ... %}}) are preserved correctly.
         """
 
         self.logger.info(f"KALI Singularity: Attempting to evolve {target_file}...")
