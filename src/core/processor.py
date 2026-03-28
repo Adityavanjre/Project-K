@@ -352,8 +352,7 @@ class DoubtProcessor:
             # Skip biometric check in Colab/cloud environments
             import os
             if os.environ.get("DISABLE_BIOMETRIC_CHECKS", "").lower() == "true":
-                # Skip biometric checks
-                pass
+                self.user_tension = 0.0
             else:
                 bio_state = self.biometric_service.get_physiological_state(
                     self.sensors.get_system_metrics().get("cpu_usage", 0)
@@ -362,8 +361,6 @@ class DoubtProcessor:
                 tension_status = self.handle_tension(query)
                 if tension_status and "NEURAL_RESET_REQUIRED" in str(tension_status):
                     return {"text": str(tension_status), "can_build": False}
-            else:
-                self.user_tension = 0.0
 
             predictions = self.predictive_engine.predict_next_steps(
                 query,
