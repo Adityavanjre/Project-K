@@ -475,13 +475,20 @@
         </div>
 
         <div class="flex items-center space-x-4">
-            <!-- Google Sign-In Container (Moved to Navbar) -->
-            <div id="g_id_onload"
-                data-client_id="494768944024-3ksc96pgmu76q21th7b45ala8brp3ccl.apps.googleusercontent.com"
-                data-callback="handleCredentialResponse" data-auto_select="false" data-theme="filled_black">
-            </div>
-            <div class="g_id_signin" data-type="standard" data-size="medium" data-theme="filled_black"
-                data-text="signin_with" data-shape="rectangular" data-logo_alignment="left"></div>
+            <!-- Phase 55: Sovereign Identity Suppression -->
+            {% if sovereign_mode %}
+                <div class="px-3 py-1 bg-amber-500/20 border border-amber-500/50 rounded flex items-center space-x-2 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                    <i class="fas fa-shield-alt text-amber-500 text-xs text-glow"></i>
+                    <span class="text-[10px] font-mono text-amber-500 font-bold tracking-widest uppercase">Sovereign Mode</span>
+                </div>
+            {% else %}
+                <div id="g_id_onload"
+                    data-client_id="494768944024-3ksc96pgmu76q21th7b45ala8brp3ccl.apps.googleusercontent.com"
+                    data-callback="handleCredentialResponse" data-auto_select="false" data-theme="filled_black">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-size="medium" data-theme="filled_black"
+                    data-text="signin_with" data-shape="rectangular" data-logo_alignment="left"></div>
+            {% endif %}
         </div>
     </nav>
 

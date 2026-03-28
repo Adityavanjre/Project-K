@@ -14,10 +14,11 @@ class MCPPool:
     def __init__(self):
         self.tools: Dict[str, Callable] = {}
         self.logger = logging.getLogger("KALI.MCPPool")
-        self._register_internal_tools()
+        # Base tools (no AI context needed)
+        self._register_base_tools()
 
-    def _register_internal_tools(self):
-        """Registers built-in tools from src/core/tools/"""
+    def _register_base_tools(self):
+        """Registers built-in tools that do not require an active AI session."""
         try:
             web_tools = importlib.import_module("src.core.tools.web_tools")
             self.register_tool("search_web", web_tools.search_web)
@@ -25,30 +26,34 @@ class MCPPool:
             self.register_tool(
                 "harvest_domain_knowledge", web_tools.harvest_domain_knowledge
             )
-            # Phase 4.9: Visual/Glowby Integration
-            try:
-                visual_tools_mod = importlib.import_module(
-                    "src.core.tools.visual_tools"
-                )
-                vt = visual_tools_mod.VisualManifestationTool(
-                    importlib.import_module("src.core.ai_service").AIService()
-                )
-                self.register_tool("manifest_from_sketch", vt.manifest_from_sketch)
-                self.register_tool("generate_cad_model", vt.generate_cad_model)
-            except Exception:
-                pass
-
-            # Phase 4.9: Advanced Toolset (CodeRabbit, GSD, Tavily)
-            try:
-                adv_tools_mod = importlib.import_module("src.core.tools.advanced_tools")
-                at = adv_tools_mod.AdvancedToolRegistry(None)
-                self.register_tool("coderabbit_review", at.coderabbit_review)
-                self.register_tool("gsd_task_sync", at.gsd_task_sync)
-                self.register_tool("tavily_search", at.tavily_search)
-            except Exception:
-                pass
         except Exception as e:
-            self.logger.error(f"Failed to register internal web tools: {e}")
+            self.logger.error(f"Failed to register base web tools: {e}")
+
+    def register_ai_tools(self, ai_service: Any):
+        """
+        Phase 55 Stability Patch: Registers tools that require an initialized AI context.
+        Ensures tools like CodeRabbit and Visual CAD are non-ghost instances.
+        """
+        self.logger.info("MCPPool: Registering AI-Dependent Core Tools...")
+        
+        # 1. Visual/CAD Tools
+        try:
+            visual_tools_mod = importlib.import_module("src.core.tools.visual_tools")
+            vt = visual_tools_mod.VisualManifestationTool(ai_service)
+            self.register_tool("manifest_from_sketch", vt.manifest_from_sketch)
+            self.register_tool("generate_cad_model", vt.generate_cad_model)
+        except Exception as e:
+            self.logger.warning(f"MCPPool: Visual tools unavailable: {e}")
+
+        # 2. Advanced Project Tools
+        try:
+            adv_tools_mod = importlib.import_module("src.core.tools.advanced_tools")
+            at = adv_tools_mod.AdvancedToolRegistry(ai_service)
+            self.register_tool("coderabbit_review", at.coderabbit_review)
+            self.register_tool("gsd_task_sync", at.gsd_task_sync)
+            self.register_tool("tavily_search", at.tavily_search)
+        except Exception as e:
+            self.logger.warning(f"MCPPool: Advanced tools unavailable: {e}")
 
     def register_tool(self, name: str, func: Callable):
         self.tools[name] = func

@@ -21,8 +21,12 @@ import time
 import random
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, project_root)
-sys.path.insert(0, os.path.join(project_root, 'src'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+src_path = os.path.join(project_root, 'src')
+if src_path not in sys.path:
+    sys.path.insert(0, src_path)
 
 from src.core.processor import DoubtProcessor
 from src.core.ai_service import AIService

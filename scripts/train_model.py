@@ -87,14 +87,21 @@ def train(dry_run=True):
             r = 16, 
             target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
             lora_alpha = 16,
-            lora_dropout = 0,
+            lora_dropout = 0.05,
             bias = "none",
         )
 
         # Convert list to Dataset
         dataset = Dataset.from_list(data)
 
-        logger.info("Initiating deep-core evolution...")
+        # Phase 52 Dynamic Compute Allocation
+        batch_size = 2
+        grad_accum = 4
+        epochs = 3
+        steps_per_epoch = max(1, len(dataset) // (batch_size * grad_accum))
+        dynamic_max_steps = max(10, steps_per_epoch * epochs)
+
+        logger.info(f"Initiating deep-core evolution (Dynamic Max Steps: {dynamic_max_steps})...")
         trainer = SFTTrainer(
             model = model,
             tokenizer = tokenizer,
@@ -102,10 +109,10 @@ def train(dry_run=True):
             dataset_text_field = "instruction", # Matches our prepare_data keys
             max_seq_length = 2048,
             args = TrainingArguments(
-                per_device_train_batch_size = 2,
-                gradient_accumulation_steps = 4,
+                per_device_train_batch_size = batch_size,
+                gradient_accumulation_steps = grad_accum,
                 warmup_steps = 5,
-                max_steps = 60,
+                max_steps = dynamic_max_steps,
                 learning_rate = 2e-4,
                 fp16 = not torch.cuda.is_bf16_supported(),
                 bf16 = torch.cuda.is_bf16_supported(),

@@ -40,7 +40,8 @@ class KnowledgeCheckEngine:
         self.unverified_path = os.path.join(
             project_root, "data", "unverified_training.jsonl"
         )
-        self.anchored_path = os.path.join(project_root, "data", "training_data.jsonl")
+        self.anchored_path = os.path.join(project_root, "data", "knowledge_atoms.jsonl") # Verified high-fidelity concepts
+        self.training_data_path = os.path.join(project_root, "data", "training_data.jsonl") # Raw interaction pairs
         self.skill_log_path = os.path.join(
             project_root, "data", "skill_sovereignty.json"
         )
@@ -515,7 +516,7 @@ class KnowledgeCheckEngine:
 
                 # Check for match (fuzzy match first 50 chars of topic)
                 if topic[:50] in user_msg:
-                    self._append_jsonl(self.anchored_path, data)
+                    self._append_jsonl(self.training_data_path, data)
                     anchored_count += 1
                 else:
                     remaining_unverified.append(line)

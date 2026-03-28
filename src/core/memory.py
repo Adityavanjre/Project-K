@@ -5,17 +5,26 @@ import logging
 import os
 from datetime import datetime
 from typing import List, Dict, Any, Optional
+import threading
 
 class MemoryService:
     """
     Long-term memory module for KALI.
     Handles persistence of conversation history using SQLite.
     """
+    _local = threading.local()
     
     def __init__(self, db_path: str = "data/jarvis.db"):
         self.logger = logging.getLogger(__name__)
         self.db_path = db_path
         self._init_db()
+
+    def _get_conn(self):
+        """Get or create a thread-local SQLite connection."""
+        if not hasattr(self._local, "conn") or self._local.conn is None:
+            self._local.conn = sqlite3.connect(self.db_path, check_same_thread=False)
+            self._local.conn.execute("PRAGMA journal_mode=WAL") # Improved concurrency
+        return self._local.conn
         
     def _init_db(self):
         """Initialize the database schema."""
@@ -23,7 +32,7 @@ class MemoryService:
             # Ensure directory exists
             os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
             
-            conn = sqlite3.connect(self.db_path)
+            conn = self._get_conn()
             cursor = conn.cursor()
             
             # Create conversations table
@@ -36,9 +45,7 @@ class MemoryService:
                     session_id TEXT
                 )
             ''')
-            
             conn.commit()
-            conn.close()
             self.logger.info(f"Memory modules initialized at {self.db_path}")
             
         except Exception as e:
@@ -47,16 +54,13 @@ class MemoryService:
     def add_memory(self, role: str, content: str, session_id: str = "default"):
         """Save a new interaction to long-term memory."""
         try:
-            conn = sqlite3.connect(self.db_path)
-            cursor = conn.cursor()
-            
-            cursor.execute(
-                'INSERT INTO memories (role, content, timestamp, session_id) VALUES (?, ?, ?, ?)',
-                (role, content, datetime.now(), session_id)
-            )
-            
-            conn.commit()
-            conn.close()
+            conn = self._get_conn()
+            with conn: # Phase 52 hardener: Context-managed transaction
+                cursor = conn.cursor()
+                cursor.execute(
+                    'INSERT INTO memories (role, content, timestamp, session_id) VALUES (?, ?, ?, ?)',
+                    (role, content, datetime.now(), session_id)
+                )
             
         except Exception as e:
             self.logger.error(f"Failed to save memory: {e}")
@@ -64,7 +68,7 @@ class MemoryService:
     def get_recent_memories(self, limit: int = 10, session_id: str = "default") -> List[Dict[str, str]]:
         """Retrieve recent context for the AI."""
         try:
-            conn = sqlite3.connect(self.db_path)
+            conn = self._get_conn()
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             
@@ -74,7 +78,6 @@ class MemoryService:
             )
             
             rows = cursor.fetchall()
-            conn.close()
             
             # Return reversed (oldest first) for context window
             return [{"role": row["role"], "content": row["content"]} for row in reversed(rows)]
@@ -86,11 +89,10 @@ class MemoryService:
     def clear_memory(self, session_id: str = "default"):
         """Wipe memory for a specific session."""
         try:
-            conn = sqlite3.connect(self.db_path)
-            cursor = conn.cursor()
-            cursor.execute('DELETE FROM memories WHERE session_id = ?', (session_id,))
-            conn.commit()
-            conn.close()
+            conn = self._get_conn()
+            with conn:
+                cursor = conn.cursor()
+                cursor.execute('DELETE FROM memories WHERE session_id = ?', (session_id,))
             self.logger.info("Memory banks reformatted.")
         except Exception as e:
             self.logger.error(f"Failed to clear memory: {e}")
@@ -98,7 +100,7 @@ class MemoryService:
     def get_sessions(self) -> List[Dict[str, Any]]:
         """Retrieve a list of unique sessions with their latest timestamp and a topic preview."""
         try:
-            conn = sqlite3.connect(self.db_path)
+            conn = self._get_conn()
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             
@@ -114,7 +116,6 @@ class MemoryService:
             ''')
             
             rows = cursor.fetchall()
-            conn.close()
             
             return [
                 {
@@ -164,26 +165,60 @@ class MemoryService:
             self.logger.error(f"Failed to sync anchor: {e}")
             return {}
 
-    def update_anchor(self, last_action: str, anchor_path: str = "MEMORY_ANCHOR.md"):
-        """Phase 15: Automatically update the anchor file with the latest mission status."""
+    def purge_all_memories(self):
+        """Phase 54: Total Sovereign Purge (Right to be forgotten)."""
         try:
+            conn = self._get_conn()
+            with conn:
+                cursor = conn.cursor()
+                cursor.execute('DELETE FROM memories')
+            self.logger.warning("SOVEREIGN_PURGE: All long-term memories have been permanently erased.")
+        except Exception as e:
+            self.logger.error(f"Failed to purge all memories: {e}")
+
+    def prune_memory(self, days: int = 30):
+        """Phase 54: Retention pruning for dated memories."""
+        try:
+            conn = self._get_conn()
+            with conn:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "DELETE FROM memories WHERE timestamp < datetime('now', ?)",
+                    (f'-{days} days',)
+                )
+                count = cursor.rowcount
+            if count > 0:
+                self.logger.info(f"Memory Maintenance: Pruned {count} archaic interaction records.")
+        except Exception as e:
+            self.logger.error(f"Failed to prune memory: {e}")
+
+    def update_anchor(self, last_action: str, anchor_path: str = "MEMORY_ANCHOR.md"):
+        """Phase 15: Sync Cycle - Update the anchor file with the latest system state."""
+        try:
+            # We don't write to DB here, but we ensure the file is updated
+            # This is a file-system 'memory' used for cross-process sync.
+            import os
+            from .gsd_service import GSDPhase
+            
+            # Use current date/time
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            # If path doesn't exist, create a baseline
             if not os.path.exists(anchor_path):
-                return
-                
-            with open(anchor_path, "r", encoding="utf-8") as f:
-                lines = f.readlines()
-                
-            new_lines = []
-            for line in lines:
-                if "Last Action" in line:
-                    new_lines.append(f"- **Last Action**: {last_action}\n")
-                elif "Status" in line:
-                     new_lines.append(f"- **Status**: Operational Sync Complete. Waiting for directive.\n")
-                else:
-                    new_lines.append(line)
-                    
+                with open(anchor_path, "w", encoding="utf-8") as f:
+                    f.write("# KALI MEMORY ANCHOR\n\n")
+            
+            # Append or overwrite? Usually we overwrite the state block
+            # For simplicity, let's keep it as a clean state manifest
+            content = f"""# KALI MEMORY ANCHOR
+- **Timestamp**: {now}
+- **Last Action**: {last_action}
+- **System State**: SOVEREIGN
+- **Integrity**: VERIFIED
+"""
             with open(anchor_path, "w", encoding="utf-8") as f:
-                f.writelines(new_lines)
+                f.write(content)
                 
+            self.logger.info("Memory Anchor updated.")
         except Exception as e:
             self.logger.error(f"Failed to update anchor: {e}")

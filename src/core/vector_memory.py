@@ -67,14 +67,33 @@ class VectorMemory:
         except Exception as e:
             self.logger.error(f"Remember failed in {collection_name}: {e}")
 
-    def recall(self, query: str, collection_name: str = "knowledge", n: int = 5) -> List[str]:
+    def recall(self, query: str, collection_name: str = "knowledge", n: int = 5, threshold: float = 1.0) -> List[str]:
+        """Recall memories with a semantic similarity threshold."""
         if not self.client:
             return []
         try:
             col = self._get_collection(collection_name)
             if not col: return []
-            res = col.query(query_embeddings=[self._embed(query)], n_results=n)
-            return res["documents"][0] if res["documents"] else []
+            
+            # Embed the query
+            query_emb = self._embed(query)
+            if not query_emb:
+                return []
+                
+            res = col.query(query_embeddings=[query_emb], n_results=n)
+            
+            # Phase 52: Distance Filtering
+            # Chroma returns L2 distance by default (lower is better)
+            if not res["documents"] or not res["documents"][0]:
+                return []
+                
+            docs = res["documents"][0]
+            distances = res["distances"][0] if "distances" in res and res["distances"] else [0] * len(docs)
+            
+            # Filter by threshold
+            filtered = [doc for doc, dist in zip(docs, distances) if dist < threshold]
+            return filtered
+            
         except Exception as e:
             self.logger.error(f"Recall failed in {collection_name}: {e}")
             return []
@@ -83,21 +102,23 @@ class VectorMemory:
         self.remember(fact, "user_facts", {"user_id": user_id})
 
     def recall_user(self, query: str, user_id: str = "default") -> List[str]:
-        return self.recall(query, "user_facts", n=5)
+        # User facts need high relevance
+        return self.recall(query, "user_facts", n=5, threshold=0.8)
 
     def remember_project(self, desc: str, meta: Optional[Dict[str, Any]] = None):
         self.remember(desc, "projects", meta)
 
     def recall_projects(self, query: str) -> List[str]:
-        return self.recall(query, "projects", n=3)
+        return self.recall(query, "projects", n=3, threshold=0.9)
 
     def cache_answer(self, query: str, answer: str):
         """Semantic cache for AI responses."""
         self.remember(answer, "cache", {"query": query})
 
     def get_cached_answer(self, query: str) -> Optional[str]:
-        """Retrieve cached answer if semantically similar."""
-        results = self.recall(query, "cache", n=1)
+        """Retrieve cached answer only if extremely similar (strict threshold)."""
+        # Strict threshold for cache (0.4) to prevent incorrect cache hits
+        results = self.recall(query, "cache", n=1, threshold=0.4)
         return results[0] if results else None
 
 

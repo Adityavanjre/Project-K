@@ -13,11 +13,10 @@ import os
 import random
 import traceback
 
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, project_root)
-sys.path.insert(0, os.path.join(project_root, 'src'))
+# sys.path injection removed per Phase 52 standards. Use PYTHONPATH.
 
-from src.core.processor import DoubtProcessor
+# Bug B-4 fix: Moved DoubtProcessor import inside run_ralph_loop() to prevent
+# top-level circular import that crashes the entire script in non-CUDA environments.
 
 # --- Existing channel imports ---
 from scripts.curiosity_scraper import run_curiosity_scraper
@@ -169,7 +168,7 @@ def _handle_exception(e: Exception, logger):
         return False
 
 
-def _dispatch_core_identity(channel: str, processor: DoubtProcessor, goal: str):
+def _dispatch_core_identity(channel: str, processor: "Any", goal: str):
     """Handles the 10 mandatory Core Identity training channels."""
     label = next((lbl for k, lbl in CORE_IDENTITY_CHANNELS if k == channel), channel)
     prompt = f"ACT AS YOUR CORE ROLE: {label}. Mission: {goal}"
@@ -178,7 +177,7 @@ def _dispatch_core_identity(channel: str, processor: DoubtProcessor, goal: str):
     return processor.process_doubt(prompt, bypass_cache=True)
 
 
-def _dispatch_channel(channel: str, processor: DoubtProcessor, goal: str, logger):
+def _dispatch_channel(channel: str, processor: "Any", goal: str, logger):
 
     """Routes the selected channel to its handler."""
     try:
@@ -290,7 +289,8 @@ def _dispatch_channel(channel: str, processor: DoubtProcessor, goal: str, logger
 def run_ralph_loop(goal: str, iterations: int = 5):
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger("RALPH_MAX")
-
+    # Bug B-4 fix: Deferred import prevents crash in non-CUDA environments
+    from src.core.processor import DoubtProcessor
     logger.info(f"KALI RALPH 500+ MAX VELOCITY: Initiating loop for '{goal}'")
     processor = DoubtProcessor()
     # Rotate through the 10 Core Identity channels in order

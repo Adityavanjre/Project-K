@@ -5,8 +5,36 @@ Helper functions and utilities for the Doubt Clearing AI system.
 import json
 import logging
 import os
+import threading
+import uuid
+from datetime import datetime
 from typing import Dict, Any, Optional
 
+
+# Context for correlation IDs (Phase 54)
+_log_context = threading.local()
+
+def get_correlation_id() -> str:
+    """Retrieve the current thread's correlation ID."""
+    return getattr(_log_context, "correlation_id", "GLOBAL")
+
+def set_correlation_id(cid: str):
+    """Set the current thread's correlation ID."""
+    _log_context.correlation_id = cid
+
+class JSONFormatter(logging.Formatter):
+    """Phase 54: Structured JSON Logging Formatter."""
+    def format(self, record):
+        log_entry = {
+            "timestamp": self.formatTime(record, self.datefmt),
+            "level": record.levelname,
+            "logger": record.name,
+            "correlation_id": get_correlation_id(),
+            "message": record.getMessage(),
+        }
+        if record.exc_info:
+            log_entry["exception"] = self.formatException(record.exc_info)
+        return json.dumps(log_entry)
 
 def setup_logging(
     level: int = logging.INFO, format_string: Optional[str] = None

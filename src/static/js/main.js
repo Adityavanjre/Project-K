@@ -1438,6 +1438,10 @@ class HUDController {
         this.disc = document.getElementById('hud-disc');
         this.power = document.getElementById('hud-power-val');
         
+        // Header Status
+        this.sysStatus = document.getElementById('hud-sys-status');
+        this.biosChip = document.getElementById('hud-bios-chip');
+        
         // Singularity Elements
         this.cpuVal = document.getElementById('hud-cpu-val');
         this.cpuBar = document.getElementById('hud-cpu-bar');
@@ -1583,8 +1587,13 @@ class HUDController {
                 // Phase 38: Sovereign Cloud
                 if (this.cloudStatus && s.cloud_status) {
                     const cs = s.cloud_status;
-                    this.cloudStatus.innerText = cs.status;
-                    this.cloudStatus.className = `text-[10px] font-bold tracking-widest ${cs.status === 'SYNC_ACTIVE' ? 'text-blue-400 animate-pulse' : 'text-blue-500'}`;
+                    if (s.sovereign_mode) {
+                        this.cloudStatus.innerText = "ABSOLUTE_LOCAL";
+                        this.cloudStatus.className = "text-amber-500 font-bold uppercase tracking-widest";
+                    } else {
+                        this.cloudStatus.innerText = cs.status;
+                        this.cloudStatus.className = `text-[10px] font-bold tracking-widest ${cs.status === 'SYNC_ACTIVE' ? 'text-blue-400 animate-pulse' : 'text-blue-500'}`;
+                    }
                     if (this.cloudSyncBar) {
                         this.cloudSyncBar.classList.toggle('hidden', cs.status !== 'SYNC_ACTIVE');
                     }
@@ -1641,14 +1650,26 @@ class HUDController {
                     if (this.healCount) this.healCount.innerText = s.repair_status.total_repairs;
                 }
 
-                // BIOS
-                if (this.biosVal) {
-                    const biosRes = await fetch('/api/bios_status');
-                    const biosData = await biosRes.json();
-                    if (biosData.success) {
-                        const status = biosData.data.status;
-                        this.biosVal.innerText = status;
-                        this.biosPulse.className = status === "SECURE" ? "bios-pulse bios-secure" : "bios-pulse bios-warning animate-pulse";
+                // BIOS & Health (Phase 54: O-2)
+                if (s.bios) {
+                    const status = s.bios.status;
+                    const isSecure = status === "SECURE";
+                    
+                    if (this.biosChip) {
+                        this.biosChip.innerText = `BIOS: ${status}`;
+                        this.biosChip.className = `ml-2 px-1 text-[8px] border rounded-sm transition-all ${isSecure ? 'bg-cyan-900/50 text-cyan-400 border-cyan-500/30' : 'bg-red-900/50 text-red-400 border-red-500/50 animate-pulse'}`;
+                    }
+                    
+                    if (this.sysStatus) {
+                        this.sysStatus.innerText = isSecure ? "NOMINAL" : "RECOVERY";
+                        this.sysStatus.style.color = isSecure ? "#00f3ff" : "#f87171";
+                    }
+
+                    if (this.biosVal) {
+                         this.biosVal.innerText = status;
+                         if (this.biosPulse) {
+                             this.biosPulse.className = isSecure ? "bios-pulse bios-secure" : "bios-pulse bios-warning animate-pulse";
+                         }
                     }
                 }
             }

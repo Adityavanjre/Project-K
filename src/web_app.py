@@ -59,7 +59,14 @@ def create_app(config_path="config/config.json"):
     app = Flask(__name__, static_folder="static")
     CORS(app)  # Enable CORS for modern frontend development
 
-    app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-change-in-production")
+    # Phase 52 Security Hardening: Enforce strong secret key
+    secret_key = os.environ.get("SECRET_KEY")
+    if not secret_key or secret_key == "dev-secret-key-change-in-production" or len(secret_key) < 32:
+        logger = logging.getLogger(__name__)
+        logger.error("CRITICAL: SECRET_KEY not set or is using insecure default. Protocol Aborted.")
+        raise RuntimeError("Insecure Configuration: A strong SECRET_KEY (min 32 chars) must be set in the environment.")
+    
+    app.secret_key = secret_key
 
     # Setup logging
     setup_logging(level=logging.INFO)
@@ -67,6 +74,17 @@ def create_app(config_path="config/config.json"):
 
     # Unified Initialization with Graceful Degradation
     try:
+        # Phase 53: Secure Boot & Self-Healing (G-6)
+        try:
+            from core.secure_boot import BootGuardian
+            bios = BootGuardian(project_root)
+            bios.perform_secure_boot()
+            app.bios_status = bios.get_bios_status()
+            logger.info(f"KALI BIOS: {app.bios_status['status']} mode active.")
+        except Exception as bios_err:
+            logger.error(f"KALI BIOS: Critical Boot Guardian Failure: {bios_err}")
+            app.bios_status = {"status": "FAILED", "violations": -1}
+
         # Load configuration
         config = load_config(config_path)
         logger.info("Configuration loaded successfully")
@@ -97,7 +115,6 @@ def create_app(config_path="config/config.json"):
                 self.power_mode = "LITE (RECOVERY)"
                 try:
                     from core.ai_service import AIService
-
                     self.ai_service = AIService()
                 except:
                     self.ai_service = None
@@ -109,6 +126,17 @@ def create_app(config_path="config/config.json"):
     if not hasattr(app, "auth_service") or app.auth_service is None:
         app.auth_service = AuthService(None)
 
+    @app.before_request
+    def set_request_correlation_id():
+        """Phase 54: Correlation Tracking."""
+        import uuid
+        try:
+            from utils.helpers import set_correlation_id
+            cid = request.headers.get("X-Correlation-ID", str(uuid.uuid4())[:8])
+            set_correlation_id(cid)
+        except:
+            pass
+
     @app.route("/health")
     def health_check():
         """Health check endpoint for monitoring."""
@@ -117,7 +145,8 @@ def create_app(config_path="config/config.json"):
     @app.route("/")
     def index():
         """Main page with the doubt clearing interface."""
-        return render_template("index.html")
+        sovereign_mode = os.getenv("KALI_SOVEREIGN_ONLY", "false").lower() == "true"
+        return render_template("index.html", sovereign_mode=sovereign_mode)
 
     @app.route("/api/verify_token", methods=["POST"])
     def verify_token():
@@ -155,6 +184,7 @@ def create_app(config_path="config/config.json"):
         return jsonify({"success": True, "message": "Logged out"})
 
     @app.route("/api/sync", methods=["POST"])
+    @login_required
     def sync_cycle():
         """Phase 15: Perform the Sync Cycle to reconsolidate state."""
         try:
@@ -183,12 +213,19 @@ def create_app(config_path="config/config.json"):
         """Handle standard text question."""
         try:
             data = request.get_json()
-            question = data.get("question", "").strip()
-
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+            
+            question = data.get("question", "")
+            if not isinstance(question, str):
+                return jsonify({"success": False, "error": "Question must be a string"}), 400
+            
+            question = question.strip()
             if not question:
-                return jsonify(
-                    {"success": False, "error": "Please enter a question"}
-                ), 400
+                return jsonify({"success": False, "error": "Please enter a question"}), 400
+                
+            if len(question) > 4000:
+                return jsonify({"success": False, "error": "Question too long (max 4000 chars)"}), 400
 
             logger.info(f"Processing question: {question[:50]}...")
 
@@ -216,11 +253,19 @@ def create_app(config_path="config/config.json"):
             return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/presentation", methods=["POST"])
+    @login_required
     def generate_presentation():
         """Generate a multimedia presentation (Steps + Audio + 3D Code)."""
         try:
             data = request.get_json()
-            question = data.get("question", "").strip()
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+
+            question = data.get("question", "")
+            if not isinstance(question, str) or not question.strip():
+                return jsonify({"success": False, "error": "Invalid presentation topic"}), 400
+            
+            question = question.strip()[:1000] # Cap presentation prompt
 
             result = app.doubt_processor.process_presentation_mode(question)
             return jsonify({"success": True, "data": result})
@@ -229,11 +274,19 @@ def create_app(config_path="config/config.json"):
             return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/project_plan", methods=["POST"])
+    @login_required
     def generate_project_plan():
         """Generate a project build plan (BOM + Roadmap)."""
         try:
             data = request.get_json()
-            idea = data.get("idea", "").strip()
+            if not data or "idea" not in data:
+                return jsonify({"success": False, "error": "Project idea missing"}), 400
+
+            idea = data.get("idea", "")
+            if not isinstance(idea, str) or not idea.strip():
+                return jsonify({"success": False, "error": "Invalid project idea"}), 400
+            
+            idea = idea.strip()[:2000]
 
             result = app.doubt_processor.process_project_mentor(idea)
             return jsonify({"success": True, "data": result})
@@ -242,10 +295,14 @@ def create_app(config_path="config/config.json"):
             return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/project_bom", methods=["POST"])
+    @login_required
     def generate_project_bom():
         """Phase 27: Economic Intelligence BOM."""
         try:
             data = request.get_json()
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+            
             components = data.get("components", [])
             name = data.get("name", "Custom Procurement")
 
@@ -257,10 +314,14 @@ def create_app(config_path="config/config.json"):
             return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/manifest_mission", methods=["POST"])
+    @login_required
     def manifest_mission():
         """Phase 28: Archive a project for fabrication."""
         try:
             data = request.get_json()
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+            
             project_path = data.get("path")
             if not project_path or not os.path.exists(project_path):
                 return jsonify({"success": False, "error": "Invalid project path"}), 400
@@ -290,10 +351,14 @@ def create_app(config_path="config/config.json"):
             return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/contextual_doubt", methods=["POST"])
+    @login_required
     def contextual_doubt():
         """Handle a doubt asked during a step."""
         try:
             data = request.get_json()
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+            
             question = data.get("question", "")
             context = data.get("context", {})  # {current_step_text: ..., topic: ...}
 
@@ -326,15 +391,21 @@ def create_app(config_path="config/config.json"):
             return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/agent", methods=["POST"])
+    @login_required
     def run_agent():
         """KALI autonomously researches or evolves her own codebase."""
         try:
             data = request.get_json()
-            goal = data.get("goal", "").strip()
-            if not goal:
-                return jsonify(
-                    {"success": False, "error": "Mission parameters missing."}
-                ), 400
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+            
+            goal = data.get("goal", "")
+            if not isinstance(goal, str) or not goal.strip():
+                return jsonify({"success": False, "error": "Mission parameters missing."}), 400
+            
+            goal = goal.strip()
+            if len(goal) > 4000:
+                return jsonify({"success": False, "error": "Goal too long (max 4000 chars)"}), 400
 
             # Phase 51: Intercept Evolution Commands
             lower_goal = goal.lower()
@@ -347,7 +418,12 @@ def create_app(config_path="config/config.json"):
                     res = app.doubt_processor.evolution_bridge.evolve_file(target_file, goal)
                     
                     if res.get("success"):
-                        return jsonify({"success": True, "data": res["message"]})
+                        return jsonify({
+                            "success": True, 
+                            "data": res["message"],
+                            "proposal_id": res.get("proposal_id"),
+                            "diff": res.get("diff")
+                        })
                     else:
                         return jsonify({"success": False, "error": res.get("error", "Evolution aborted.")})
 
@@ -359,10 +435,14 @@ def create_app(config_path="config/config.json"):
             return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/sovereign/cmd", methods=["POST"])
+    @login_required
     def run_sovereign_cmd():
         """KALI's Internal Root Command Interface."""
         try:
             data = request.get_json()
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+            
             prompt = data.get("prompt", "").strip()
             if not prompt:
                 return jsonify({"success": False, "error": "Root instruction missing."}), 400
@@ -371,6 +451,76 @@ def create_app(config_path="config/config.json"):
             return jsonify(res)
         except Exception as e:
             logger.error(f"Sovereign Core Failure: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
+
+    @app.route("/api/sovereign/proposals", methods=["GET"])
+    @login_required
+    def get_proposals():
+        """List all pending/applied code evolution proposals."""
+        try:
+            p_dir = app.doubt_processor.evolution_bridge.proposals_dir
+            proposals = []
+            import json
+            for f in os.listdir(p_dir):
+                if f.endswith(".json"):
+                    with open(os.path.join(p_dir, f), "r") as pf:
+                        proposals.append(json.load(pf))
+            # Sort by timestamp
+            proposals.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+            return jsonify({"success": True, "proposals": proposals})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
+
+    @app.route("/api/sovereign/confirm", methods=["POST"])
+    @app.route("/api/sovereign/apply", methods=["POST"])  # Phase 52 Alias
+    @login_required
+    def confirm_proposal():
+        """Confirm and apply a specific evolution proposal."""
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+            
+            proposal_id = data.get("proposal_id")
+            if not proposal_id:
+                 return jsonify({"success": False, "error": "Proposal ID required."}), 400
+            
+            res = app.doubt_processor.evolution_bridge.confirm_evolution(proposal_id)
+            return jsonify(res)
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
+
+    @app.route("/api/user/consent", methods=["POST"])
+    @login_required
+    def update_consent():
+        """Update logging consent (Phase 54)."""
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+            
+            status = data.get("consent", False)
+            app.doubt_processor.user_dna.set_consent(status)
+            return jsonify({"success": True, "consent": status})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
+
+    @app.route("/api/user/data", methods=["DELETE"])
+    @login_required
+    def delete_user_data():
+        """Absolute Sovereign Purge (Right to be Forgotten)."""
+        try:
+            # Requires re-authentication or a specific 'confirm' flag for safety
+            data = request.get_json() or {}
+            if not data.get("confirm_purge") == "PERMANENT_DELETE":
+                return jsonify({
+                    "success": False, 
+                    "error": "Safety Interlock: Please provide 'confirm_purge': 'PERMANENT_DELETE' to proceed."
+                }), 403
+                
+            res = app.doubt_processor.purge_sovereign_data()
+            return jsonify(res)
+        except Exception as e:
             return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/status", methods=["GET"])
@@ -389,7 +539,11 @@ def create_app(config_path="config/config.json"):
                 if getattr(processor.proactive_research, "is_active", False)
                 else "Idle"
             )
+            # Overlay BIOS status from app context
+            status["bios"] = getattr(app, "bios_status", {"status": "UNKNOWN"})
             status["is_local"] = processor.use_local_ai
+            status["sovereignty_score"] = status.get("sovereignty_score", 0.0)
+            status["node_status"] = "SYNCED" if status.get("local_node_ready") else "EXTERNAL"
             status["uptime"] = "Optimal"
             status["last_discovery"] = "Quantum Vedic Resonance"
             status["heartbeat"] = {"status": "OFFLINE"}
@@ -527,11 +681,18 @@ def create_app(config_path="config/config.json"):
 
     @app.route("/api/toggle_power", methods=["POST"])
     def toggle_power():
-        new_mode = request.json.get("mode")
-        if new_mode in ["ECO", "TURBO"]:
-            app.doubt_processor.power_mode = new_mode
-            return jsonify({"success": True, "mode": app.doubt_processor.power_mode})
-        return jsonify({"success": False, "error": "Invalid mode"})
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+            
+            new_mode = data.get("mode")
+            if new_mode in ["ECO", "TURBO"]:
+                app.doubt_processor.power_mode = new_mode
+                return jsonify({"success": True, "mode": app.doubt_processor.power_mode})
+            return jsonify({"success": False, "error": "Invalid mode"})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/feedback", methods=["POST"])
     def feedback():
@@ -581,19 +742,29 @@ def create_app(config_path="config/config.json"):
 
 
 def main():
-    """Run the Flask development server."""
+    """Run the Flask server with Waitress fallback for Windows (Bug B-6)."""
     app = create_app()
     config = load_config("config/config.json")
     api_config = config.get("api", {})
 
-    # Phase 25: Enable broadcasting to network
     host = "0.0.0.0"
     port = api_config.get("port", 8000)
     debug = api_config.get("debug", False)
 
     print(f"🚀 KALI Omnipresent Interface Running on http://localhost:{port}")
     print(f"🌐 Broadcast Mode Active: Access via http://0.0.0.0:{port}")
-    app.run(host=host, port=port, debug=debug)
+
+    if os.name == "nt" and not debug:
+        try:
+            from waitress import serve
+            print("🛡️  Windows Detected: Using Waitress for production serving.")
+            serve(app, host=host, port=port)
+        except ImportError:
+            print("⚠️  Waitress not found. Falling back to development server.")
+            app.run(host=host, port=port, debug=debug)
+    else:
+        # Standard Flask run (with debug if enabled)
+        app.run(host=host, port=port, debug=debug)
 
 
 if __name__ == "__main__":
