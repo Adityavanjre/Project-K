@@ -41,8 +41,13 @@ class EvolutionBridge:
             
         return raw_text.strip()
 
-    def _verify_integrity(self, code: str) -> bool:
-        """Rule 1: AST Code Verification to prevent self-destruction."""
+    def _verify_integrity(self, code: str, file_type: str = "python") -> bool:
+        """Rule 1: Code Verification to prevent self-destruction."""
+        if file_type != "python":
+            # For HTML/CSS, we currently only check if not empty. 
+            # In Phase 52, we will add template-linting.
+            return len(code.strip()) > 0
+            
         try:
             ast.parse(code)
             return True
@@ -77,11 +82,12 @@ class EvolutionBridge:
         """
         abs_path = os.path.abspath(os.path.join(self.project_root, target_file))
         
-        # Security Boundary: Restrict to `src/` directory
-        if "src" not in abs_path or not abs_path.endswith(".py"):
+        # Security Boundary: Restrict to `src/` directory and allowed extensions
+        allowed_extensions = (".py", ".html", ".css", ".js")
+        if "src" not in abs_path or not abs_path.endswith(allowed_extensions):
             return {
                 "success": False, 
-                "error": "SECURITY_VIOLATION: KALI can only self-evolve native .py files inside the src/ directory."
+                "error": f"SECURITY_VIOLATION: KALI can only self-evolve native {allowed_extensions} files inside the src/ directory."
             }
 
         if not os.path.exists(abs_path):
@@ -107,10 +113,11 @@ class EvolutionBridge:
         {original_code}
 
         CRITICAL DIRECTIVES:
-        1. Return ONLY the fully complete, upgraded Python code for this file. 
+        1. Return ONLY the fully complete, upgraded code for this file. 
         2. DO NOT return markdown. DO NOT return explanations. 
         3. Do not omit any core functionality from the original file unless instructed.
         4. Strictly follow the NoEmojiPolicy.
+        5. If this is HTML, ensure all template tags (e.g. {{ ... }} or {% ... %}) are preserved correctly.
         """
 
         self.logger.info(f"KALI Singularity: Attempting to evolve {target_file}...")
@@ -120,11 +127,14 @@ class EvolutionBridge:
             raw_response = self.ai_service.ask_question(prompt)
             new_code = self._extract_python_code(raw_response)
 
+            # 1b. Determine file type for integrity check
+            file_type = "python" if target_file.endswith(".py") else "frontend"
+            
             # Rule 1: Integrity Check
-            if not self._verify_integrity(new_code):
+            if not self._verify_integrity(new_code, file_type):
                 return {
                     "success": False, 
-                    "error": "The neural brain returned syntactically invalid Python. I have aborted the upgrade."
+                    "error": f"The neural brain returned syntactically invalid {file_type} or empty code. I have aborted the upgrade."
                 }
 
             # Rule Guard: Behavioral Check

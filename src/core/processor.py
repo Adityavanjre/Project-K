@@ -313,6 +313,17 @@ class DoubtProcessor:
 
             self.logger.info(f"KALI Research Loop: {query.splitlines()[0]}...")
 
+            # Phase 4.14+: Greeting Interceptor (Stop academic hallucinations for causal conversation)
+            greetings = ["hi", "hello", "hey", "hola", "greetings", "yo", "morning", "evening", "night"]
+            clean_query = query.lower().strip("?!. ")
+            if clean_query in greetings or len(clean_query) < 3:
+                self.logger.info("KALI: Casual Greeting Detected. Bypassing Explainer.")
+                return {
+                    "text": "Greetings, Commander. KALI Sovereignty is online and awaiting your strategic instructions.",
+                    "can_build": False,
+                    "source": "conversational_shield"
+                }
+
             # Cache check
             if not bypass_cache:
                 cached = self.vector_memory.get_cached_answer(query)

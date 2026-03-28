@@ -28,8 +28,9 @@ class AutonomousCoder:
         You are KALI, an autonomous Sovereign AI.
         Commander Request: "{goal}"
         
-        Analyze your current project structure and identify which files in 'src/core/' 
-        need to be modified to fulfill this request.
+        Analyze your current project structure and identify which files in the entire 'src/' directory 
+        (including 'src/core/', 'src/templates/', and 'src/static/') need to be modified 
+        to fulfill this request.
         
         Return ONLY a JSON array of strings representing the relative file paths.
         Example: ["src/core/memory.py", "src/core/processor.py"]

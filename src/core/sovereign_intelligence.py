@@ -23,9 +23,9 @@ class SovereignIntelligence:
         
         # 1. Intent: SELF_EVOLUTION (High-Level Mission)
         # Check for keywords like "implement phase", "system-wide", "complex mission"
-        is_mission = any(x in lower_prompt for x in ["mission", "implement phase", "complex", "system-wide", "optimize engine"])
+        is_mission = any(x in lower_prompt for x in ["mission", "implement phase", "complex", "system-wide", "optimize engine", "ui", "frontend", "responsive", "clean layout"])
         
-        if any(x in lower_prompt for x in ["rewrite", "update code", "change logic", "modify", "evolve"]) or is_mission:
+        if any(x in lower_prompt for x in ["rewrite", "update code", "change logic", "modify", "evolve", "fix"]) or is_mission:
             # If it's a specific file mentions, use Bridge directly
             match = re.search(r'([A-Za-z0-9_/\\]+\\.py)', prompt) # Updated regex for windows paths
             if not match:
