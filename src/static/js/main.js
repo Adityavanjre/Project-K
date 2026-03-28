@@ -1848,6 +1848,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Late Init for modules added via replace
         window.app.home = new SmartHome();
         window.app.agent = new AgentMode();
+        window.app.core = new CoreMode();
 
         if (window.cachedCredential) {
             console.log("Processing Cached Credential...");

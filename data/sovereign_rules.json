@@ -1,0 +1,19 @@
+{
+    "ImmutableRules": {
+        "NoEmojiPolicy": true,
+        "OriginProtection": [
+            "src/core/processor.py",
+            "src/core/secure_boot.py",
+            "src/core/omega_protocol.py"
+        ],
+        "CommanderOnly": "adity",
+        "SovereignPC": "aditya",
+        "NoUnauthorizedLeaks": true,
+        "HighPriorityInterruption": true
+    },
+    "EvolutionThresholds": {
+        "AST_Verification": "REQUIRED",
+        "BackupRequired": true,
+        "MinAlignment": 0.92
+    }
+}

@@ -2,6 +2,7 @@ import logging
 import re
 import json
 from typing import Dict, Any
+from .autonomous_coder import AutonomousCoder
 
 class SovereignIntelligence:
     """
@@ -12,6 +13,7 @@ class SovereignIntelligence:
     def __init__(self, processor: Any):
         self.processor = processor
         self.logger = logging.getLogger(__name__)
+        self.auto_coder = AutonomousCoder(processor)
 
     def process_command(self, prompt: str) -> Dict[str, Any]:
         """Analyzes intent and executes internal sovereign actions."""
@@ -19,16 +21,26 @@ class SovereignIntelligence:
         
         lower_prompt = prompt.lower()
         
-        # 1. Intent: SELF_EVOLUTION (Code Modification)
-        if any(x in lower_prompt for x in ["rewrite", "update code", "change logic", "modify"]):
-            # Target file extraction (simple regex for now)
-            match = re.search(r'([A-Za-z0-9_/\\]+\.py)', prompt)
-            target_file = match.group(1) if match else "src/core/processor.py" # Default to processor if not specified
+        # 1. Intent: SELF_EVOLUTION (High-Level Mission)
+        # Check for keywords like "implement phase", "system-wide", "complex mission"
+        is_mission = any(x in lower_prompt for x in ["mission", "implement phase", "complex", "system-wide", "optimize engine"])
+        
+        if any(x in lower_prompt for x in ["rewrite", "update code", "change logic", "modify", "evolve"]) or is_mission:
+            # If it's a specific file mentions, use Bridge directly
+            match = re.search(r'([A-Za-z0-9_/\\]+\\.py)', prompt) # Updated regex for windows paths
+            if not match:
+                match = re.search(r'([A-Za-z0-9_/\\]+\.py)', prompt)
             
-            self.logger.info(f"KALI_CORE: Routing to Evolution Bridge for {target_file}")
-            return self.processor.evolution_bridge.evolve_file(target_file, prompt)
+            if match and not is_mission:
+                target_file = match.group(1)
+                self.logger.info(f"KALI_CORE: Routing to Evolution Bridge for {target_file}")
+                return self.processor.evolution_bridge.evolve_file(target_file, prompt)
+            else:
+                # High-level mission: Route to Autonomous Coder
+                self.logger.info(f"KALI_CORE: Routing to Autonomous Coder for complex mission: {prompt}")
+                return self.auto_coder.execute_mission(prompt)
 
-        # 2. Intent: SKILL_MANIFESTATION (New Capability)
+        # 2. Intent: SKILL_MANIFESTOR (New Capability)
         if any(x in lower_prompt for x in ["manifest", "new skill", "add feature"]):
             self.logger.info(f"KALI_CORE: Routing to Skill Manifestor")
             return self.processor.skill_manifestor.manifest_skill(prompt)
