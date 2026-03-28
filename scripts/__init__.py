@@ -1,1 +1,1 @@
-# Initializer for scripts module
+# Initialize scripts as a Python package. 2

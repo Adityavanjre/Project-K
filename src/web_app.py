@@ -21,6 +21,13 @@ from flask_cors import CORS
 # Load env variables immediately
 load_dotenv()
 from datetime import datetime
+import sys
+
+# Phase 4.14: Colab Path Stability
+# Ensure project root is in sys.path for top-level scripts access
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 try:
     from core.processor import DoubtProcessor

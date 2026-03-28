@@ -1,7 +1,1 @@
-"""
-Doubt Clearing AI - An intelligent assistant for clearing doubts effortlessly.
-"""
-
-__version__ = "0.1.0"
-__author__ = "Your Name"
-__email__ = "your.email@example.com"
+# Initialize src as a Python package. 2
