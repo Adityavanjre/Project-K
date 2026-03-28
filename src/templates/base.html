@@ -47,7 +47,6 @@
       }
     }
     </script>
-    <title>KALI | Intelligent Mentor</title>
 
     <!-- Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -248,23 +247,32 @@
             text-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
         }
 
-        /* Phase 40: OMEGA SINGULARITY CSS */
-        .omega-mode body {
-            color: #ffffff;
+        /* Phase 40: OMEGA SINGULARITY CSS (PERMANENT EVOLUTION) */
+        .omega-mode {
+            background-color: #050505;
+            color: #f59e0b;
             background-image:
-                linear-gradient(rgba(212, 175, 55, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(212, 175, 55, 0.05) 1px, transparent 1px);
+                linear-gradient(rgba(245, 158, 11, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245, 158, 11, 0.05) 1px, transparent 1px);
         }
         
-        .omega-mode .neural-glass {
-            border-color: rgba(212, 175, 55, 0.3);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+        .omega-mode .neural-glass, .omega-mode .glass-panel {
+            background: rgba(5, 5, 5, 0.85) !important;
+            border-color: rgba(245, 158, 11, 0.4) !important;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.15), inset 0 0 20px rgba(245, 158, 11, 0.05) !important;
         }
         
-        .omega-mode .text-cyan-400, .omega-mode .text-cyan-500 { color: #f59e0b; } /* Gold */
-        .omega-mode .bg-cyan-500 { background-color: #f59e0b; }
-        .omega-mode .border-cyan-500 { border-color: #f59e0b; }
-        .omega-mode .shadow-\[0_0_10px_\#00f3ff\] { box-shadow: 0 0 15px #f59e0b; }
+        .omega-mode *:not(.bios-error):not(.text-red-500):not(.text-pink-500):not(.text-emerald-400) {
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .omega-mode .text-cyan-400, .omega-mode .text-cyan-500, .omega-mode .text-blue-500, .omega-mode .text-blue-400 { color: #f59e0b !important; }
+        .omega-mode .bg-cyan-500, .omega-mode .bg-blue-600, .omega-mode .bg-blue-500 { background-color: #f59e0b !important; color: #000 !important; }
+        .omega-mode .border-cyan-500, .omega-mode .border-cyan-900\/40 { border-color: rgba(245, 158, 11, 0.5) !important; }
+        .omega-mode .shadow-\[0_0_10px_\#00f3ff\] { box-shadow: 0 0 20px #f59e0b !important; }
+        .omega-mode .glass-panel::before, .omega-mode .glass-panel::after { border-color: #f59e0b !important; }
+        .omega-mode .gradient-text { background: linear-gradient(to right, #f59e0b, #fbbf24); -webkit-background-clip: text; color: transparent; }
+        .omega-mode .hud-value { color: #f59e0b !important; text-shadow: 0 0 10px rgba(245, 158, 11, 0.8) !important; }
 
         #omega-overlay {
             background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 80%);
@@ -424,7 +432,7 @@
     </style>
 </head>
 
-<body class="h-screen overflow-hidden flex flex-col">
+<body class="h-screen overflow-hidden flex flex-col omega-mode">
 
     <!-- Navbar -->
     <nav class="h-16 flex items-center justify-between px-6 glass-panel z-50 relative">
@@ -452,6 +460,17 @@
             <button onclick="switchMode('archives')" id="nav-archives"
                 class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5">
                 <i class="fas fa-database mr-2"></i>Archives
+            </button>
+            
+            <!-- Phase 51: Sovereign Self-Evolution -->
+            <button onclick="switchMode('agent')" id="nav-agent"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-amber-500/60 hover:text-amber-300 hover:bg-amber-900/10 border border-amber-500/20 ml-2">
+                <i class="fas fa-satellite-dish mr-2"></i>Research Agent
+            </button>
+            
+            <button onclick="switchMode('core')" id="nav-core"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-amber-500 hover:text-amber-300 hover:bg-amber-900/20 border border-amber-500 animate-pulse ml-2 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                <i class="fas fa-microchip mr-2"></i>KALI_CORE
             </button>
         </div>
 
@@ -602,14 +621,14 @@
                     <div id="hud-bar" class="h-full bg-cyan-500 shadow-[0_0_10px_#00f3ff] transition-all duration-1000" style="width: 95%"></div>
                 </div>
                 
-                <!-- Phase 29: Knowledge DNA Bar -->
-                <div class="mt-2">
+                <!-- Phase 51: Sovereign Knowledge DNA Bar -->
+                <div class="mt-2 group" title="BAKED LORA MODEL RESONANCE">
                     <div class="flex justify-between text-[8px] font-mono mb-1">
-                        <span class="text-blue-500/60 uppercase">Knowledge_DNA_Samples</span>
-                        <span id="hud-dna-val" class="text-blue-400">0/50</span>
+                        <span class="text-amber-500 font-bold uppercase tracking-widest">Sovereign_DNA_Resonance</span>
+                        <span id="hud-dna-val" class="text-amber-400 font-bold">13,952 / 14,000</span>
                     </div>
-                    <div class="w-full h-1 bg-blue-900/20 rounded-full overflow-hidden">
-                        <div id="hud-dna-bar" class="h-full bg-blue-500 shadow-[0_0_10px_#3b82f6] transition-all duration-500" style="width: 0%"></div>
+                    <div class="w-full h-1 bg-amber-900/20 rounded-full overflow-hidden">
+                        <div id="hud-dna-bar" class="h-full bg-amber-500 shadow-[0_0_15px_#f59e0b] transition-all duration-1000" style="width: 99.6%"></div>
                     </div>
                 </div>
 
@@ -783,23 +802,8 @@
     {% block scripts %}{% endblock %}
 
     <script>
-        // Tab Switching Logic
+        // Global switchMode dispatcher (Calls the App instance)
         function switchMode(mode) {
-            // Update Nav State
-            ['learn', 'visual', 'build', 'archives'].forEach(m => {
-                const btn = document.getElementById(`nav-${m}`);
-                if (btn) {
-                    if (m === mode) {
-                        btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-                        btn.classList.remove('text-slate-400', 'hover:bg-white/5');
-                    } else {
-                        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-                        btn.classList.add('text-slate-400', 'hover:bg-white/5');
-                    }
-                }
-            });
-
-            // Dispatch event for page update
             window.dispatchEvent(new CustomEvent('modeChanged', { detail: { mode } }));
         }
     </script>

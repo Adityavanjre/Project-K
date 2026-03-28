@@ -69,6 +69,8 @@ class App {
         this.visualizer = new Visualizer();
         this.mentor = new ProjectMentor();
         this.archives = new Archives();
+        this.agent = new AgentMode();
+        this.core = new CoreMode();
         this.voice = new VoiceModule();
 
         window.addEventListener('modeChanged', (e) => this.switchMode(e.detail.mode));
@@ -93,7 +95,7 @@ class App {
         this.mode = newMode;
 
         // Hide all sections
-        this.modes = ['learn', 'visual', 'build', 'archives', 'agent'];
+        this.modes = ['learn', 'visual', 'build', 'archives', 'agent', 'core'];
         this.modes.forEach(m => {
             const el = document.getElementById(`mode-${m}`);
             if (el) {
@@ -107,22 +109,29 @@ class App {
                     el.classList.add('hidden');
                 }
             }
+
+            // Sync nav buttons
+            const nav = document.getElementById(`nav-${m}`);
+            if (nav) {
+                if (m === newMode) {
+                    nav.classList.add('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-500/20');
+                    nav.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-white/5');
+                    
+                    if (m === 'core') {
+                        nav.classList.remove('bg-blue-600');
+                        nav.classList.add('bg-amber-600', 'text-white', 'border-amber-400');
+                    }
+                } else {
+                    nav.classList.remove('bg-blue-600', 'bg-amber-600', 'text-white', 'shadow-lg', 'shadow-blue-500/20', 'border-amber-400');
+                    nav.classList.add('text-slate-400');
+                }
+            }
         });
 
         // Resize Three.js if entering visual mode
         if (newMode === 'visual') {
             setTimeout(() => this.visualizer.resizeCanvas(), 100);
         }
-
-        // Update Nav UI
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            // Simplified logic: visual cue handled mainly by switching content
-            if (btn.innerText.toLowerCase().includes(newMode) || btn.innerHTML.includes(newMode)) {
-                btn.classList.add('text-cyan-400', 'border-b-2', 'border-cyan-400');
-            } else {
-                btn.classList.remove('text-cyan-400', 'border-b-2', 'border-cyan-400');
-            }
-        });
     }
 
     startBuildFromChat(msgId) {
@@ -299,8 +308,10 @@ class VoiceModule {
     constructor() {
         this.recognition = null;
         this.isListening = false;
-        this.speechEnabled = true; // For output
+        this.speechEnabled = true;
         this.synth = window.speechSynthesis;
+        this.isSpeaking = false;
+        this.currentUtterance = null;
 
         this.initRecognition();
         this.setupUI();
@@ -315,15 +326,14 @@ class VoiceModule {
             this.recognition.onstart = () => {
                 this.isListening = true;
                 this.updateBtnState(true);
-                // Phase 36: Pulse based on activity
-                if(window.app.hud) window.app.hud.setVocalState('listening');
-                this.synth.cancel(); // Stop speaking to listen
+                if(window.app && window.app.hud) window.app.hud.setVocalState('listening');
+                this.synth.cancel();
             };
 
             this.recognition.onend = () => {
                 this.isListening = false;
                 this.updateBtnState(false);
-                if(window.app.hud) window.app.hud.setVocalState('standby');
+                if(window.app && window.app.hud) window.app.hud.setVocalState('standby');
             };
 
             this.recognition.onresult = (event) => {
@@ -360,38 +370,55 @@ class VoiceModule {
 
     handleVoiceInput(text) {
         console.log("Voice Command:", text);
-        // Put text in input
         const input = document.getElementById('chat-input');
         if (input) {
             input.value = text;
-            // Auto submit
             document.getElementById('chat-form').dispatchEvent(new Event('submit'));
         }
     }
 
     speak(text) {
-        if (!this.speechEnabled) return;
+        if (!this.speechEnabled || !text) return;
+        this.stop();
 
         try {
-            this.synth.cancel();
-            if(window.app.hud) window.app.hud.setVocalState('speaking');
-
             const cleanText = text.replace(/>/g, '').replace(/\*/g, '').replace(/_/g, '');
-            const utter = new SpeechSynthesisUtterance(cleanText);
-            
-            utter.onend = () => {
-                if(window.app.hud) window.app.hud.setVocalState('standby');
+            this.currentUtterance = new SpeechSynthesisUtterance(cleanText);
+
+            this.currentUtterance.rate = 1.0;
+            this.currentUtterance.pitch = 0.9;
+            this.currentUtterance.volume = 1.0;
+
+            this.currentUtterance.onstart = () => {
+                this.isSpeaking = true;
+                if(window.app && window.app.hud) window.app.hud.setVocalState('speaking');
+            };
+            this.currentUtterance.onend = () => {
+                this.isSpeaking = false;
+                if(window.app && window.app.hud) window.app.hud.setVocalState('standby');
+            };
+            this.currentUtterance.onerror = (e) => {
+                console.error("Vocal failure:", e);
+                this.isSpeaking = false;
+                if(window.app && window.app.hud) window.app.hud.setVocalState('standby');
             };
 
             const voices = this.synth.getVoices();
             if (voices.length > 0) {
                 const preferred = voices.find(v => v.name.includes('Google US English') || v.name.includes('David') || v.name.includes('Male'));
-                if (preferred) utter.voice = preferred;
+                if (preferred) this.currentUtterance.voice = preferred;
             }
 
-            this.synth.speak(utter);
+            this.synth.speak(this.currentUtterance);
         } catch (e) {
             console.warn("Audio Output Failed:", e);
+        }
+    }
+
+    stop() {
+        if (this.synth.speaking) {
+            this.synth.cancel();
+            this.isSpeaking = false;
         }
     }
 }
@@ -1197,6 +1224,63 @@ class AgentMode {
     }
 }
 
+class CoreMode {
+    constructor() {
+        this.input = document.getElementById('core-input');
+        this.btn = document.getElementById('btn-core-execute');
+        this.logs = document.getElementById('core-logs');
+        
+        if (this.btn) {
+            this.btn.addEventListener('click', () => this.runCommand());
+            this.input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') this.runCommand();
+            });
+        }
+    }
+
+    addLog(msg, type = 'info') {
+        const div = document.createElement('div');
+        const ts = new Date().toLocaleTimeString();
+        let color = 'text-amber-500/60';
+        if (type === 'cmd') color = 'text-amber-400 font-bold';
+        if (type === 'success') color = 'text-emerald-400';
+        if (type === 'error') color = 'text-red-500';
+        
+        div.className = `${color} mb-1`;
+        div.innerHTML = `<span class="opacity-30 mr-2">[${ts}]</span> ${msg}`;
+        this.logs.appendChild(div);
+        this.logs.scrollTop = this.logs.scrollHeight;
+    }
+
+    async runCommand() {
+        const cmd = this.input.value ? this.input.value.trim() : "";
+        if (!cmd) return;
+
+        this.addLog(`KALI@CORE:~$ ${cmd}`, 'cmd');
+        this.input.value = '';
+        this.addLog("INITIATING ROOT_LEVEL_EVOLUTION_PROTOCOL...", 'info');
+
+        try {
+            const res = await fetch('/api/sovereign/cmd', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: cmd })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                this.addLog(">>> EVOLUTION_PROTOCOL_SUCCESS", 'success');
+                this.addLog(data.data || data.message || "Root modification applied successfully.", 'info');
+                this.addLog("NOTE: RESTART REQUIRED FOR FULL DNA RECLAMATION.", 'info');
+            } else {
+                this.addLog(`>>> PROTOCOL_ABORTED: ${data.error}`, 'error');
+            }
+        } catch (e) {
+            this.addLog(`>>> CORE_FAIL: ${e.message}`, 'error');
+        }
+    }
+}
+
 class SmartHome {
     constructor() {
         this.isPartyMode = false;
@@ -1693,45 +1777,6 @@ class HUDController {
     }
 }
 
-
-class VoiceModule {
-    constructor() {
-        this.synth = window.speechSynthesis;
-        this.isSpeaking = false;
-        this.currentUtterance = null;
-    }
-
-    speak(text) {
-        if (!text) return;
-        
-        // Stop current if any (Point 4: State-Aware Interruption)
-        this.stop();
-
-        this.currentUtterance = new SpeechSynthesisUtterance(text);
-        
-        // KALI's Voice Characteristics
-        this.currentUtterance.rate = 1.0;
-        this.currentUtterance.pitch = 0.9; // Slightly deeper, authoritative
-        this.currentUtterance.volume = 1.0;
-
-        this.currentUtterance.onstart = () => { this.isSpeaking = true; };
-        this.currentUtterance.onend = () => { this.isSpeaking = false; };
-        this.currentUtterance.onerror = (e) => { 
-            console.error("Vocal failure:", e);
-            this.isSpeaking = false; 
-        };
-
-        this.synth.speak(this.currentUtterance);
-    }
-
-    stop() {
-        if (this.synth.speaking) {
-            this.synth.cancel();
-            this.isSpeaking = false;
-            console.log("KALI Vocal Flow Interrupted.");
-        }
-    }
-}
 
 class CognitiveHUD {
     constructor() {

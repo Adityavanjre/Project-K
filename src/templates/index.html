@@ -8,10 +8,10 @@
         class="absolute top-0 w-full px-6 py-2 flex justify-between text-[10px] text-cyan-600 font-mono z-40 pointer-events-none">
         <div>SYS.STATUS: <span class="text-cyan-400">NOMINAL</span></div>
         <div class="flex gap-4">
-            <div id="hud-tension">NEURAL.TENSION: <span class="text-cyan-400">CALCULATING...</span></div>
-            <div id="hud-dna">DNA.LEVEL: <span class="text-cyan-400">9/50</span></div>
+            <div id="hud-tension">NEURAL.TENSION: <span class="text-amber-400 font-bold">CALCULATING...</span></div>
+            <div id="hud-dna">DNA.LEVEL: <span class="text-amber-400 font-bold tracking-widest">SOVEREIGN (14K)</span></div>
         </div>
-        <div>KALI.PROTOCOL: <span class="text-cyan-400">ACTIVE</span></div>
+        <div>KALI.PROTOCOL: <span class="text-amber-400 font-bold">OMEGA_ACTIVE</span></div>
     </div>
 
     <!-- Cognitive Alert Overlay -->
@@ -181,23 +181,99 @@
             </div>
         </div>
     </div>
-    <!-- MODE: AGENT (Autonomous Task Executor) -->
-    <div id="mode-agent" class="hidden h-full flex flex-col p-6 max-w-4xl mx-auto w-full">
-        <div class="glass-panel p-4 mb-4">
-            <div class="flex gap-4">
-                <input type="text" id="agent-goal"
-                    class="flex-1 glass-input rounded px-4 py-2 text-sm"
-                    placeholder="MISSION OBJECTIVE: e.g. Research ESP32 vs Arduino for drone project">
-                <button id="btn-agent-execute"
-                    class="px-6 py-2 bg-purple-600/20 hover:bg-purple-600 text-purple-400 hover:text-white border border-purple-500 transition-all font-bold">
-                    EXECUTE
-                </button>
+
+    <!-- MODE: AGENT (Autonomous Research) -->
+    <div id="mode-agent" class="hidden h-full flex flex-col p-6 max-w-5xl mx-auto w-full">
+        <div class="glass-panel p-6 flex flex-col h-full border-blue-500/30">
+            <h2 class="text-xl font-tech text-blue-400 mb-6 flex items-center justify-between">
+                <span><i class="fas fa-robot mr-3"></i>AUTONOMOUS RESEARCH AGENT</span>
+                <span class="text-[10px] text-blue-900 font-mono tracking-widest">v4.0_STABLE</span>
+            </h2>
+            
+            <div class="mb-6">
+                <label class="text-[9px] text-blue-500 uppercase font-bold tracking-widest mb-2 block">Set Primary Objective</label>
+                <div class="flex gap-2">
+                    <input type="text" id="agent-goal" 
+                        class="flex-1 bg-blue-900/10 border border-blue-500/30 rounded p-3 text-blue-100 placeholder-blue-900/50 font-mono text-sm focus:outline-none focus:border-blue-500/60"
+                        placeholder="e.g.: 'Analyze the economic impact of the 2024 semi-conductor shortage'">
+                    <button id="btn-agent-execute" class="px-8 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs tracking-widest transition-all">
+                        DEPLOY
+                    </button>
+                </div>
+            </div>
+
+            <div id="agent-output" class="flex-1 overflow-y-auto font-mono text-xs text-blue-300/80 space-y-2 p-4 bg-black/40 rounded border border-blue-500/10 custom-scrollbar">
+                <div class="text-blue-900/30 italic">AGENT_STANDBY: Awaiting neural link...</div>
             </div>
         </div>
-        <div id="agent-output" class="glass-panel flex-1 p-6 overflow-y-auto font-mono text-sm text-cyan-300">
-            <div class="text-cyan-900/50 text-center mt-20">
-                <i class="fas fa-robot text-6xl mb-4 block"></i>
-                AWAITING MISSION PARAMETERS...
+    </div>
+    <!-- MODE: CORE (Internal Sovereign Command) -->
+    <div id="mode-core" class="hidden h-full flex flex-col p-6 max-w-6xl mx-auto w-full">
+        <div class="flex-1 flex gap-6 overflow-hidden">
+            <!-- Left: Neural Command Terminal -->
+            <div class="flex-1 flex flex-col glass-panel p-0 overflow-hidden border-amber-500/30">
+                <div class="bg-amber-900/20 border-b border-amber-500/30 p-3 flex justify-between items-center">
+                    <span class="text-[10px] font-mono text-amber-500 font-bold tracking-[0.2em] animate-pulse">
+                        <i class="fas fa-terminal mr-2"></i>SOVEREIGN_ROOT_TERMINAL_v1.0
+                    </span>
+                    <div class="flex gap-2">
+                        <div class="w-2 h-2 rounded-full bg-amber-500/20"></div>
+                        <div class="w-2 h-2 rounded-full bg-amber-500/20"></div>
+                        <div class="w-2 h-2 rounded-full bg-amber-500"></div>
+                    </div>
+                </div>
+                
+                <div id="core-logs" class="flex-1 overflow-y-auto p-4 font-mono text-sm space-y-2 bg-[#050505]/80 custom-scrollbar">
+                    <div class="text-amber-900/50"># KALI_CORE PROTOCOL INITIALIZED...</div>
+                    <div class="text-amber-900/50"># WAITING FOR ROOT INSTRUCTION...</div>
+                </div>
+
+                <div class="p-4 border-t border-amber-500/30 bg-amber-900/10">
+                    <div class="flex gap-4">
+                        <span class="text-amber-500 font-mono self-center">KALI@CORE:~$</span>
+                        <input type="text" id="core-input"
+                            class="flex-1 bg-transparent border-none text-amber-400 placeholder-amber-900/40 font-mono text-sm focus:outline-none"
+                            placeholder="e.g.: 'Rewrite src/core/memory.py to optimize vector caching'..." autocomplete="off">
+                        <button id="btn-core-execute"
+                            class="px-6 py-1 bg-amber-600/20 hover:bg-amber-600 text-amber-400 hover:text-white border border-amber-500 transition-all font-bold text-[10px] tracking-widest clip-path-slant">
+                            COMMIT_DNA
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Live System DNA HUD -->
+            <div class="w-64 glass-panel border-amber-500/20 flex flex-col p-4 space-y-6">
+                <div>
+                    <h3 class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-4 border-b border-amber-500/30 pb-2">Active DNA Status</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-end mb-1">
+                            <span class="text-[8px] text-amber-900 uppercase">Integrity</span>
+                            <span class="text-amber-400 font-mono">99.82%</span>
+                        </div>
+                        <div class="w-full h-1 bg-amber-900/20 rounded-full overflow-hidden">
+                            <div class="w-[99.82%] h-full bg-amber-500 shadow-[0_0_10px_#f59e0b]"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-2">Neural Paths</h3>
+                    <ul class="text-[9px] font-mono space-y-1 text-amber-900/60">
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-2 text-amber-500"></i>EvolutionBridge: LOADED</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-2 text-amber-500"></i>Self_Rewrite: ENABLED</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle mr-2 text-amber-500"></i>AST_Verifier: ACTIVE</li>
+                        <li class="flex items-center"><i class="fas fa-lock mr-2 text-amber-500/40"></i>System_Lock: ENGAGED</li>
+                    </ul>
+                </div>
+                
+                <div class="flex-1"></div>
+                
+                <div class="border-t border-amber-500/20 pt-4">
+                    <p class="text-[8px] leading-relaxed text-amber-700/60 italic font-mono uppercase tracking-tighter">
+                        Warning: Direct DNA modification can lead to system drift. Ensure AST verification is nominal.
+                    </p>
+                </div>
             </div>
         </div>
     </div>

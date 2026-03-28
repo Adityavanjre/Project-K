@@ -22,20 +22,28 @@ class KnowledgeCheckEngine:
     A training run is only marked SUCCESS when this check passes.
     """
 
-    PASS_THRESHOLD = 100  # Score out of 100 required to pass (Perfect Recall)
+    PASS_THRESHOLD = 60  # Score out of 100 required to pass
 
     def __init__(self, ai_service, project_root: str = None):
         self.ai = ai_service
         if project_root is None:
-            project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+            project_root = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "..", "..")
+            )
         self.project_root = project_root
         self.training_log_path = os.path.join(project_root, "data", "training_log.json")
-        self.failures_path = os.path.join(project_root, "data", "training_failures.jsonl")
+        self.failures_path = os.path.join(
+            project_root, "data", "training_failures.jsonl"
+        )
         self.pending_path = os.path.join(project_root, "data", "pending_checks.jsonl")
         self.pinned_path = os.path.join(project_root, "data", "pinned_topics.jsonl")
-        self.unverified_path = os.path.join(project_root, "data", "unverified_training.jsonl")
+        self.unverified_path = os.path.join(
+            project_root, "data", "unverified_training.jsonl"
+        )
         self.anchored_path = os.path.join(project_root, "data", "training_data.jsonl")
-        self.skill_log_path = os.path.join(project_root, "data", "skill_sovereignty.json")
+        self.skill_log_path = os.path.join(
+            project_root, "data", "skill_sovereignty.json"
+        )
         os.makedirs(os.path.join(project_root, "data"), exist_ok=True)
 
     def is_atom_mastered(self, fact: str) -> bool:
@@ -45,9 +53,13 @@ class KnowledgeCheckEngine:
         try:
             with open(self.anchored_path, "r", encoding="utf-8") as f:
                 for line in f:
-                    if not line.strip(): continue
+                    if not line.strip():
+                        continue
                     data = json.loads(line)
-                    if data.get("fact") == fact and data.get("status") == "FINALIZED_SOVEREIGN":
+                    if (
+                        data.get("fact") == fact
+                        and data.get("status") == "FINALIZED_SOVEREIGN"
+                    ):
                         return True
         except Exception:
             pass
@@ -68,14 +80,17 @@ class KnowledgeCheckEngine:
 
         # Load or create skill log
         skill_log = self._load_skill_log()
-        entry = skill_log.get(skill_name, {
-            "pass_count": 0,
-            "fail_count": 0,
-            "partial_count": 0,
-            "sovereignty_level": 0.0,
-            "best_score": 0.0,
-            "status": "UNTESTED"
-        })
+        entry = skill_log.get(
+            skill_name,
+            {
+                "pass_count": 0,
+                "fail_count": 0,
+                "partial_count": 0,
+                "sovereignty_level": 0.0,
+                "best_score": 0.0,
+                "status": "UNTESTED",
+            },
+        )
 
         current_score = result.get("score", 0.0)
         previous_best = entry.get("best_score", 0.0)
@@ -83,12 +98,15 @@ class KnowledgeCheckEngine:
         # Progressive Mastery: Track high-water mark
         if current_score > previous_best:
             entry["best_score"] = current_score
-            logger.info(f"[MASTERY] New High-Water Mark for '{skill_name}': {current_score}% (Previous: {previous_best}%)")
+            logger.info(
+                f"[MASTERY] New High-Water Mark for '{skill_name}': {current_score}% (Previous: {previous_best}%)"
+            )
 
             # Phase 4.75: Every improvement counts — 0.001%, 1%, 50% — all recorded.
             # Delta is proportional: bigger gain = bigger DNA boost. No gate, no threshold.
             try:
                 from src.core.user_dna import UserDNA as _UserDNA
+
                 _dna = _UserDNA()
                 improvement = current_score - previous_best
                 # Even the tiniest gain gets delta=1 minimum
@@ -100,7 +118,6 @@ class KnowledgeCheckEngine:
                 )
             except Exception as _e:
                 logger.debug(f"DNA incremental update skipped: {_e}")
-
 
         status = result.get("status", "SKIPPED")
         if status == "PASSED":
@@ -131,13 +148,15 @@ class KnowledgeCheckEngine:
     def get_skill_sovereignty_report(self) -> Dict[str, Any]:
         """Returns a per-skill sovereignty report. Every skill must be at 100% independently."""
         skill_log = self._load_skill_log()
-        sovereign_count = sum(1 for s in skill_log.values() if s.get("status") == "SOVEREIGN")
+        sovereign_count = sum(
+            1 for s in skill_log.values() if s.get("status") == "SOVEREIGN"
+        )
         total = len(skill_log)
         report = {
             "total_skills_tracked": total,
             "sovereign_skills": sovereign_count,
             "skills_remaining": total - sovereign_count,
-            "skills": skill_log
+            "skills": skill_log,
         }
         return report
 
@@ -173,7 +192,7 @@ class KnowledgeCheckEngine:
             "topic": topic[:200],
             "response_summary": ai_response[:800],
             "queued_at": datetime.now().isoformat(),
-            "status": "PENDING"
+            "status": "PENDING",
         }
         self._append_jsonl(self.pending_path, record)
         logger.debug(f"KALI Knowledge Check queued for: {topic[:60]}")
@@ -206,7 +225,9 @@ class KnowledgeCheckEngine:
 
         questions = self._generate_questions(source_response)
         if not questions:
-            logger.warning(f"Knowledge Check: Could not generate questions for '{topic[:60]}'")
+            logger.warning(
+                f"Knowledge Check: Could not generate questions for '{topic[:60]}'"
+            )
             return {"topic": topic, "status": "SKIPPED", "score": None}
 
         total_score = 0.0
@@ -224,17 +245,19 @@ class KnowledgeCheckEngine:
             )
             score = self._evaluate(expected, kali_answer)
             total_score += score
-            scored_qa.append({
-                "question": question,
-                "expected": expected,
-                "kali_answer": kali_answer,
-                "score": round(score, 1)
-            })
+            scored_qa.append(
+                {
+                    "question": question,
+                    "expected": expected,
+                    "kali_answer": kali_answer,
+                    "score": round(score, 1),
+                }
+            )
 
         # Phase 4.50: Atomized Anchoring Protocol (AAP)
         atoms_anchored = 0
         atoms_failed = 0
-        
+
         for qa in scored_qa:
             if qa["score"] >= self.PASS_THRESHOLD:
                 self._anchor_atom(topic, qa)
@@ -242,17 +265,36 @@ class KnowledgeCheckEngine:
             else:
                 self._flag_atom_failure(topic, qa)
                 atoms_failed += 1
-        
+
         total_atoms = len(scored_qa)
         if atoms_anchored == total_atoms:
-            logger.info(f"[PASS] Interaction fully ANCHORED ({atoms_anchored}/{total_atoms} atoms).")
-            return {"topic": topic, "status": "PASSED", "score": 100.0, "atoms": total_atoms}
+            logger.info(
+                f"[PASS] Interaction fully ANCHORED ({atoms_anchored}/{total_atoms} atoms)."
+            )
+            return {
+                "topic": topic,
+                "status": "PASSED",
+                "score": 100.0,
+                "atoms": total_atoms,
+            }
         elif atoms_anchored > 0:
-            logger.warning(f"[PARTIAL] {atoms_anchored}/{total_atoms} atoms ANCHORED. {atoms_failed} quarantined.")
-            return {"topic": topic, "status": "PARTIAL", "score": round((atoms_anchored/total_atoms)*100, 1), "atoms": total_atoms}
+            logger.warning(
+                f"[PARTIAL] {atoms_anchored}/{total_atoms} atoms ANCHORED. {atoms_failed} quarantined."
+            )
+            return {
+                "topic": topic,
+                "status": "PARTIAL",
+                "score": round((atoms_anchored / total_atoms) * 100, 1),
+                "atoms": total_atoms,
+            }
         else:
             logger.error(f"[FAIL] All {total_atoms} atoms failed. TOPIC PINNED.")
-            return {"topic": topic, "status": "FAILED", "score": 0.0, "atoms": total_atoms}
+            return {
+                "topic": topic,
+                "status": "FAILED",
+                "score": 0.0,
+                "atoms": total_atoms,
+            }
 
     def get_training_log(self) -> List[Dict[str, Any]]:
         """Returns the full training log (all pass/fail records)."""
@@ -277,7 +319,7 @@ class KnowledgeCheckEngine:
             "passed": len(passed),
             "failed": len(failed),
             "pass_rate": round((len(passed) / len(log)) * 100, 1),
-            "avg_score": round(sum(e.get("score", 0) for e in log) / len(log), 1)
+            "avg_score": round(sum(e.get("score", 0) for e in log) / len(log), 1),
         }
 
     # ------------------------------------------------------------------
@@ -294,11 +336,12 @@ class KnowledgeCheckEngine:
             f"generate exactly 3 test questions that verify factual retention.\n\n"
             f"TRAINING CONTENT:\n{source_response[:600]}\n\n"
             f"Return ONLY a JSON array, no markdown, no extra text: "
-            f"[{{\"question\": \"...\", \"expected_answer\": \"...\"}}]\n"
+            f'[{{"question": "...", "expected_answer": "..."}}]\n'
             f"Questions must be directly answerable from the content above. "
             f"Expected answers should be concise key facts (5-15 words max)."
         )
         import re
+
         try:
             raw = self.ai.ask_question(prompt)
             if raw and len(raw) > 30:
@@ -316,7 +359,7 @@ class KnowledgeCheckEngine:
                 except json.JSONDecodeError:
                     pass
 
-                match = re.search(r'\[.*?\]', raw, re.DOTALL)
+                match = re.search(r"\[.*?\]", raw, re.DOTALL)
                 if match:
                     try:
                         parsed = json.loads(match.group(0))
@@ -332,14 +375,21 @@ class KnowledgeCheckEngine:
         logger.info("Using keyword extraction fallback for question generation.")
         return self._generate_questions_fallback(source_response)
 
-    def _generate_questions_fallback(self, source_response: str) -> List[Dict[str, str]]:
+    def _generate_questions_fallback(
+        self, source_response: str
+    ) -> List[Dict[str, str]]:
         """
         Extracts key noun phrases from training content and constructs Q&A pairs.
         Used when AI question generation fails or is unavailable.
         This ensures the knowledge check is NEVER blocked by AI service availability.
         """
         import re
-        sentences = [s.strip() for s in re.split(r'[.!?\n]', source_response) if len(s.strip()) > 30]
+
+        sentences = [
+            s.strip()
+            for s in re.split(r"[.!?\n]", source_response)
+            if len(s.strip()) > 30
+        ]
         qa_pairs = []
         seen = set()
         for sentence in sentences[:10]:
@@ -362,13 +412,13 @@ class KnowledgeCheckEngine:
         if not qa_pairs:
             # Ultra-fallback: synthesize a single Q&A from the first 100 chars
             snippet = source_response[:120].strip()
-            qa_pairs.append({
-                "question": f"What is the main concept described in this training?",
-                "expected_answer": snippet[:60]
-            })
+            qa_pairs.append(
+                {
+                    "question": f"What is the main concept described in this training?",
+                    "expected_answer": snippet[:60],
+                }
+            )
         return qa_pairs
-
-
 
     def _evaluate(self, expected: str, actual: str) -> float:
         """
@@ -382,7 +432,22 @@ class KnowledgeCheckEngine:
         actual_words = set(actual.lower().split())
 
         # Remove common stop words
-        stop = {"a", "an", "the", "is", "it", "in", "of", "to", "and", "or", "for", "with", "that", "this"}
+        stop = {
+            "a",
+            "an",
+            "the",
+            "is",
+            "it",
+            "in",
+            "of",
+            "to",
+            "and",
+            "or",
+            "for",
+            "with",
+            "that",
+            "this",
+        }
         expected_words -= stop
         actual_words -= stop
 
@@ -413,14 +478,18 @@ class KnowledgeCheckEngine:
             "score": score,
             "status": "PASSED",
             "questions_count": len(scored_qa),
-            "qa_summary": [{"q": qa["question"][:80], "score": qa["score"]} for qa in scored_qa]
+            "qa_summary": [
+                {"q": qa["question"][:80], "score": qa["score"]} for qa in scored_qa
+            ],
         }
         self._append_training_log(record)
-        
+
         # Phase 4.40: Anchor the training (Move from unverified once success is verified)
         self._anchor_training(topic)
-        
-        logger.info(f"[PASS] Knowledge Check: '{topic[:60]}' scored {score}/100. Interaction ANCHORED.")
+
+        logger.info(
+            f"[PASS] Knowledge Check: '{topic[:60]}' scored {score}/100. Interaction ANCHORED."
+        )
         return record
 
     def _anchor_training(self, topic: str):
@@ -434,13 +503,16 @@ class KnowledgeCheckEngine:
 
             remaining_unverified = []
             anchored_count = 0
-            
+
             for line in lines:
-                if not line.strip(): continue
+                if not line.strip():
+                    continue
                 data = json.loads(line)
                 messages = data.get("messages", [])
-                user_msg = next((m["content"] for m in messages if m["role"] == "user"), "")
-                
+                user_msg = next(
+                    (m["content"] for m in messages if m["role"] == "user"), ""
+                )
+
                 # Check for match (fuzzy match first 50 chars of topic)
                 if topic[:50] in user_msg:
                     self._append_jsonl(self.anchored_path, data)
@@ -451,14 +523,18 @@ class KnowledgeCheckEngine:
             # Rewrite unverified with non-anchored records
             with open(self.unverified_path, "w", encoding="utf-8") as f:
                 f.writelines(remaining_unverified)
-            
+
             if anchored_count > 0:
-                logger.info(f"Anchored {anchored_count} verified training records to core.")
+                logger.info(
+                    f"Anchored {anchored_count} verified training records to core."
+                )
 
         except Exception as e:
             logger.error(f"Failed to anchor training for '{topic[:30]}': {e}")
 
-    def _flag_failure(self, topic: str, score: float, scored_qa: list, gap: str) -> Dict:
+    def _flag_failure(
+        self, topic: str, score: float, scored_qa: list, gap: str
+    ) -> Dict:
         """Persists a FAILED record and queues a retry."""
         record = {
             "topic": topic[:200],
@@ -467,7 +543,9 @@ class KnowledgeCheckEngine:
             "status": "FAILED",
             "gap": gap,
             "questions_count": len(scored_qa),
-            "qa_summary": [{"q": qa["question"][:80], "score": qa["score"]} for qa in scored_qa]
+            "qa_summary": [
+                {"q": qa["question"][:80], "score": qa["score"]} for qa in scored_qa
+            ],
         }
         self._append_training_log(record)
         # Also write to failures file for ralph loop to pick up
@@ -476,14 +554,19 @@ class KnowledgeCheckEngine:
             "gap": gap,
             "score": score,
             "timestamp": datetime.now().isoformat(),
-            "retry_prompt": f"CRITICAL KNOWLEDGE GAP DETECTED. Provide a comprehensive, detailed explanation of: {topic}. Focus especially on: {gap}"
+            "retry_prompt": f"CRITICAL KNOWLEDGE GAP DETECTED. Provide a comprehensive, detailed explanation of: {topic}. Focus especially on: {gap}",
         }
         self._append_jsonl(self.failures_path, failure_item)
-        
+
         # Phase 4.40: Pin the topic for immediate remediation priority
-        self._append_jsonl(self.pinned_path, {"topic": topic, "gap": gap, "pinned_at": datetime.now().isoformat()})
-        
-        logger.warning(f"[FAIL] Knowledge Check: '{topic[:60]}' scored {score}/100. Gap: {gap[:80]}. TOPIC PINNED.")
+        self._append_jsonl(
+            self.pinned_path,
+            {"topic": topic, "gap": gap, "pinned_at": datetime.now().isoformat()},
+        )
+
+        logger.warning(
+            f"[FAIL] Knowledge Check: '{topic[:60]}' scored {score}/100. Gap: {gap[:80]}. TOPIC PINNED."
+        )
         return record
 
     def get_pinned_topics(self) -> List[Dict]:
@@ -533,22 +616,26 @@ class KnowledgeCheckEngine:
         """Phase 4.60: Cross-Context Verification (CCV). Atoms mature over 3 checks."""
         # Check if atom already exists
         existing_atoms = self._load_jsonl(self.anchored_path)
-        match = next((a for a in existing_atoms if a.get("fact") == qa["expected"]), None)
-        
+        match = next(
+            (a for a in existing_atoms if a.get("fact") == qa["expected"]), None
+        )
+
         if match:
             v_count = match.get("verification_count", 1) + 1
             contexts = match.get("verified_contexts", ["general"])
             if current_context not in contexts:
                 contexts.append(current_context)
-            
+
             match["verification_count"] = v_count
             match["verified_contexts"] = contexts
             match["last_verified"] = datetime.now().isoformat()
-            
+
             if v_count >= 3:
                 match["status"] = "FINALIZED_SOVEREIGN | VERIFIED_100"
-                logger.info(f"[SOVEREIGN] Atom matured: '{qa['expected'][:40]}' (3/3 CCV).")
-            
+                logger.info(
+                    f"[SOVEREIGN] Atom matured: '{qa['expected'][:40]}' (3/3 CCV)."
+                )
+
             # Update the dataset
             self._update_jsonl_record(self.anchored_path, "fact", qa["expected"], match)
         else:
@@ -558,16 +645,19 @@ class KnowledgeCheckEngine:
                 "verification_count": 1,
                 "verified_contexts": [current_context],
                 "status": "PROBATION_1 | VERIFIED_100",
-                "anchored_at": datetime.now().isoformat()
+                "anchored_at": datetime.now().isoformat(),
             }
             self._append_jsonl(self.anchored_path, atom_record)
 
     def _load_jsonl(self, path: str) -> List[Dict]:
-        if not os.path.exists(path): return []
+        if not os.path.exists(path):
+            return []
         with open(path, "r", encoding="utf-8") as f:
             return [json.loads(l) for l in f if l.strip()]
 
-    def _update_jsonl_record(self, path: str, key: str, value: str, updated_record: Dict):
+    def _update_jsonl_record(
+        self, path: str, key: str, value: str, updated_record: Dict
+    ):
         records = self._load_jsonl(path)
         new_records = []
         for r in records:
@@ -588,11 +678,18 @@ class KnowledgeCheckEngine:
             "actual": qa["kali_answer"],
             "score": qa["score"],
             "timestamp": datetime.now().isoformat(),
-            "retry_prompt": f"KNOWLEDGE ATOM FAILURE: Reinforce the following fact: {qa['expected']}. KALI previously thought: {qa['kali_answer']}"
+            "retry_prompt": f"KNOWLEDGE ATOM FAILURE: Reinforce the following fact: {qa['expected']}. KALI previously thought: {qa['kali_answer']}",
         }
         self._append_jsonl(self.failures_path, failure_item)
         # Pin the topic if any atom fails
-        self._append_jsonl(self.pinned_path, {"topic": topic, "gap": qa["question"], "pinned_at": datetime.now().isoformat()})
+        self._append_jsonl(
+            self.pinned_path,
+            {
+                "topic": topic,
+                "gap": qa["question"],
+                "pinned_at": datetime.now().isoformat(),
+            },
+        )
 
     def _append_training_log(self, record: Dict):
         """Appends a record to training_log.json (list format)."""

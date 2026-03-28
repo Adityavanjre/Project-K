@@ -1,0 +1,28 @@
+# Optimized requirements for Google Colab (T4 GPU)
+# These are pre-configured to work with Unsloth and xformers
+
+# Core Web
+flask>=3.0.0
+flask-cors>=3.0.10
+python-dotenv>=1.0.0
+ngrok  # For tunneling
+
+# Database & Memory
+chromadb>=0.4.0
+sentence-transformers>=2.2.2
+
+# Singularity AI (T4 Optimized)
+# We use Unsloth for 2x faster performance on Colab
+unsloth
+trl
+peft
+bitsandbytes
+transformers>=4.40.0
+accelerate
+xformers
+
+# Google Colab specific
+google-colab
+pyyaml
+requests
+psutil
