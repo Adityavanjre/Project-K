@@ -1,0 +1,25 @@
+{
+    "nodes": {
+        "Decepticon": "https://github.com/PurpleAILAB/Decepticon",
+        "hackingtool": "https://github.com/z4nzu/hackingtool",
+        "OpenHuman": "https://github.com/Adityavanjre/OpenHuman",
+        "MemPalace": "https://github.com/Adityavanjre/MemPalace",
+        "ML-Intern": "https://github.com/Adityavanjre/ML-Intern",
+        "RLM": "https://github.com/Adityavanjre/RLM",
+        "OpenMythos": "https://github.com/Adityavanjre/OpenMythos",
+        "Windows-MCP": "https://github.com/Adityavanjre/Windows-MCP",
+        "CUA": "https://github.com/Adityavanjre/CUA",
+        "GitNexus": "https://github.com/Adityavanjre/GitNexus",
+        "Obscura": "https://github.com/Adityavanjre/Obscura",
+        "Parrot": "https://github.com/Adityavanjre/Parrot",
+        "Lucebox-Hub": "https://github.com/Adityavanjre/Lucebox-Hub",
+        "Trail-of-Bits-Skills": "https://github.com/Adityavanjre/Trail-of-Bits-Skills",
+        "Wrkflw": "https://github.com/Adityavanjre/Wrkflw",
+        "No-Mistakes": "https://github.com/Adityavanjre/No-Mistakes",
+        "Easy-Vibe": "https://github.com/Adityavanjre/Easy-Vibe",
+        "LLM-RL-Course": "https://github.com/Adityavanjre/LLM-RL-Course",
+        "DanceUI": "https://github.com/Adityavanjre/DanceUI",
+        "RA-H-OS": "https://github.com/Adityavanjre/RA-H-OS"
+    },
+    "protocol": "SOVEREIGN_SYNC_v1"
+}
