@@ -1,0 +1,40 @@
+# docker-compose.yml
+# Use: docker compose up -d  then  docker exec -it hackingtool bash
+#
+# Profiles:
+#   (default)  — runs the built image; code is embedded at build time
+#   dev        — mounts source directory for live editing without rebuilding
+#                docker compose --profile dev up
+
+services:
+  hackingtool:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hackingtool:latest
+    container_name: hackingtool
+    stdin_open: true
+    tty: true
+    # Persist tools installed at runtime across container restarts
+    volumes:
+      - hackingtool_data:/root/.hackingtool
+    restart: unless-stopped
+
+  hackingtool-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hackingtool:latest
+    container_name: hackingtool-dev
+    stdin_open: true
+    tty: true
+    profiles:
+      - dev
+    volumes:
+      # Live source mount — code changes are visible without rebuilding
+      - .:/root/hackingtool
+      - hackingtool_data:/root/.hackingtool
+    restart: "no"
+
+volumes:
+  hackingtool_data:

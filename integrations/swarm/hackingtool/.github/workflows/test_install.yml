@@ -1,0 +1,28 @@
+name: test_install
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+jobs:
+  test_install:
+    runs-on: ubuntu-latest
+    env:
+      TERM: "linux"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+      - run: pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      - run: sudo python3 install.py 1
+      # Verify the hackingtool entrypoint is on PATH
+      - run: which hackingtool
+      # Smoke test: launch and immediately quit (99)
+      - name: "Smoke test: launch and quit"
+        run: echo -e "99\n" | hackingtool || true
+      # Navigate into first category and back out
+      - name: "Navigation test: enter category 1, quit"
+        run: echo -e "1\n99\n99\n" | hackingtool || true
