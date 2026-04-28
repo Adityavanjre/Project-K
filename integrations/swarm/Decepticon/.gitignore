@@ -1,0 +1,98 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Poetry / uv
+uv.lock
+
+# Python specific
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node
+node_modules/
+
+# etc
+sliver-py/
+/src/
+config/*.local.*
+reference/
+demo.tape
+
+# Decepticon runtime data
+.decepticon/
+workspace/
+.bg-shell/
+
+.langgraph_api/
+.omc/
+.ouroboros/
+.gstack/
+.claude/
+clients/ee/
+
+# Project-specific Claude Code instructions (private)
+CLAUDE.md
+references/octogent
+clients/launcher/decepticon
+
+# Benchmark
+benchmark/results/
+benchmark/workspaces/

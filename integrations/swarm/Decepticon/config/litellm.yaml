@@ -1,0 +1,107 @@
+# =============================================================================
+# LiteLLM Proxy Configuration for Decepticon
+# =============================================================================
+# This file configures the LiteLLM Proxy server as the central LLM gateway.
+#
+# Model names use LiteLLM provider-prefix format (e.g., "anthropic/claude-opus-4-6")
+# matching the names in decepticon/llm/models.py. Agents send these names directly;
+# the proxy resolves them to the correct provider endpoint + API key.
+#
+# Features:
+#   - Model routing: provider-prefix names map to actual API endpoints
+#   - Load balancing: multiple entries per model_name for redundancy
+#   - Usage tracking: logs all API calls with cost data
+#   - Budget management: per-key spending limits
+#   - Rate limiting: per-key RPM/TPM controls
+#
+# Docs: https://docs.litellm.ai/docs/proxy/configs
+
+# --- Model Definitions ---
+# model_name must match the constants in decepticon/llm/models.py exactly.
+
+model_list:
+  # ── Anthropic ────────────────────────────────────────────────────────
+  - model_name: anthropic/claude-opus-4-6
+    litellm_params:
+      model: anthropic/claude-opus-4-6
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  - model_name: anthropic/claude-sonnet-4-6
+    litellm_params:
+      model: anthropic/claude-sonnet-4-6
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  - model_name: anthropic/claude-haiku-4-5
+    litellm_params:
+      model: anthropic/claude-haiku-4-5-20251001
+      api_key: os.environ/ANTHROPIC_API_KEY
+
+  # ── OpenAI ───────────────────────────────────────────────────────────
+  - model_name: openai/gpt-5.4
+    litellm_params:
+      model: openai/gpt-5.4
+      api_key: os.environ/OPENAI_API_KEY
+
+  - model_name: openai/gpt-4.1
+    litellm_params:
+      model: openai/gpt-4.1
+      api_key: os.environ/OPENAI_API_KEY
+
+  # ── Google ───────────────────────────────────────────────────────────
+  - model_name: gemini/gemini-2.5-flash
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+
+  # ── MiniMax ──────────────────────────────────────────────────────────
+  - model_name: minimax/MiniMax-M2.7
+    litellm_params:
+      model: openai/MiniMax-M2.7
+      api_base: https://api.minimax.io/v1
+      api_key: os.environ/MINIMAX_API_KEY
+
+  - model_name: minimax/MiniMax-M2.7-highspeed
+    litellm_params:
+      model: openai/MiniMax-M2.7-highspeed
+      api_base: https://api.minimax.io/v1
+      api_key: os.environ/MINIMAX_API_KEY
+
+  # ── Claude Code Auth (OAuth subscription) ────────────────────────────
+  - model_name: auth/claude-opus-4-6
+    litellm_params:
+      model: auth/claude-opus-4-6
+
+  - model_name: auth/claude-sonnet-4-6
+    litellm_params:
+      model: auth/claude-sonnet-4-6
+
+  - model_name: auth/claude-haiku-4-5
+    litellm_params:
+      model: auth/claude-haiku-4-5
+
+  # ── Local LLM (Ollama) ──────────────────────────────────────────────
+  - model_name: ollama/llama3.2
+    litellm_params:
+      model: ollama/llama3.2
+      api_base: os.environ/OLLAMA_API_BASE
+
+# --- LiteLLM Settings ---
+litellm_settings:
+  custom_provider_map:
+    - provider: "auth"
+      custom_handler: claude_code_handler.claude_code_handler_instance
+
+# --- Router Settings ---
+router_settings:
+  routing_strategy: simple-shuffle
+  num_retries: 5
+  timeout: 300
+  retry_after: 30
+  allowed_fails: 3
+  cooldown_time: 60
+
+# --- General Settings ---
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  database_url: os.environ/DATABASE_URL
+  store_model_in_db: false
