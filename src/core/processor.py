@@ -97,7 +97,12 @@ class DoubtProcessor:
             self._service_registry[name] = factory()
         return self._service_registry[name]
 
-    # --- Lazy Service Accessors ---
+    @property
+    def uncensored(self):
+        from .specialists.uncensored_specialist import UncensoredSpecialist
+        return self._get_service("uncensored", lambda: UncensoredSpecialist(self.local_ai))
+
+    # --- Feature: Mission Control (Phase 50) ---
 
     @property
     def council(self):

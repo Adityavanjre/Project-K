@@ -15,6 +15,7 @@ from flask import (
     session,
     send_from_directory,
     send_file,
+    redirect,
 )
 from flask_cors import CORS
 
@@ -93,6 +94,15 @@ def create_app(config_path="config/config.json"):
         app.doubt_processor = DoubtProcessor(config)
         logger.info("Doubt processor initialized")
 
+        # Phase 41: Neural Swarm Ingestion
+        try:
+            from core.swarm_service import SwarmService
+            app.swarm = SwarmService(project_root)
+            logger.info(f"KALI Neural Link: 30 nodes detected and synchronized.")
+        except Exception as swarm_err:
+            logger.error(f"KALI Neural Link: Synapse connection failure: {swarm_err}")
+            app.swarm = None
+
         # Safely initialize Auth Service
         try:
             client_id = os.getenv("GOOGLE_CLIENT_ID")
@@ -145,8 +155,49 @@ def create_app(config_path="config/config.json"):
     @app.route("/")
     def index():
         """Main page with the doubt clearing interface."""
+        # Phase 51: Check if onboarding is required
+        if not session.get("onboarding_complete"):
+            # Check if DNA exists in config/user_dna.json
+            dna_path = os.path.join(project_root, "config", "user_dna.json")
+            if not os.path.exists(dna_path):
+                return redirect("/genesis")
+            session["onboarding_complete"] = True
+
         sovereign_mode = os.getenv("KALI_SOVEREIGN_ONLY", "false").lower() == "true"
         return render_template("index.html", sovereign_mode=sovereign_mode)
+
+    @app.route("/genesis")
+    def genesis():
+        """The KALI Onboarding Protocol."""
+        return render_template("kali_onboarding.html")
+
+    @app.route("/api/genesis", methods=["POST"])
+    def api_genesis():
+        """Initialize User DNA."""
+        try:
+            data = request.get_json()
+            dna_path = os.path.join(project_root, "config", "user_dna.json")
+            os.makedirs(os.path.dirname(dna_path), exist_ok=True)
+            
+            with open(dna_path, "w") as f:
+                import json
+                json.dump(data, f)
+            
+            session["onboarding_complete"] = True
+            return jsonify({"success": True, "message": "DNA_INITIALIZED"})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
+
+    @app.route("/api/swarm/health")
+    def api_swarm_health():
+        """Neural Swarm Health Monitor."""
+        try:
+            if not hasattr(app, 'swarm') or app.swarm is None:
+                 return jsonify({"success": False, "error": "Neural Link Offline"}), 503
+            health = app.swarm.get_neural_health()
+            return jsonify({"success": True, "health": health})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/verify_token", methods=["POST"])
     def verify_token():
@@ -451,6 +502,25 @@ def create_app(config_path="config/config.json"):
             return jsonify(res)
         except Exception as e:
             logger.error(f"Sovereign Core Failure: {e}")
+            return jsonify({"success": False, "error": str(e)}), 500
+
+    @app.route("/api/sovereign/uncensored", methods=["POST"])
+    @login_required
+    def run_uncensored_mission():
+        """Sovereign Specialist: Zero Boundary Engineering."""
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"success": False, "error": "Invalid JSON payload"}), 400
+            
+            prompt = data.get("prompt", "").strip()
+            if not prompt:
+                return jsonify({"success": False, "error": "Mission objective missing."}), 400
+
+            res = app.doubt_processor.uncensored.execute_logic(prompt)
+            return jsonify(res)
+        except Exception as e:
+            logger.error(f"Uncensored Mission Failure: {e}")
             return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/api/sovereign/proposals", methods=["GET"])

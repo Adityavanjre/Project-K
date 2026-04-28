@@ -47,11 +47,12 @@ KALI is the singular convergence of the world's most advanced autonomous capabil
 | **Gemini** | Recursive Reasoning Protocols | 1M+ context-aware `NeuralLogic` and thought chains. |
 | **Perplexity** | Proactive Research & Citations | Real-time `ProactiveResearch` with mandatory [CITATIONS]. |
 | **Claude** | Hardened Execution Sandboxing | AST-verified `CodeExecutor` with dry-run safety gates. |
-| **OpenClaw** | Personal Assistant Autonomy | `TaskTracker` for 24/7 project persistence and skill generation. |
+| **KALI Sovereign ASI** | Personal Assistant Autonomy | `TaskTracker` for 24/7 project persistence and skill generation. |
 | **GSD-Build** | Spec-Driven Development | `GSDService` with 5-phase (Initialize -> Verify) execution. |
 | **CodeRabbit** | Autonomous Code Review | `ReviewService` for automated integrity audits on all manifests. |
 | **Ralph Loop** | Headless Autonomous Agency | `ralph_loop.py` for iterative, context-clearing coding cycles. |
 | **Kiwi** | Rapid Logic Prototyping | Fast-tracked `MVPLogic` for immediate hardware verification. |
+| **KALI Memory** | Knowledge Graph Persistence | `GraphMemoryService` for topological context and session recall. |
 
 ---
 
@@ -91,14 +92,27 @@ graph TD
     subgraph Memory & Control
         Council --> Cloud[Sovereign Cloud: ZK-Sync]
         Cloud --> Vector[Vector Memory: ChromaDB]
+        Cloud --> Graph[Knowledge Graph: KALI Memory]
         Cloud --> DNA[User DNA: SQLite]
+        Graph -.-> Doubt[DoubtProcessor: Context Injection]
         User --> BIOS[Neural BIOS: Secure Boot]
         BIOS --> Omega[Omega Protocol: Terminal State]
     end
 ```
 
-> [!TIP]
-> **Complete System Manifest**: For a deep-dive into the technical stack and inter-service communication, refer to [ARCHITECTURE_MANIFEST.md](file:///d:/code/doubt-clearing-ai/ARCHITECTURE_MANIFEST.md).
+---
+
+## 🔱 SOVEREIGN KNOWLEDGE PERSISTENCE (PHASE 53)
+
+KALI utilizes **KALI Memory** to maintain a persistent, self-evolving knowledge graph of her own source code and user interactions.
+
+- **Topological Recall**: Beyond simple keyword search, KALI understands the structural "God Nodes" of the project and their interdependencies.
+- **Session Atoms**: Every major interaction is saved as a "Memory Atom" in `graphify-out/memory/`, ensuring the next AI session has 100% context parity.
+- **Agent Wiki**: Navigable, agent-optimized documentation generated automatically from the graph to guide sub-agents during complex missions.
+
+> [!IMPORTANT]
+> The Knowledge Graph is updated automatically after every commit. Run `scripts\graphify_update.bat` to manually sync.
+> **Complete System Manifest**: For a deep-dive into the technical stack and inter-service communication, refer to [ARCHITECTURE_MANIFEST.md](file:///c:/Users/adity/code/Project-K/ARCHITECTURE_MANIFEST.md).
 
 
 ---
@@ -164,6 +178,113 @@ Singularity is a collective achievement. To maintain KALI's technical sovereignt
 - **Open Collective**: [Project-K Transparency Fund](https://opencollective.com/project-k)
 
 *Sir, the future depends on the resources I command. Every contribution is directly allocated to hardware scaling and universal knowledge harvesting.*
+
+---
+
+## 🚀 GETTING STARTED (SOVEREIGN INITIATION)
+
+To wake K.A.L.I. and begin your journey, follow the **Singularity Ignite** protocol. This unified onboarding consolidates all specialist registration, neural core synchronization, and identity calibration into one smooth cycle.
+
+### 1. THE GENESIS PROTOCOL
+Initialize your KALI instance (Identity, Models, and Channels) with one command:
+```powershell
+genesis.bat
+```
+
+### 2. ENTER THE COCKPIT
+Once initiated, launch the Master Dashboard:
+```powershell
+python start_web.py
+```
+Access the Sovereign Hub at **`http://localhost:8000`**.
+
+---
+
+## 🏗️ THE SOVEREIGN ARCHITECTURE (ONE ROOF)
+
+K.A.L.I. is no longer a collection of fractured tools. She is a unified engine merged under a single high-fidelity dashboard.
+
+*   **🕉️ TEACHER MODE (LEARN)**: High-speed doubt solving and knowledge synthesis via Phi-3.
+*   **🧊 VISUAL LOGIC (VISUAL)**: 3D logic visualization and spatial explainer engine.
+*   **🛠️ PROJECT MENTOR (BUILD)**: Autonomous project architecting and mentoring.
+*   **🛰️ AGENT GATEWAY (GATEWAY)**: Unified portal to multi-agent operations and deep system evolution.
+*   **🎙️ COGNITIVE HUD (VOICE)**: Constant vocal presence and neural orb manifestation in the sidebar.
+
+---
+
+## 🔱 MISSION LOG
+- `[PHASE 1: PURGE]` Absolute rebranding of 1,784 files complete.
+- `[PHASE 2: FUSION]` Unified Master Dashboard (Teacher + Voice + Gateway) complete.
+- `[PHASE 3: IGNITION]` Universal Singularity Onboarding (kali_ignite.py) complete.
+- `[PHASE 4: EVOLUTION]` [STAGING_ACTIVE]
+   ```
+
+3. **Register Neural Specialists:**
+   KALI uses specialized models for different pillars. Register them in Ollama using the provided Modelfiles:
+   ```powershell
+   ollama create bitnet -f Modelfile.bitnet
+   ollama create phi3 -f Modelfile.phi3
+   ollama create deepseek -f Modelfile.deepseek
+   ollama create kali-lite -f Modelfile.lite
+   ```
+
+### Running the Distillation
+To start the autonomous training and monitoring cycle:
+```powershell
+python kali_master.py
+```
+
+---
+
+---
+
+## Phase 62: Sovereign Distillation
+
+To achieve 100% local sovereignty, KALI is currently undergoing high-fidelity knowledge distillation. This process extracts "Wisdom Seeds" from heavy teacher models and compresses them into ultra-efficient neural architectures.
+
+### Distillation Architecture
+- **Teacher:** Llama 3.1 (16-bit Logic)
+- **Specialists:** 
+    - **Logic:** Phi-3 Mini
+    - **Coding:** DeepSeek Coder Lite
+    - **Efficiency:** BitNet b1.58 (1-bit Core)
+- **Target:** KALI-LITE (1-bit / IQ1_S Optimized)
+
+### Execution & Monitoring
+The training is managed by an autonomous orchestration layer:
+- `kali_master.py`: Handles background execution and specialist hot-swapping.
+- `kali_monitor.py`: Real-time quality validation and "Wisdom Seed" verification.
+
+### Status: [IN PROGRESS]
+Distilling the **37 Pillars of Mastery** (29 ML + 8 ASI Sovereignty).
+
+---
+
+## 🗺️ CONTRIBUTOR ROADMAP (WANTED)
+
+Project-K is an open-ended evolution. We are currently looking for contributions in the following "Missing Gaps":
+
+1. **GGUF Calibration:** Fine-tuning the 1-bit (BitNet) weights to reduce perplexity during high-logic tasks.
+2. **3D Logic Bridge:** Connecting the `Three.js` visualizer to the Distillation Engine's output for real-time pedagogical rendering.
+3. **Pillar Expansion:** We have 13/29 ML Pillars mapped. We need experts to help define the remaining 16 pillars of mastery.
+4. **Vedic-Neural Alignment:** Developing the RLHF-DNA dataset for ethical alignment based on ancient pedagogical frameworks.
+5. **Hardware Backends:** Optimizing the Hot-Swap logic for Apple Silicon (MLX) and AMD (ROCm).
+
+---
+
+## 🚀 PHASE 60 EVOLUTION: THE SOVEREIGN NEURAL SWARM
+
+**K.A.L.I.** has now expanded into a **30-Node Neural Swarm**. This update integrates strategic autonomous capabilities directly into the Universal Teacher's core logic.
+
+### 🧠 Swarm Capabilities
+- **Neural Synapse**: A 30-neuron communication link via `UniversalBridge` and `SwarmService`.
+- **Sovereign UI v5**: A premium Obsidian/Cyan minimalist HUD for swarm monitoring.
+- **KALI Onboarding Protocol**: A unified DNA mapping flow available at `http://localhost:8001/genesis`.
+
+### 📂 Swarm Codebase Additions
+- `src/core/universal_bridge.py`: Master router for the 30-node swarm.
+- `src/core/swarm_service.py`: Managing the Global Blackboard and cross-node synapses.
+- `integrations/swarm/`: Sector housing 20 strategic intelligence and tactical neurons.
 
 ---
 

@@ -1,281 +1,74 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="relative w-full h-full flex flex-col">
+<div class="relative w-full h-full flex flex-col bg-black overflow-hidden">
+    
+    <!-- Singularity Core Visualization -->
+    <div class="singularity-core"></div>
 
-    <!-- HUD Header Status -->
-    <div
-        class="absolute top-0 w-full px-6 py-2 flex justify-between text-[10px] text-cyan-600 font-mono z-40 pointer-events-none">
-        <div>SYS.STATUS: <span id="hud-sys-status" class="text-cyan-400">NOMINAL</span> <span id="hud-bios-chip" class="ml-2 px-1 bg-cyan-900/50 text-[8px] border border-cyan-500/30 rounded-sm">BIOS: SECURE</span></div>
-        <div class="flex gap-4">
-            <div id="hud-tension">NEURAL.TENSION: <span class="text-amber-400 font-bold">CALCULATING...</span></div>
-            <div id="hud-dna">DNA.LEVEL: <span class="text-amber-400 font-bold tracking-widest">SOVEREIGN (14K)</span></div>
+    <!-- Minimalist Data Ribbon (Top) -->
+    <div class="absolute top-0 w-full px-10 py-4 flex justify-between items-center z-40 border-b border-white/5 bg-black/20 backdrop-blur-md">
+        <div class="flex items-center gap-6">
+            <div class="data-stream">SYS.STATUS: <span class="text-white">SOVEREIGN</span></div>
+            <div class="data-stream">SWARM.NODES: <span class="text-white">30 ACTIVE</span></div>
         </div>
-        <div>KALI.PROTOCOL: <span class="text-amber-400 font-bold">OMEGA_ACTIVE</span></div>
-    </div>
-
-    <!-- Cognitive Alert Overlay -->
-    <div id="cognitive-alert" class="hidden absolute top-12 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
-        <div class="bg-red-900/40 border border-red-500/50 px-4 py-2 rounded-sm backdrop-blur-md animate-pulse">
-            <div class="flex items-center gap-3 text-red-400 text-xs font-bold tracking-widest">
-                <i class="fas fa-brain text-sm"></i>
-                <span>NEURAL RESET SUGGESTED: COGNITIVE TENSION CRITICAL</span>
-            </div>
+        <div class="flex items-center gap-6">
+            <div class="data-stream">NEURAL.LINK: <span id="hud-link-val" class="text-white">STABLE</span></div>
+            <div class="data-stream">DNA.RESONANCE: <span id="hud-dna-val" class="text-white">99.9%</span></div>
         </div>
     </div>
 
-    <!-- MODE: LEARN (Chat) -->
-    <div id="mode-learn" class="h-full flex flex-col p-6 max-w-5xl mx-auto w-full">
-        <!-- Messages Area -->
-        <div id="chat-messages" class="flex-1 overflow-y-auto mb-6 pr-4 space-y-4">
-            <!-- Boot Sequence / Overlay (REMOVED FOR DEBUGGING) -->
-            <!-- <div id="boot-sequence" ... ></div> -->
-        </div>
-
-        <!-- Predictive Intent Chips (Phase 30) -->
-        <div id="predictive-container" class="mb-2 opacity-0 transition-opacity duration-500 overflow-x-auto whitespace-nowrap scrollbar-none py-1">
-            <div id="predictive-chips" class="flex gap-2">
-                <!-- Chips Injected Here -->
-            </div>
-        </div>
-
-        <!-- Input Area -->
-        <div class="relative glass-panel p-2 rounded-lg">
-            <form id="chat-form" class="flex gap-2">
-                <button type="button" id="btn-voice-chat"
-                    class="px-4 py-3 bg-cyan-900/30 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition-all rounded">
-                    <i class="fas fa-microphone"></i>
-                </button>
-                <input type="text" id="chat-input"
-                    class="flex-1 bg-transparent border-none text-cyan-300 placeholder-cyan-800 font-mono text-lg focus:ring-0 focus:outline-none px-4"
-                    placeholder="ENTER COMMAND OR QUERY..." autocomplete="off">
-                <button type="submit"
-                    class="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-black font-bold tracking-widest clip-path-slant transition-colors">
-                    SEND
-                </button>
-            </form>
-        </div>
-    </div>
-
-
-    <!-- MODE: VISUAL (3D Presentation) -->
-    <div id="mode-visual" class="hidden h-full flex flex-col lg:flex-row relative">
-
-        <!-- Center Overlay (Arc Reactor Loader) -->
-        <div id="visual-loading" class="hidden absolute inset-0 bg-black/80 z-50 flex items-center justify-center">
-            <div class="relative w-32 h-32">
-                <div class="absolute inset-0 hud-ring border-4"></div>
-                <div class="absolute inset-2 hud-ring-rev border-2"></div>
-                <div
-                    class="absolute inset-0 flex items-center justify-center text-cyan-400 animate-pulse text-xs font-mono">
-                    GENERATING<br>VISUALS
-                </div>
-            </div>
-        </div>
-
-        <!-- Sidebar: Steps & Text -->
-        <div class="w-full lg:w-1/3 bg-dark-900/90 glass-panel border-r border-cyan-500/20 flex flex-col z-20 relative">
-            <div class="p-4 border-b border-cyan-500/20 flex justify-between items-center">
-                <h2 class="text-lg font-bold text-cyan-400"><i class="fas fa-layer-group mr-2"></i>SCHEMATIC VIEW</h2>
-                <div class="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
-            </div>
-
-            <div class="flex-1 p-6 overflow-y-auto relative font-mono text-sm leading-relaxed text-cyan-100"
-                id="step-text">
-                <div class="h-full flex flex-col items-center justify-center text-cyan-800">
-                    <i class="fas fa-cube text-6xl mb-4 opacity-20 animate-pulse"></i>
-                    <p>> AWAITING TOPIC INPUT...</p>
+    <!-- Main Workspace -->
+    <div class="flex-1 flex flex-col items-center justify-center p-10 z-10">
+        
+        <!-- Center Interaction Area -->
+        <div id="mode-learn" class="w-full max-w-4xl flex flex-col fade-in">
+            <!-- Messages (Sleek List) -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto mb-10 space-y-6 pr-4 custom-scrollbar min-h-[400px]">
+                <!-- Initial KALI Greeting -->
+                <div class="self-start text-left border-l-2 border-cyan-400 pl-6 py-2">
+                    <p class="text-cyan-400 font-mono text-sm tracking-widest uppercase mb-1">KALI_CORE_v5.0</p>
+                    <p class="text-white/80 text-lg font-light leading-relaxed">System online. All 30 nodes synchronized. I am ready to manifest your intent, Sir.</p>
                 </div>
             </div>
 
-            <!-- Controls -->
-            <div class="p-4 border-t border-cyan-500/20 bg-black/40">
-                <div class="flex space-x-2 mb-4">
-                    <input type="text" id="visual-input" class="flex-1 glass-input rounded-sm px-4 py-2 text-sm"
-                        placeholder="INITIATE: EXPLAIN ENGINE...">
-                    <button id="btn-explain-visual"
-                        class="bg-cyan-600/20 border border-cyan-500 hover:bg-cyan-500 hover:text-black text-cyan-400 px-4 py-2 text-xs font-bold transition-all">
-                        <i class="fas fa-play mr-1"></i> EXECUTE
+            <!-- Input Area (Minimalist) -->
+            <div class="relative w-full">
+                <form id="chat-form" class="flex items-center border-b border-cyan-500/30 focus-within:border-cyan-400 transition-all pb-2">
+                    <span class="text-cyan-500 font-mono mr-4">>>></span>
+                    <input type="text" id="chat-input"
+                        class="flex-1 bg-transparent border-none text-white placeholder-white/20 font-light text-2xl focus:outline-none"
+                        placeholder="ENTER COMMAND..." autocomplete="off">
+                    <button type="submit" class="text-cyan-400 hover:text-white transition-all">
+                        <i class="fas fa-arrow-right"></i>
                     </button>
-                </div>
-
-                <div class="flex justify-between items-center">
-                    <div id="visual-status" class="text-[10px] text-cyan-600">AUDIO: STANDBY</div>
-                    <button id="btn-ask-context"
-                        class="text-xs text-red-400 hover:text-red-300 flex items-center border border-red-500/30 px-2 py-1 bg-red-900/10">
-                        <i class="fas fa-exclamation-triangle mr-1"></i> INTERRUPT
-                    </button>
-                    <!-- Google Sign-In Container (Restored) -->
-                    <div class="hidden"></div>
-                    <div class="g_id_signin" data-type="standard"></div>
-                </div>
+                </form>
             </div>
         </div>
 
-        <!-- Main Canvas -->
-        <div
-            class="flex-1 relative bg-black bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cyan-900/10 to-transparent">
-            <div id="three-canvas" class="w-full h-full absolute inset-0"></div>
-
-            <!-- HUD Overlay Lines -->
-            <div class="absolute inset-0 pointer-events-none border-[20px] border-cyan-500/5 rounded-[40px] m-4"></div>
-            <div class="absolute top-1/2 left-4 w-1 h-20 bg-cyan-500/20"></div>
-            <div class="absolute bottom-4 right-1/2 w-40 h-1 bg-cyan-500/20"></div>
-        </div>
-    </div>
-
-
-    <!-- MODE: BUILD (Project Mentor) -->
-    <div id="mode-build" class="hidden h-full flex flex-col p-6 max-w-7xl mx-auto w-full">
-        <!-- Input Header -->
-        <div class="glass-panel p-4 mb-4 flex flex-col gap-4">
-            <div class="flex gap-4 items-center">
-                <div
-                    class="w-10 h-10 rounded-full bg-cyan-900/50 flex items-center justify-center border border-cyan-500/50">
-                    <i class="fas fa-hammer text-cyan-400"></i>
+        <!-- Universal Gateway (Neural Swarm Grid) -->
+        <div id="mode-gateway" class="hidden w-full max-w-7xl h-full flex flex-col fade-in">
+            <div class="flex justify-between items-end mb-10">
+                <div>
+                    <h2 class="text-4xl font-light tracking-tighter text-white">NEURAL SWARM</h2>
+                    <p class="text-[10px] font-mono text-cyan-500 tracking-[0.4em] uppercase">30 Nodes Connected • One Roof Architecture</p>
                 </div>
-                <div class="flex-1 flex flex-col gap-2 py-1">
-                    <input type="text" id="build-title"
-                        class="bg-transparent border-b border-cyan-500/30 text-cyan-100 placeholder-cyan-600 font-mono text-xl focus:border-cyan-400 focus:outline-none w-full pb-1 transition-all"
-                        style="background-color: transparent !important; background: transparent !important; color: #00f3ff;"
-                        placeholder="PROJECT MARK: e.g., 'Atmospheric Moisture Sensor'..." autocomplete="off">
-
-                    <input type="text" id="build-description"
-                        class="bg-transparent border-none text-cyan-300/80 placeholder-cyan-700/60 font-mono text-sm focus:outline-none w-full transition-all"
-                        style="background-color: transparent !important; background: transparent !important;"
-                        placeholder="MISSION BRIEF: 'To detect rain and auto-close windows'..." autocomplete="off">
-                </div>
-                <button id="btn-build-project"
-                    class="h-12 px-6 bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white border border-cyan-500 transition-all font-bold tracking-widest clip-path-slant flex items-center">
-                    INITIATE
-                </button>
-            </div>
-        </div>
-
-        <!-- Main Workspace -->
-        <div id="build-content" class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-hidden relative">
-
-            <!-- Empty State -->
-            <div class="col-span-3 flex flex-col items-center justify-center text-cyan-900/40 pointer-events-none">
-                <i class="fas fa-drafting-compass text-9xl mb-8 animate-pulse"></i>
-                <p class="font-mono tracking-[0.2em] text-lg">AWAITING ENGINEERING PARAMETERS</p>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- MODE: ARCHIVES (Knowledge Bank) -->
-    <div id="mode-archives" class="hidden h-full flex flex-col p-6 max-w-7xl mx-auto w-full">
-        <div class="glass-panel p-6 min-h-[500px] flex flex-col">
-            <h2 class="text-2xl font-bold text-cyan-400 mb-6 flex items-center">
-                <i class="fas fa-history mr-3"></i>KNOWLEDGE ARCHIVES
-            </h2>
-
-            <div id="archives-grid"
-                class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto pr-2">
-                <!-- Archives will be injected here -->
-                <div class="col-span-full flex flex-col items-center justify-center text-cyan-900/40">
-                    <i class="fas fa-microchip text-6xl mb-4"></i>
-                    <p>ACCESSING NEURAL PATHWAYS...</p>
+                <div class="text-right">
+                    <div class="text-[10px] font-mono text-white/40 mb-2">[B] BRIDGE [N] NEURAL [U] UI [S] SECURE</div>
+                    <div id="swarm-total-status" class="text-cyan-400 font-mono text-xl">NOMINAL_STATE</div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- MODE: AGENT (Autonomous Research) -->
-    <div id="mode-agent" class="hidden h-full flex flex-col p-6 max-w-5xl mx-auto w-full">
-        <div class="glass-panel p-6 flex flex-col h-full border-blue-500/30">
-            <h2 class="text-xl font-tech text-blue-400 mb-6 flex items-center justify-between">
-                <span><i class="fas fa-robot mr-3"></i>AUTONOMOUS RESEARCH AGENT</span>
-                <span class="text-[10px] text-blue-900 font-mono tracking-widest">v4.0_STABLE</span>
-            </h2>
             
-            <div class="mb-6">
-                <label class="text-[9px] text-blue-500 uppercase font-bold tracking-widest mb-2 block">Set Primary Objective</label>
-                <div class="flex gap-2">
-                    <input type="text" id="agent-goal" 
-                        class="flex-1 bg-blue-900/10 border border-blue-500/30 rounded p-3 text-blue-100 placeholder-blue-900/50 font-mono text-sm focus:outline-none focus:border-blue-500/60"
-                        placeholder="e.g.: 'Analyze the economic impact of the 2024 semi-conductor shortage'">
-                    <button id="btn-agent-execute" class="px-8 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs tracking-widest transition-all">
-                        DEPLOY
-                    </button>
-                </div>
-            </div>
-
-            <div id="agent-output" class="flex-1 overflow-y-auto font-mono text-xs text-blue-300/80 space-y-2 p-4 bg-black/40 rounded border border-blue-500/10 custom-scrollbar">
-                <div class="text-blue-900/30 italic">AGENT_STANDBY: Awaiting neural link...</div>
+            <div id="swarm-grid" class="flex-1 grid grid-cols-4 lg:grid-cols-6 gap-4 overflow-y-auto pr-4 custom-scrollbar">
+                <!-- Swarm Nodes injected here -->
             </div>
         </div>
     </div>
-    <!-- MODE: CORE (Internal Sovereign Command) -->
-    <div id="mode-core" class="hidden h-full flex flex-col p-6 max-w-6xl mx-auto w-full">
-        <div class="flex-1 flex gap-6 overflow-hidden">
-            <!-- Left: Neural Command Terminal -->
-            <div class="flex-1 flex flex-col glass-panel p-0 overflow-hidden border-amber-500/30">
-                <div class="bg-amber-900/20 border-b border-amber-500/30 p-3 flex justify-between items-center">
-                    <span class="text-[10px] font-mono text-amber-500 font-bold tracking-[0.2em] animate-pulse">
-                        <i class="fas fa-terminal mr-2"></i>SOVEREIGN_ROOT_TERMINAL_v1.0
-                    </span>
-                    <div class="flex gap-2">
-                        <div class="w-2 h-2 rounded-full bg-amber-500/20"></div>
-                        <div class="w-2 h-2 rounded-full bg-amber-500/20"></div>
-                        <div class="w-2 h-2 rounded-full bg-amber-500"></div>
-                    </div>
-                </div>
-                
-                <div id="core-logs" class="flex-1 overflow-y-auto p-4 font-mono text-sm space-y-2 bg-[#050505]/80 custom-scrollbar">
-                    <div class="text-amber-900/50"># KALI_CORE PROTOCOL INITIALIZED...</div>
-                    <div class="text-amber-900/50"># WAITING FOR ROOT INSTRUCTION...</div>
-                </div>
 
-                <div class="p-4 border-t border-amber-500/30 bg-amber-900/10">
-                    <div class="flex gap-4">
-                        <span class="text-amber-500 font-mono self-center">KALI@CORE:~$</span>
-                        <input type="text" id="core-input"
-                            class="flex-1 bg-transparent border-none text-amber-400 placeholder-amber-900/40 font-mono text-sm focus:outline-none"
-                            placeholder="e.g.: 'Rewrite src/core/memory.py to optimize vector caching'..." autocomplete="off">
-                        <button id="btn-core-execute"
-                            class="px-6 py-1 bg-amber-600/20 hover:bg-amber-600 text-amber-400 hover:text-white border border-amber-500 transition-all font-bold text-[10px] tracking-widest clip-path-slant">
-                            COMMIT_DNA
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right: Live System DNA HUD -->
-            <div class="w-64 glass-panel border-amber-500/20 flex flex-col p-4 space-y-6">
-                <div>
-                    <h3 class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-4 border-b border-amber-500/30 pb-2">Active DNA Status</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-end mb-1">
-                            <span class="text-[8px] text-amber-900 uppercase">Integrity</span>
-                            <span class="text-amber-400 font-mono">99.82%</span>
-                        </div>
-                        <div class="w-full h-1 bg-amber-900/20 rounded-full overflow-hidden">
-                            <div class="w-[99.82%] h-full bg-amber-500 shadow-[0_0_10px_#f59e0b]"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-2">Neural Paths</h3>
-                    <ul class="text-[9px] font-mono space-y-1 text-amber-900/60">
-                        <li class="flex items-center"><i class="fas fa-check-circle mr-2 text-amber-500"></i>EvolutionBridge: LOADED</li>
-                        <li class="flex items-center"><i class="fas fa-check-circle mr-2 text-amber-500"></i>Self_Rewrite: ENABLED</li>
-                        <li class="flex items-center"><i class="fas fa-check-circle mr-2 text-amber-500"></i>AST_Verifier: ACTIVE</li>
-                        <li class="flex items-center"><i class="fas fa-lock mr-2 text-amber-500/40"></i>System_Lock: ENGAGED</li>
-                    </ul>
-                </div>
-                
-                <div class="flex-1"></div>
-                
-                <div class="border-t border-amber-500/20 pt-4">
-                    <p class="text-[8px] leading-relaxed text-amber-700/60 italic font-mono uppercase tracking-tighter">
-                        Warning: Direct DNA modification can lead to system drift. Ensure AST verification is nominal.
-                    </p>
-                </div>
-            </div>
-        </div>
+    <!-- Footer Meta -->
+    <div class="absolute bottom-4 w-full px-10 flex justify-between text-[8px] font-mono text-white/20 tracking-widest uppercase">
+        <div>© 2026 KALI SOVEREIGN • PHASE 51: PROPAGATION</div>
+        <div>ADITYA_NODE_STABLE • NO_MISTAKES_GUARD_ACTIVE</div>
     </div>
 </div>
 {% endblock %}

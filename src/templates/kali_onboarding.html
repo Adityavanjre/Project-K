@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="h-full flex items-center justify-center bg-black">
+    <div class="glass-panel max-w-2xl w-full p-10 text-center animate-in fade-in zoom-in duration-1000">
+        <div class="mb-8">
+            <img src="/static/branding/logo.png" alt="KALI" class="w-32 mx-auto mb-4 animate-pulse">
+            <h1 class="text-4xl font-bold text-cyan-400 tracking-[0.3em]">KALI ONBOARDING</h1>
+            <p class="text-cyan-800 font-mono text-sm mt-2">ESTABLISHING SOVEREIGN NEURAL LINK</p>
+        </div>
+
+        <div id="onboarding-flow" class="space-y-6">
+            <div id="step-1" class="space-y-4">
+                <p class="text-cyan-200 font-mono text-lg italic">"Identify yourself. What is your primary area of expertise?"</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="nextStep('Engineer')" class="btn-quantum">Engineer</button>
+                    <button onclick="nextStep('Researcher')" class="btn-quantum">Researcher</button>
+                    <button onclick="nextStep('Auditor')" class="btn-quantum">Auditor</button>
+                    <button onclick="nextStep('Philosopher')" class="btn-quantum">Philosopher</button>
+                </div>
+            </div>
+
+            <div id="step-2" class="hidden space-y-4">
+                <p class="text-cyan-200 font-mono text-lg italic">"And your desired level of autonomy?"</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="finishOnboarding('Low')" class="btn-quantum">Guided</button>
+                    <button onclick="finishOnboarding('High')" class="btn-quantum">Sovereign</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 pt-6 border-t border-cyan-500/10">
+            <p class="text-[10px] text-cyan-900 font-mono uppercase tracking-tighter">
+                By initializing, you agree to the Law of Sovereign Consent.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let dna = {};
+
+    function nextStep(val) {
+        dna.expertise = val;
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-2').classList.remove('hidden');
+    }
+
+    async function finishOnboarding(autonomy) {
+        dna.autonomy = autonomy;
+        
+        const res = await fetch('/api/genesis', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(dna)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            window.location.href = '/';
+        }
+    }
+</script>
+{% endblock %}

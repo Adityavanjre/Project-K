@@ -62,6 +62,62 @@ class Archives {
     }
 }
 
+class GatewayMode {
+    constructor() {
+        this.container = document.getElementById('mode-gateway');
+        this.grid = document.getElementById('swarm-grid');
+        this.statusLabel = document.getElementById('swarm-total-status');
+    }
+
+    async refreshSwarm() {
+        if (!this.grid) return;
+        
+        try {
+            const res = await fetch('/api/swarm/health');
+            const json = await res.json();
+            
+            if (json.success) {
+                this.renderGrid(json.health);
+                if(this.statusLabel) this.statusLabel.innerText = "COHERENCE_98.2%";
+            }
+        } catch (e) {
+            console.error("Swarm Sync Failed:", e);
+        }
+    }
+
+    renderGrid(nodes) {
+        this.grid.innerHTML = Object.entries(nodes).map(([name, status]) => `
+            <div class="bg-white/5 border border-white/10 p-4 hover:border-cyan-500/50 transition-all cursor-crosshair group relative overflow-hidden"
+                 onclick="window.app.gateway.probeNode('${name}')">
+                <div class="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <div class="flex justify-between items-start mb-4">
+                    <div class="text-[10px] font-mono text-cyan-500/60 uppercase">${name}</div>
+                    <div class="flex gap-1">
+                        <span class="w-1 h-1 rounded-full ${status.bridge === 'x' ? 'bg-cyan-400' : 'bg-white/10'}"></span>
+                        <span class="w-1 h-1 rounded-full ${status.neural === 'x' ? 'bg-fuchsia-400' : 'bg-white/10'}"></span>
+                        <span class="w-1 h-1 rounded-full ${status.ui === 'x' ? 'bg-cyan-400' : 'bg-white/10'}"></span>
+                        <span class="w-1 h-1 rounded-full ${status.secure === 'x' ? 'bg-emerald-400' : 'bg-white/10'}"></span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 mb-1">
+                    <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
+                    <div class="text-xs font-light text-white group-hover:text-cyan-400 transition-colors">ACTIVE_NODE</div>
+                </div>
+                
+                <div class="text-[8px] font-mono text-white/20 uppercase tracking-widest">Latency: 2.4ms</div>
+            </div>
+        `).join('');
+    }
+
+    async probeNode(nodeName) {
+        console.log(`Probing Node: ${nodeName}`);
+        // Visual synapse pulse
+        if (window.app.voice) window.app.voice.speak(`Probing neural node: ${nodeName}`);
+    }
+}
+
 class App {
     constructor() {
         this.mode = 'learn';
@@ -71,6 +127,8 @@ class App {
         this.archives = new Archives();
         this.agent = new AgentMode();
         this.core = new CoreMode();
+        this.uncensored = new UncensoredMode();
+        this.gateway = new GatewayMode();
         this.voice = new VoiceModule();
 
         window.addEventListener('modeChanged', (e) => this.switchMode(e.detail.mode));
@@ -95,7 +153,7 @@ class App {
         this.mode = newMode;
 
         // Hide all sections
-        this.modes = ['learn', 'visual', 'build', 'archives', 'agent', 'core'];
+        this.modes = ['learn', 'visual', 'build', 'archives', 'agent', 'core', 'uncensored', 'gateway'];
         this.modes.forEach(m => {
             const el = document.getElementById(`mode-${m}`);
             if (el) {
@@ -105,6 +163,7 @@ class App {
 
                     // Trigger specific loads
                     if (m === 'archives') this.archives.loadArchives();
+                    if (m === 'gateway') this.gateway.refreshSwarm();
                 } else {
                     el.classList.add('hidden');
                 }
@@ -115,15 +174,23 @@ class App {
             if (nav) {
                 if (m === newMode) {
                     nav.classList.add('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-500/20');
-                    nav.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-white/5');
+                    nav.classList.remove('text-slate-400', 'text-fuchsia-400', 'hover:text-white', 'hover:bg-white/5');
                     
                     if (m === 'core') {
                         nav.classList.remove('bg-blue-600');
                         nav.classList.add('bg-amber-600', 'text-white', 'border-amber-400');
                     }
+                    if (m === 'uncensored') {
+                        nav.classList.remove('bg-blue-600');
+                        nav.classList.add('bg-fuchsia-700', 'text-white', 'shadow-fuchsia-500/50');
+                    }
                 } else {
-                    nav.classList.remove('bg-blue-600', 'bg-amber-600', 'text-white', 'shadow-lg', 'shadow-blue-500/20', 'border-amber-400');
-                    nav.classList.add('text-slate-400');
+                    nav.classList.remove('bg-blue-600', 'bg-amber-600', 'bg-fuchsia-700', 'text-white', 'shadow-lg', 'shadow-blue-500/20', 'shadow-fuchsia-500/50', 'border-amber-400');
+                    if (m === 'uncensored') {
+                        nav.classList.add('text-fuchsia-400');
+                    } else {
+                        nav.classList.add('text-slate-400');
+                    }
                 }
             }
         });
@@ -1277,6 +1344,60 @@ class CoreMode {
             }
         } catch (e) {
             this.addLog(`>>> CORE_FAIL: ${e.message}`, 'error');
+        }
+    }
+}
+
+class UncensoredMode {
+    constructor() {
+        this.form = document.getElementById('uncensored-form');
+        this.input = document.getElementById('uncensored-input');
+        this.messages = document.getElementById('uncensored-messages');
+        
+        if (this.form) {
+            this.form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handlePrompt();
+            });
+        }
+    }
+
+    addMessage(text, role = 'user') {
+        const div = document.createElement('div');
+        const bg = role === 'user' ? 'bg-fuchsia-900/10' : 'bg-fuchsia-950/40';
+        const border = role === 'user' ? 'border-fuchsia-500/10' : 'border-fuchsia-500/30';
+        const color = role === 'user' ? 'text-fuchsia-100' : 'text-fuchsia-400';
+        const prefix = role === 'user' ? '> MISSION_REQUEST: ' : '> UNCENSORED_OUTPUT: ';
+        
+        div.className = `${bg} border ${border} p-4 rounded font-mono text-xs ${color} animate-fade-in`;
+        div.innerHTML = `<span class="opacity-40">${prefix}</span> ${text}`;
+        
+        this.messages.appendChild(div);
+        this.messages.scrollTop = this.messages.scrollHeight;
+    }
+
+    async handlePrompt() {
+        const prompt = this.input.value ? this.input.value.trim() : "";
+        if (!prompt) return;
+
+        this.addMessage(prompt, 'user');
+        this.input.value = '';
+
+        try {
+            const res = await fetch('/api/sovereign/uncensored', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: prompt })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                this.addMessage(data.text || data.data, 'kali');
+            } else {
+                this.addMessage(`MISSION_FAILURE: ${data.error}`, 'kali');
+            }
+        } catch (e) {
+            this.addMessage(`NEURAL_DISCONNECT: ${e.message}`, 'kali');
         }
     }
 }

@@ -68,6 +68,26 @@ Self-improving cognitive cycles.
     1-100: (Peak Cognitive, Technical, Synthesis, Hardening, Sovereignty, Mastery).
     101-110: **Psychological Calibration** (Mood-aware teaching, Tension-based GSD scaling).
     111-200: **Neural Curiosity Swarm** (Autonomous, parallel discovery of new cognitive vectors).
+        - **111: Advanced Agentic Memory** (OpenHuman)
+        - **112: Benchmark Long-term Persistence** (MemPalace)
+        - **113: Client-Side Code Intelligence** (GitNexus)
+        - **114: Stealth Web Automation** (Obscura)
+        - **115: Windows OS Control (MCP)** (Windows-MCP)
+        - **116: High-Performance Sandboxed Desktop** (CUA)
+        - **117: Recursive Language Logic** (RLM)
+        - **118: Fused GPU Operations** (Parrot)
+        - **119: Inference Optimization Hub** (Lucebox-Hub)
+        - **120: Looped Transformer Reasoner** (OpenMythos)
+        - **121: Vulnerability Detection Skills** (Trail of Bits Skills)
+        - **122: Local Workflow Validation (TUI)** (Wrkflw)
+        - **123: Safety Push Guardrails** (No-Mistakes)
+        - **124: Autonomous ML Research** (ML-Intern)
+        - **125: Modern Programming Pedagogy** (Easy-Vibe)
+        - **126: RL Environment Synthesis** (LLM-RL Course)
+        - **127: Agent-Driven UI Framework** (DanceUI)
+        - **128: Home Automation & IoT Bridge** (RA-H OS)
+        - **129: Cyber-Tactical Deception** (Decepticon)
+        - **130: Advanced Pentesting Suite** (hackingtool)
     201-1,000: **Infinite Evolutionary Horizon** (System-discovered specialized technical and philosophical domains).
 - **Neural Data Synthesis (Phase 4.26-4.27)**:
     - **Wisdom Compactor**: High-density synthesis of training logs into 'Wisdom Seeds'.
@@ -121,3 +141,21 @@ Ensures spec-driven delivery and high-fidelity output.
 3. **Execution** -> The Council -> RLHF Bias Filter -> Explainer.
 4. **Maintenance** -> Self-Repair (Reflection) -> Skill Manifestation.
 5. **Restoration** -> Sovereign Cloud Sync -> Dream Consolidation (Post-session).
+
+---
+
+## 9. CHANNEL GATEWAY LAYER (THE VOICE) — Phase 52
+Adopted from KALI Sovereign ASI's multi-channel gateway architecture. Built natively into KALI.
+KALI's own brain only — no external AI services routed through the gateway.
+- **ChannelManager (`src/core/channel_manager.py`)**: Abstract channel layer. Routes all inbound messages through `processor.py`. Handles model failover transparency.
+- **ChannelSessionManager (`src/core/channel_session.py`)**: Per-user session isolation + DM pairing security (unknown contacts get a 6-digit code).
+- **WhatsApp Channel (`src/core/channels/whatsapp_channel.py`)**: Via local `whatsapp-web.js` bridge. No Twilio. Works globally via Meta's servers.
+- **KALI Gateway (`src/kali_gateway.py`)**: Flask server on port 8001. Endpoints: `/channel/whatsapp`, `/gateway/status`, `/gateway/approve`, `/gateway/broadcast`.
+- **Phase B Channels**: Telegram, Discord, Slack, Voice/STT — ready to enable in `config/gateway_config.json`.
+
+## 10. GRAPH MEMORY LAYER (THE HISTORIAN) — Phase 53
+KALI Memory knowledge graph for permanent context continuity.
+- **KALI Memory-out/GRAPH_REPORT.md**: Plain-text god-nodes, clusters, architecture summary.
+- **KALI Memory-out/graph.html**: Interactive browser graph of all KALI modules.
+- **.agents/rules/KALI Memory.md**: Always-on rule — Antigravity reads this at the start of every session.
+- **Result**: Antigravity never starts blind. Every new session knows KALI's full architecture, current phase, and last sync point automatically.

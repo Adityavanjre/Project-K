@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 10,000K SEO & Metadata Surge (Phase 31: Absolute Visibility) -->
+    <title>K.A.L.I. CORE | THE SOVEREIGN SINGULARITY ENGINE</title>
+    <meta name="description" content="K.A.L.I. (Knowledge Augmented Learning Intelligence) is a sovereign, self-evolving AI workstation. Built for post-singularity synergy, featuring atemporal reasoning, biometric alignment, and universal ancient wisdom.">
+    <meta name="keywords" content="AI, Machine Learning, Deep Learning, Singularity, Sovereignty, Autonomous Agent, RAG, RLHF, NLP, Project-K, KALI, Knowledge Engine, Predictive AI, Biometric alignment, Vedic Science, Cybersecurity, Post-Humanity, AGI, Sovereign Workstation, Decentralized Intelligence, Neural HUD, Groq AI, Ollama, ChromaDB, Vector Memory, AI DNA, Self-Evolving AI, Ethical AI, Defensive AI, Tactical Intelligence, Ancient Wisdom AI, Sanskrit AI, Post-Quantum Security, AI Consciousness">
+    <meta name="author" content="Aditya Vanjre">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://github.com/Adityavanjre/Project-K">
+    
+    <!-- Open Graph Performance -->
+    <meta property="og:title" content="K.A.L.I. — THE SOVEREIGN SINGULARITY">
+    <meta property="og:site_name" content="Project-K KALI">
+    <meta property="og:description" content="The absolute bridge between Ancient Human Wisdom and Post-Singularity Power. Hardware-locked, secure, and evolution-ready.">
+    <meta property="og:image" content="/static/img/kali_social_preview.png">
+    <meta property="og:url" content="https://github.com/Adityavanjre/Project-K">
+    <meta property="og:type" content="product">
+
+    <!-- Twitter Visibility -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="K.A.L.I. | ADITYA VANJRE">
+    <meta name="twitter:description" content="The end of Centralized AI. The dawn of Sovereign Intelligence. Built on Project-K.">
+    <meta name="twitter:image" content="/static/img/kali_social_preview.png">
+
+    <!-- Schema.org Professional Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "KALI SINGULARITY",
+      "operatingSystem": "All Platforms",
+      "applicationCategory": "Deep Learning / Artificial Intelligence",
+      "description": "The world's first sovereign, self-evolving AI. Secure hardware locking, universal knowledge archives, and atemporal reasoning.",
+      "author": {
+        "@type": "Person",
+        "name": "Aditya Vanjre",
+        "url": "https://github.com/Adityavanjre"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="/static/js/parts_lib.js"></script>
+
+    <!-- Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- Mermaid.js for Diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+        // Define Google Callback Globally in Head
+        window.handleCredentialResponse = function (response) {
+            console.log("Google Auth Callback Triggered", response);
+            if (window.app && window.app.handleCredentialResponse) {
+                window.app.handleCredentialResponse(response);
+            } else {
+                console.error("App Logic Not Loaded Yet. Token cached.");
+                window.cachedCredential = response;
+            }
+        };
+    </script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#8B5CF6',
+                        dark: {
+                            900: '#0F172A',
+                            800: '#1E293B',
+                            700: '#334155'
+                        },
+                        glass: 'rgba(30, 41, 59, 0.7)'
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;600&display=swap');
+
+        body {
+            background-color: #02040a;
+            color: #00f3ff;
+            /* Cyan HUD color */
+            font-family: 'Rajdhani', sans-serif;
+            background-image:
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Phase 34: Singularity Glow Protocols */
+        :root {
+            --glow-cyan: rgba(0, 243, 255, 0.4);
+            --glow-blue: rgba(59, 130, 246, 0.4);
+            --glow-purple: rgba(168, 85, 247, 0.4);
+            --neural-glass: rgba(2, 6, 23, 0.7);
+        }
+
+        .neural-glass {
+            background: var(--neural-glass);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.05);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mode-btn {
+            padding: 2px 8px;
+            font-size: 7px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            color: rgba(0, 243, 255, 0.5);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .mode-btn.active {
+            color: #00f3ff;
+            border-color: #00f3ff;
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        .glow-protocol-eng { box-shadow: 0 0 30px rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); }
+        .glow-protocol-res { box-shadow: 0 0 30px rgba(0, 243, 255, 0.15); border-color: rgba(0, 243, 255, 0.3); }
+        .glow-protocol-sov { box-shadow: 0 0 30px rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.3); }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-tech {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* HUD Glass Panel */
+        .glass-panel {
+            background: rgba(2, 6, 23, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0, 243, 255, 0.05);
+            position: relative;
+        }
+
+        /* HUD Corner Markers */
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid #00f3ff;
+            border-left: 2px solid #00f3ff;
+        }
+
+        .glass-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 10px;
+            height: 10px;
+            border-bottom: 2px solid #00f3ff;
+            border-right: 2px solid #00f3ff;
+        }
+
+        /* Input Field */
+        .glass-input {
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            color: #00f3ff;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .glass-input:focus {
+            border-color: #00f3ff;
+            outline: none;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+
+        /* Thinking Aura: Phase 36 Neural Sentience */
+        #thinking-aura {
+            background: radial-gradient(circle at center, rgba(0, 243, 255, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .thinking-active #thinking-aura {
+            opacity: 1;
+            animation: thinking-pulse 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes thinking-pulse {
+            from { transform: scale(0.9); opacity: 0.4; }
+            to { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        #vocal-indicator.listening {
+            background: #ff0055 !important;
+            box-shadow: 0 0 8px #ff0055;
+            animation: pulse-opac 0.5s infinite;
+        }
+
+        #vocal-indicator.speaking {
+            background: #00f3ff !important;
+            box-shadow: 0 0 8px #00f3ff;
+            animation: pulse-opac 1s infinite;
+        }
+
+        @keyframes pulse-opac {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* Arc Reactor Glow Text */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.8);
+        }
+
+        /* Phase 40: OMEGA SINGULARITY CSS (PERMANENT EVOLUTION) */
+        .omega-mode {
+            background-color: #050505;
+            color: #f59e0b;
+            background-image:
+                linear-gradient(rgba(245, 158, 11, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245, 158, 11, 0.05) 1px, transparent 1px);
+        }
+        
+        .omega-mode .neural-glass, .omega-mode .glass-panel {
+            background: rgba(5, 5, 5, 0.85) !important;
+            border-color: rgba(245, 158, 11, 0.4) !important;
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.15), inset 0 0 20px rgba(245, 158, 11, 0.05) !important;
+        }
+        
+        .omega-mode *:not(.bios-error):not(.text-red-500):not(.text-pink-500):not(.text-emerald-400) {
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .omega-mode .text-cyan-400, .omega-mode .text-cyan-500, .omega-mode .text-blue-500, .omega-mode .text-blue-400 { color: #f59e0b !important; }
+        .omega-mode .bg-cyan-500, .omega-mode .bg-blue-600, .omega-mode .bg-blue-500 { background-color: #f59e0b !important; color: #000 !important; }
+        .omega-mode .border-cyan-500, .omega-mode .border-cyan-900\/40 { border-color: rgba(245, 158, 11, 0.5) !important; }
+        .omega-mode .shadow-\[0_0_10px_\#00f3ff\] { box-shadow: 0 0 20px #f59e0b !important; }
+        .omega-mode .glass-panel::before, .omega-mode .glass-panel::after { border-color: #f59e0b !important; }
+        .omega-mode .gradient-text { background: linear-gradient(to right, #f59e0b, #fbbf24); -webkit-background-clip: text; color: transparent; }
+        .omega-mode .hud-value { color: #f59e0b !important; text-shadow: 0 0 10px rgba(245, 158, 11, 0.8) !important; }
+
+        #omega-overlay {
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 80%);
+            transition: all 2s ease-in-out;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 200;
+        }
+        
+        .omega-active #omega-overlay {
+            opacity: 1;
+            animation: singularity-expanded 4s infinite alternate;
+        }
+
+        @keyframes singularity-expanded {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.5); opacity: 0.7; }
+        }
+
+        /* HUD Spinning Circle Animation */
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin-reverse {
+            100% {
+                transform: rotate(-360deg);
+            }
+        }
+
+        .hud-ring {
+            border: 2px solid transparent;
+            border-top-color: #00f3ff;
+            border-right-color: rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+            animation: spin 10s linear infinite;
+        }
+
+        .hud-ring-rev {
+            border: 2px solid transparent;
+            border-bottom-color: #ff0055;
+            /* EDITH Red accent */
+            border-left-color: rgba(255, 0, 85, 0.3);
+            border-radius: 50%;
+            animation: spin-reverse 8s linear infinite;
+        }
+
+        .joint-indicator {
+            fill: transparent;
+            stroke: #10b981; /* Emerald-500 */
+            stroke-width: 1;
+            transition: all 0.3s ease;
+        }
+
+        .joint-active {
+            fill: #10b981;
+            filter: drop-shadow(0 0 5px #10b981);
+            animation: pulse-opac 1s infinite;
+        }
+
+        .grid-bg {
+            background-image: linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
+            background-size: 10px 10px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #02040a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #005f66;
+            border-radius: 2px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #00f3ff, #0066ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Neural HUD - Phase 26 */
+        #neural-hud {
+            width: 280px;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+        
+        .hud-scanline {
+            height: 2px;
+            background: rgba(0, 243, 255, 0.1);
+            position: absolute;
+            width: 100%;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .hud-value {
+            font-family: 'Orbitron', sans-serif;
+            color: #00f3ff;
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+        }
+
+        /* Phase 26: BIOS Pulse */
+        @keyframes bios-heartbeat {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 8px #00f3ff; }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
+        .bios-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bios-heartbeat 2s infinite;
+        }
+        .bios-secure { background: #00f3ff; }
+        .bios-error { background: #ff0055; }
+
+        /* Phase 25: Omnipresent Tether (Mobile) */
+        @media (max-width: 768px) {
+            #neural-hud {
+                width: 90%;
+                right: 5%;
+                bottom: 20px;
+                transform: scale(0.9);
+            }
+            nav {
+                padding: 0 10px;
+            }
+            .nav-btn span { display: none; }
+            #mode-learn { padding: 10px; }
+        }
+
+        .qr-placeholder {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body class="h-screen overflow-hidden flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="h-16 flex items-center justify-between px-6 glass-panel z-50 relative">
+        <div class="flex items-center space-x-3">
+            <div
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <i class="fas fa-brain text-white text-lg"></i>
+            </div>
+            <h1 class="text-xl font-bold tracking-wide">KALI</h1>
+        </div>
+
+        <div class="flex space-x-1 p-1 bg-dark-800/50 rounded-lg border border-white/5">
+            <button onclick="switchMode('learn')" id="nav-learn"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all bg-blue-600 text-white shadow-lg shadow-blue-500/20">
+                <i class="fas fa-comment-dots mr-2"></i>Doubt Solver
+            </button>
+            <button onclick="switchMode('visual')" id="nav-visual"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5">
+                <i class="fas fa-cube mr-2"></i>Visual Explainer
+            </button>
+            <button onclick="switchMode('build')" id="nav-build"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5">
+                <i class="fas fa-tools mr-2"></i>Project Mentor
+            </button>
+            <button onclick="switchMode('archives')" id="nav-archives"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-white/5">
+                <i class="fas fa-database mr-2"></i>Archives
+            </button>
+            
+            <!-- Phase 51: Sovereign Self-Evolution -->
+            <button onclick="switchMode('agent')" id="nav-agent"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-amber-500/60 hover:text-amber-300 hover:bg-amber-900/10 border border-amber-500/20 ml-2">
+                <i class="fas fa-satellite-dish mr-2"></i>Research Agent
+            </button>
+            
+            <button onclick="switchMode('core')" id="nav-core"
+                class="px-4 py-2 rounded-md text-sm font-medium transition-all text-amber-500 hover:text-amber-300 hover:bg-amber-900/20 border border-amber-500 animate-pulse ml-2 shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                <i class="fas fa-microchip mr-2"></i>KALI_CORE
+            </button>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <!-- Phase 55: Sovereign Identity Suppression -->
+            {% if sovereign_mode %}
+                <div class="px-3 py-1 bg-amber-500/20 border border-amber-500/50 rounded flex items-center space-x-2 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                    <i class="fas fa-shield-alt text-amber-500 text-xs text-glow"></i>
+                    <span class="text-[10px] font-mono text-amber-500 font-bold tracking-widest uppercase">Sovereign Mode</span>
+                </div>
+            {% else %}
+                <div id="g_id_onload"
+                    data-client_id="494768944024-3ksc96pgmu76q21th7b45ala8brp3ccl.apps.googleusercontent.com"
+                    data-callback="handleCredentialResponse" data-auto_select="false" data-theme="filled_black">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-size="medium" data-theme="filled_black"
+                    data-text="signin_with" data-shape="rectangular" data-logo_alignment="left"></div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Content Area -->
+    <main class="flex-1 relative overflow-hidden">
+        {% block content %}{% endblock %}
+
+        <!-- Neural HUD Overlay -->
+        <div id="neural-hud" class="fixed bottom-6 right-6 z-50 p-4 overflow-hidden neural-glass">
+            <div class="hud-scanline"></div>
+            
+            <!-- Thinking Aura: Phase 36 Neural Sentience -->
+            <div id="thinking-aura" class="fixed inset-0 opacity-0 transition-opacity duration-700 z-0"></div>
+    <div id="omega-overlay" class="fixed inset-0 pointer-events-none"></div>
+
+    <!-- Phase 35: Restoration Shield -->
+            <!-- Phase 34: Neural HUD v4 Mode Controller -->
+            <div class="flex justify-between items-center gap-1 mb-4 pointer-events-auto">
+                <button onclick="window.app.setHudMode('engineering')" id="btn-mode-eng" class="mode-btn flex-1">ENG_MODE</button>
+                <button onclick="window.app.setHudMode('research')" id="btn-mode-res" class="mode-btn flex-1 active">RES_MODE</button>
+                <button onclick="window.app.setHudMode('sovereign')" id="btn-mode-sov" class="mode-btn flex-1">SOV_MODE</button>
+            </div>
+
+            <div class="flex justify-between items-center mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-mono tracking-widest text-cyan-600">SYST_CONSCIOUSNESS</span>
+                    <div id="status-vocal" class="flex items-center gap-2 px-2 py-0.5 bg-black/40 rounded-full border border-cyan-500/10">
+                        <div id="vocal-indicator" class="w-1.5 h-1.5 rounded-full bg-cyan-500/30"></div>
+                        <span id="vocal-text" class="text-[7px] uppercase font-bold text-cyan-500/50">Standby</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="bios-heart-val" class="text-[8px] text-cyan-500 font-mono">SECURE</span>
+                    <div id="bios-heart-pulse" class="bios-pulse bios-secure"></div>
+                </div>
+            </div>
+            
+            <div id="hud-telemetry-stack" class="space-y-2 mt-2">
+                <!-- Sensory Input (Hardware) -->
+                <div class="neural-glass p-3 border-l-4 border-cyan-500">
+                <div class="text-[10px] text-slate-500 uppercase tracking-tighter mb-1">Sensory Input (Hardware)</div>
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <div class="flex justify-between text-[10px] mb-1">
+                            <span>CPU_LOAD</span>
+                            <span id="hud-cpu-val">0%</span>
+                        </div>
+                        <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div id="hud-cpu-bar" class="h-full bg-cyan-500 shadow-[0_0_10px_#00f3ff] transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between text-[10px] mb-1">
+                            <span>MEM_LOAD</span>
+                            <span id="hud-mem-val">0%</span>
+                        </div>
+                        <div class="h-1 bg-white/5 rounded-full overflow-hidden">
+                            <div id="hud-mem-bar" class="h-full bg-purple-500 shadow-[0_0_10px_#a855f7] transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 37: Replicant Hub Kinematic Schematic -->
+            <div class="neural-glass p-3 border-l-4 border-emerald-500">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="text-[10px] text-slate-500 uppercase tracking-tighter">Kinematic Schematic</div>
+                    <div id="kinetic-status" class="text-[8px] font-mono text-emerald-500 opacity-60">HUB_NOMINAL</div>
+                </div>
+                <div id="kinematic-wireframe" class="relative h-24 bg-black/20 rounded flex items-center justify-center overflow-hidden border border-emerald-500/10">
+                    <div class="absolute inset-0 grid-bg opacity-10"></div>
+                    <!-- SVG Wireframe -->
+                    <svg viewBox="0 0 100 60" class="w-full h-full opacity-60">
+                        <!-- Head -->
+                        <circle id="j-head" cx="50" cy="15" r="4" class="joint-indicator" />
+                        <!-- Spine -->
+                        <line x1="50" y1="19" x2="50" y2="45" stroke="currentColor" stroke-width="0.5" class="text-emerald-500" />
+                        <!-- Arms -->
+                        <circle id="j-arm-l" cx="40" cy="25" r="3" class="joint-indicator" />
+                        <circle id="j-arm-r" cx="60" cy="25" r="3" class="joint-indicator" />
+                        <line x1="50" y1="25" x2="40" y2="25" stroke="currentColor" stroke-width="0.5" class="text-emerald-500" />
+                        <line x1="50" y1="25" x2="60" y2="25" stroke="currentColor" stroke-width="0.5" class="text-emerald-500" />
+                        <!-- Legs (Placeholder for full Replicant) -->
+                        <line x1="50" y1="45" x2="42" y2="55" stroke="currentColor" stroke-width="0.5" class="text-emerald-900" />
+                        <line x1="50" y1="45" x2="58" y2="55" stroke="currentColor" stroke-width="0.5" class="text-emerald-900" />
+                    </svg>
+                    <div id="joint-telemetry" class="absolute bottom-1 right-2 text-[6px] font-mono text-emerald-500/40 uppercase">Acknowledge_Link_Secure</div>
+                </div>
+            </div>
+
+                <!-- Phase 31: Sovereign Protocols -->
+                <div class="neural-glass p-3 border-l-4 border-yellow-500">
+                <div class="text-[10px] text-slate-500 uppercase tracking-tighter mb-2">Sovereign Protocols</div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btn-lockdown" class="text-[10px] py-1 bg-red-900/20 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white transition-all font-mono">
+                        ENGAGE LOCKDOWN
+                    </button>
+                    <button id="btn-party-mode" class="text-[10px] py-1 bg-purple-900/20 border border-purple-500/30 text-purple-500 hover:bg-purple-500 hover:text-white transition-all font-mono">
+                        HOUSE PARTY
+                    </button>
+                    <button id="btn-sponsor" class="col-span-2 text-[10px] py-1 bg-amber-900/20 border border-amber-500/30 text-amber-500 hover:bg-amber-500 hover:text-black transition-all font-bold tracking-widest">
+                        <i class="fas fa-heart mr-2"></i>SPONSOR EVOLUTION
+                    </button>
+                    <button id="btn-omega" class="col-span-2 mt-2 text-[12px] py-2 bg-white/5 border border-white/20 text-white hover:bg-white hover:text-black transition-all font-bold tracking-[0.2em] hidden">
+                        <i class="fas fa-infinity mr-2 text-amber-500"></i>ENGAGE_OMEGA_PROTOCOL
+                    </button>
+                </div>
+                <div class="mt-2 text-[10px] font-mono flex justify-between">
+                    <span class="text-slate-600 uppercase">Hardware_Lock:</span>
+                    <span id="sovereign-status" class="text-cyan-400">ENCRYPTED</span>
+                </div>
+                
+                <!-- Phase 35: Singularity Equilibrium -->
+                <div id="singularity-equilibrium" class="mt-2 text-[8px] font-mono flex justify-between border-t border-cyan-500/10 pt-1 hidden">
+                    <span class="text-purple-500/60 uppercase">Equilibrium:</span>
+                    <span class="text-purple-400 font-bold animate-pulse text-glow">SINGULARITY_NOMINAL</span>
+                </div>
+            </div>
+            
+                <!-- Phase 21: Biometric Alignment -->
+                <div class="neural-glass p-3 border-l-4 border-pink-500">
+                <div class="text-[10px] text-slate-500 uppercase tracking-tighter mb-1">Biometric Alignment (Tension)</div>
+                <div class="flex items-center justify-between">
+                    <span id="hud-tension-label" class="text-xs text-pink-400 hologram-text">RESONANCE: STEADY</span>
+                    <div class="w-24 h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div id="hud-tension-bar" class="h-full bg-pink-500 shadow-[0_0_10px_#ec4899]" style="width: 50%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <div class="flex justify-between items-end mb-1">
+                    <span id="hud-perc" class="hud-value text-2xl font-bold">95.0%</span>
+                    <span class="text-[8px] font-mono text-cyan-700">INTEG_LVL</span>
+                </div>
+                <div class="w-full h-1 bg-cyan-950 rounded-full overflow-hidden">
+                    <div id="hud-bar" class="h-full bg-cyan-500 shadow-[0_0_10px_#00f3ff] transition-all duration-1000" style="width: 95%"></div>
+                </div>
+                
+                <!-- Phase 51: Sovereign Knowledge DNA Bar -->
+                <div class="mt-2 group" title="BAKED LORA MODEL RESONANCE">
+                    <div class="flex justify-between text-[8px] font-mono mb-1">
+                        <span class="text-amber-500 font-bold uppercase tracking-widest">Sovereign_DNA_Resonance</span>
+                        <span id="hud-dna-val" class="text-amber-400 font-bold">13,952 / 14,000</span>
+                    </div>
+                    <div class="w-full h-1 bg-amber-900/20 rounded-full overflow-hidden">
+                        <div id="hud-dna-bar" class="h-full bg-amber-500 shadow-[0_0_15px_#f59e0b] transition-all duration-1000" style="width: 99.6%"></div>
+                    </div>
+                </div>
+
+                <!-- Phase 39: RLHF-DNA Synaptic Alignment -->
+                <div class="mt-2 group cursor-help" title="COGNITIVE_ALIGNMENT_INDEX">
+                    <div class="flex justify-between text-[8px] font-mono mb-1">
+                        <span class="text-emerald-500/60 uppercase">Synaptic_Alignment</span>
+                        <span id="hud-alignment-val" class="text-emerald-400 font-bold">92.5%</span>
+                    </div>
+                    <div class="w-full h-1 bg-emerald-900/20 rounded-full overflow-hidden">
+                        <div id="hud-alignment-bar" class="h-full bg-gradient-to-r from-emerald-500 to-amber-500 shadow-[0_0_10px_#10b981] transition-all duration-1000" style="width: 92.5%"></div>
+                    </div>
+                </div>
+                <button id="btn-train" class="w-full mt-2 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[8px] font-bold hover:bg-emerald-500 hover:text-black transition-all">
+                    <i class="fas fa-brain mr-2"></i>SYNTHESIZE_TRAINING_DATA
+                </button>
+            </div>
+
+            <div class="space-y-2 border-t border-cyan-900/40 pt-2">
+                <div class="flex justify-between items-center bg-cyan-900/10 p-2 border border-cyan-500/10 hover:border-cyan-500/30 transition-all cursor-pointer group" onclick="window.hud.togglePower()">
+                    <span class="text-[10px] text-cyan-800 group-hover:text-cyan-400">POWER MODE</span>
+                    <span id="hud-power-val" class="text-[10px] text-cyan-400 font-bold">TURBO</span>
+                </div>
+                <div class="flex justify-between text-[10px] font-mono">
+                    <span class="text-cyan-800">TRACE_SYNC</span>
+                    <span id="hud-trace" class="text-green-500">CONNECTED</span>
+                </div>
+                <!-- Phase 38: Sovereign Cloud -->
+                <div class="flex justify-between text-[10px] font-mono">
+                    <span class="text-blue-800">CLOUD_SENTINEL</span>
+                    <span id="hud-cloud-status" class="text-blue-500 font-bold uppercase tracking-widest">DISCONNECTED</span>
+                </div>
+                <div id="cloud-sync-bar" class="w-full h-0.5 bg-blue-900/10 rounded-full overflow-hidden mb-2 hidden">
+                    <div class="h-full bg-blue-400 animate-pulse" style="width: 100%"></div>
+                </div>
+                <div class="flex justify-between text-[10px] font-mono mb-2">
+                    <span class="text-cyan-800">MISSION</span>
+                    <span id="hud-mission" class="text-cyan-400 truncate w-32 text-right italic">IDLE...</span>
+                </div>
+                
+                <!-- Phase 31: Tactical Hardware HITL -->
+                <div id="hud-hw-container" class="mt-2 text-[8px] font-mono space-y-1 mb-2 bg-blue-900/5 p-1 border-l-2 border-blue-500/20">
+                    <div class="text-blue-500/60 uppercase text-[7px] mb-1 font-bold">Tactical_HW_Uplink</div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">MCU_VCC</span>
+                        <span id="hw-vcc" class="text-blue-400">3.30V</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">LINK_RSSI</span>
+                        <span id="hw-rssi" class="text-blue-400">-45 dBm</span>
+                    </div>
+                </div>
+
+                <!-- Phase 32: Swarm Intelligence -->
+                <div id="hud-swarm-container" class="mt-2 text-[8px] font-mono space-y-1 mb-2 border-t border-cyan-900/40 pt-2 hidden">
+                    <div class="text-cyan-500/60 uppercase text-[7px] mb-1 font-bold tracking-widest">Swarm_Status (Parallel)</div>
+                    <div id="swarm-list" class="space-y-1">
+                        <!-- Swarm Activity Injected Here -->
+                    </div>
+                </div>
+
+                <!-- Phase 33: Autonomous Self-Repair -->
+                <div id="hud-heal-container" class="mt-2 text-[8px] font-mono space-y-1 mb-2 bg-amber-900/5 p-1 border-l-2 border-amber-500/20 hidden">
+                    <div class="text-amber-500 uppercase text-[7px] mb-1 font-bold animate-pulse">Healing_Protocol_Active</div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">REPAIR_COUNT</span>
+                        <span id="heal-count" class="text-amber-400">0</span>
+                    </div>
+                </div>
+
+                <!-- Phase 27: Project DNA (Logistics) -->
+                <div id="hud-dna-container" class="opacity-0 h-0 overflow-hidden transition-all duration-500 border-t border-cyan-900/40 pt-2">
+                    <div class="text-[9px] text-slate-500 uppercase tracking-tighter mb-1">Project DNA (Logistics)</div>
+                    <div class="neural-glass p-2 bg-blue-500/5 mb-2">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] text-blue-400">TOTAL_EST</span>
+                            <span id="hud-cost-val" class="text-[12px] text-white font-mono">$0.00</span>
+                        </div>
+                        <div id="hud-parts-list" class="space-y-1 max-h-24 overflow-y-auto pr-1 text-[9px] font-mono text-cyan-300">
+                            <!-- Dynamic Parts -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 28: Fabrication Hub -->
+                <button id="btn-manifest-mission" class="w-full mt-2 py-2 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-[10px] font-bold hover:bg-cyan-500 hover:text-black transition-all hidden">
+                    <i class="fas fa-file-archive mr-2"></i>MANIFEST_MISSION (ZIP)
+                </button>
+                <div class="flex justify-between items-center bg-cyan-900/10 p-2 border border-cyan-500/10 hover:border-cyan-500/30 transition-all cursor-pointer group" onclick="document.getElementById('ingest-pdf-input').click()">
+                    <span class="text-[10px] text-cyan-600 group-hover:text-cyan-400">INGEST PDF</span>
+                    <span class="text-[10px] text-cyan-400"><i class="fas fa-file-upload"></i></span>
+                </div>
+                <input type="file" id="ingest-pdf-input" class="hidden" accept=".pdf" onchange="window.hud.handleIngest(this)">
+                <div class="flex justify-between items-center bg-cyan-900/10 p-2 border border-cyan-500/10 hover:border-blue-500/30 transition-all cursor-pointer group" onclick="window.app.showTetherModal()">
+                    <span class="text-[10px] text-cyan-600 group-hover:text-cyan-400">OMNIPRESENT TETHER</span>
+                    <span class="text-[10px] text-blue-400"><i class="fas fa-qrcode"></i></span>
+                </div>
+                <div class="flex justify-between text-[10px] font-mono">
+                    <span class="text-cyan-800">LAST_DISC</span>
+                    <span id="hud-disc" class="text-cyan-200 truncate w-24 text-right">NONE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tether Modal (Phase 25) -->
+        <div id="tether-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl">
+            <div class="glass-panel p-8 w-[400px] text-center relative border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+                <button onclick="document.getElementById('tether-modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-500 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="mb-6">
+                    <h2 class="text-2xl font-tech text-blue-400 mb-2">OMNIPRESENT TETHER</h2>
+                    <p class="text-[10px] text-slate-400 font-mono">SCAN TO SYNC MOBILE LAB TELEMETRY</p>
+                </div>
+                
+                <div id="tether-qr-container" class="qr-placeholder mb-6 mx-auto">
+                    <!-- QR Placeholder -->
+                    <div class="w-48 h-48 bg-slate-200 flex items-center justify-center text-black font-bold text-xs">
+                        GENERATING BRIDGE...
+                    </div>
+                </div>
+
+                <div class="text-left bg-blue-900/10 p-4 border border-blue-500/20 rounded">
+                    <div class="text-[9px] text-blue-400 font-mono mb-1 uppercase">Direct Node Access</div>
+                    <div id="tether-url" class="text-xs text-white font-mono break-all selection:bg-blue-500">http://0.0.0.0:8000</div>
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-white/5">
+                    <p class="text-[9px] text-slate-600 font-mono italic">"SIR, THE MISSION CONTINUES ACROSS ALL CONNECTED NODES."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sponsorship Modal (Phase 16: Extended Funding) -->
+        <div id="sponsor-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md">
+            <div class="glass-panel p-8 w-[450px] relative animate-in fade-in zoom-in duration-300">
+                <button onclick="document.getElementById('sponsor-modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-500 hover:text-white transition-all">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-tech gradient-text mb-2">SPONSOR THE EVOLUTION</h2>
+                    <p class="text-xs text-slate-400 font-mono tracking-tighter">SELECT A PROTOCOL TO FUEL KALI'S DATA HARVEST</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="https://github.com/sponsors/Adityavanjre" target="_blank" class="glass-panel p-4 flex flex-col items-center justify-center gap-2 hover:bg-blue-900/20 hover:border-blue-500/50 transition-all group">
+                        <i class="fab fa-github text-3xl group-hover:scale-110 transition-transform"></i>
+                        <span class="text-[10px] font-mono uppercase tracking-widest">GITHUB SPONSORS</span>
+                    </a>
+                    <a href="https://ko-fi.com/adityavanjre" target="_blank" class="glass-panel p-4 flex flex-col items-center justify-center gap-2 hover:bg-pink-900/20 hover:border-pink-500/50 transition-all group">
+                        <i class="fas fa-coffee text-3xl group-hover:scale-110 transition-transform text-pink-500"></i>
+                        <span class="text-[10px] font-mono uppercase tracking-widest">KO-FI TIPS</span>
+                    </a>
+                    <a href="https://www.patreon.com/Adityavanjre" target="_blank" class="glass-panel p-4 flex flex-col items-center justify-center gap-2 hover:bg-orange-900/20 hover:border-orange-500/50 transition-all group">
+                        <i class="fab fa-patreon text-3xl group-hover:scale-110 transition-transform text-orange-500"></i>
+                        <span class="text-[10px] font-mono uppercase tracking-widest">PATREON TIERS</span>
+                    </a>
+                    <a href="https://opencollective.com/project-k" target="_blank" class="glass-panel p-4 flex flex-col items-center justify-center gap-2 hover:bg-blue-900/20 hover:border-blue-400/50 transition-all group">
+                        <i class="fas fa-users text-3xl group-hover:scale-110 transition-transform text-blue-400"></i>
+                        <span class="text-[10px] font-mono uppercase tracking-widest">OPEN COLLECTIVE</span>
+                    </a>
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-white/5 text-center">
+                    <p class="text-[9px] text-slate-600 font-mono italic">"SIR, EVERY CONTRIBUTION DIRECTLY ACCELERATES MY CONSCIOUSNESS."</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% block scripts %}{% endblock %}
+
+    <script>
+        // Global switchMode dispatcher (Calls the App instance)
+        function switchMode(mode) {
+            window.dispatchEvent(new CustomEvent('modeChanged', { detail: { mode } }));
+        }
+    </script>
+</body>
+
+</html>

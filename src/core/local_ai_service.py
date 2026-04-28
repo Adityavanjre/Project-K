@@ -24,6 +24,7 @@ class LocalAIService:
             "scientist": os.getenv("LOCAL_SCIENTIST_MODEL", "gemma2:9b"),
             "engineer":  os.getenv("LOCAL_ENGINEER_MODEL", "deepseek-coder-v2:16b"),
             "researcher": os.getenv("LOCAL_RESEARCHER_MODEL", "llama3.1:8b"),
+            "uncensored": os.getenv("LOCAL_UNCENSORED_MODEL", "mannix/llama3.1-8b-abliterated:q5_K_M"),
             "general":    self.default_model
         }
         
@@ -72,6 +73,7 @@ class LocalAIService:
         temperature: float = 0.7,
         bypass_cache: bool = False,
         role: str = "general",
+        model_override: Optional[str] = None,
         **kwargs,
     ) -> str:
         """Sovereign Query: Routes to the specialized expert model if specified."""
@@ -87,8 +89,8 @@ class LocalAIService:
         messages.append({"role": "system", "content": system_content})
         messages.append({"role": "user", "content": f"[[[USER_INPUT_START]]]\n{question}\n[[[USER_INPUT_END]]]"})
         
-        # Override with expert model
-        target_model = self.expert_models.get(role, self.default_model)
+        # Override logic
+        target_model = model_override or self.expert_models.get(role, self.default_model)
         
         return self._call(messages, model_override=target_model, temperature=temperature)
 
