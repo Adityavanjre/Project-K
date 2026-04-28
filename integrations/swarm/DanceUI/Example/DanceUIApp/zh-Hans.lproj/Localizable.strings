@@ -1,0 +1,15 @@
+"t%%p%lld!!" = "温度是 %lld！！";
+"t%%p%@!!" = "温度是 %@！！";
+"Hello, World!" = "你好，世界！";
+"Hello, World! 1" = "你好，世界！1";
+"Hello, World! 2" = "你好，世界！2";
+"Hello, World! 3" = "你好，世界！3";
+"s%@e" = "始%@终@";
+"s%de" = "始%d终d";
+"s%llde" = "始%lld终lld";
+"s%lfe" = "始%lf终lf";
+"s%fe" = "始%.2f终.2f";
+"s%ue" = "始%u终u";
+"s%llue" = "始%llu终llu";
+"s%de" = "始%d终d";
+

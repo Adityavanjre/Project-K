@@ -1,0 +1,7 @@
+//
+// Project-level base configuration referenced by DanceUIApp.xcodeproj.
+//
+// Keep this file present so Xcode can resolve the project's base
+// configuration. Signing settings are currently defined on the target
+// build configurations in project.pbxproj.
+//

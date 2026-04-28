@@ -1,0 +1,143 @@
+PODS:
+  - boost (1.88.0)
+  - DanceUI (0.14.12):
+    - DanceUIGraph
+    - DanceUIObservation
+    - DanceUIObservationMacro
+    - DanceUIRuntime
+    - MyShims
+    - OpenCombine
+    - OpenCombineDispatch
+    - OpenCombineFoundation
+    - Resolver
+  - DanceUICompose (0.14.12):
+    - DanceUI
+    - DanceUICompose/Basic (= 0.14.12)
+    - Resolver (>= 0.0.1)
+  - DanceUICompose/Basic (0.14.12):
+    - DanceUI
+    - Resolver (>= 0.0.1)
+  - DanceUIComposeModule (0.14.12):
+    - DanceUI
+    - DanceUICompose
+    - RxInjector/Annotation
+  - DanceUIGraph (0.1.0):
+    - DanceUIGraph/core (= 0.1.0)
+  - DanceUIGraph/core (0.1.0):
+    - DanceUIGraph/no-arc
+    - DanceUIRuntime
+  - DanceUIGraph/no-arc (0.1.0)
+  - DanceUIObservation (0.14.12):
+    - DanceUIObservationMacro
+  - DanceUIObservationMacro (0.14.12)
+  - DanceUIRuntime (0.1.0):
+    - boost (~> 1.88.0)
+    - swift (~> 6.1.2)
+  - MyShims (1.0.0)
+  - OpenCombine (0.14.0)
+  - OpenCombineDispatch (0.14.0):
+    - OpenCombine (>= 0.13.0)
+  - OpenCombineFoundation (0.14.0):
+    - OpenCombine (>= 0.13.0)
+  - Resolver (1.5.1)
+  - RxAnnotation (1.0.0)
+  - RxCoreComponents (1.0.0):
+    - RxFoundation
+  - RxFoundation (1.0.0)
+  - RxInjector (1.0.0):
+    - RxAnnotation
+    - RxCoreComponents
+    - RxFoundation
+    - RxInjector/Annotation (= 1.0.0)
+  - RxInjector/Annotation (1.0.0):
+    - RxAnnotation
+    - RxCoreComponents
+    - RxFoundation
+  - swift (6.1.2)
+
+DEPENDENCIES:
+  - boost (from `../../DanceUIDependencies/boost`)
+  - DanceUI (from `../`)
+  - DanceUICompose (from `../Modules/DanceUICompose/`)
+  - DanceUIComposeModule (from `../Modules/DanceUIComposeModule/`)
+  - DanceUIGraph (from `../../DanceUIGraph`)
+  - DanceUIObservation (from `../Modules/DanceUIObservation`)
+  - DanceUIObservationMacro (from `../Modules/DanceUIObservation`)
+  - DanceUIRuntime (from `../../DanceUIRuntime`)
+  - MyShims (from `https://github.com/RetVal/MyShims`, branch `master`)
+  - OpenCombine (= 0.14.0)
+  - OpenCombineDispatch (= 0.14.0)
+  - OpenCombineFoundation (= 0.14.0)
+  - Resolver (= 1.5.1)
+  - RxAnnotation (from `../Modules/RxAnnotation`)
+  - RxCoreComponents (from `../Modules/RxCoreComponents`)
+  - RxFoundation (from `../Modules/RxFoundation`)
+  - RxInjector (from `../Modules/RxInjector`)
+  - swift (from `../../DanceUIDependencies/swift`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - OpenCombine
+    - OpenCombineDispatch
+    - OpenCombineFoundation
+    - Resolver
+
+EXTERNAL SOURCES:
+  boost:
+    :path: "../../DanceUIDependencies/boost"
+  DanceUI:
+    :path: "../"
+  DanceUICompose:
+    :path: "../Modules/DanceUICompose/"
+  DanceUIComposeModule:
+    :path: "../Modules/DanceUIComposeModule/"
+  DanceUIGraph:
+    :path: "../../DanceUIGraph"
+  DanceUIObservation:
+    :path: "../Modules/DanceUIObservation"
+  DanceUIObservationMacro:
+    :path: "../Modules/DanceUIObservation"
+  DanceUIRuntime:
+    :path: "../../DanceUIRuntime"
+  MyShims:
+    :branch: master
+    :git: https://github.com/RetVal/MyShims
+  RxAnnotation:
+    :path: "../Modules/RxAnnotation"
+  RxCoreComponents:
+    :path: "../Modules/RxCoreComponents"
+  RxFoundation:
+    :path: "../Modules/RxFoundation"
+  RxInjector:
+    :path: "../Modules/RxInjector"
+  swift:
+    :path: "../../DanceUIDependencies/swift"
+
+CHECKOUT OPTIONS:
+  MyShims:
+    :commit: 155bd4ad6a53f481dbe159fbe176bc9cb370272f
+    :git: https://github.com/RetVal/MyShims
+
+SPEC CHECKSUMS:
+  boost: 3bbaaae7953958bf292199a51a3da8302419e7bb
+  DanceUI: 5a945901daddbd6ae20764fd37bef5288be9d239
+  DanceUICompose: 3212ce6d68acae618f4614f697be82c80bfe53ca
+  DanceUIComposeModule: 20059f7bc2c74401556303b86be23a30681240bc
+  DanceUIGraph: b246b1695cf9537d58649a57383a8a1c22994f76
+  DanceUIObservation: c915494f89c448a68f7aaf9bee8d67e835eb6a99
+  DanceUIObservationMacro: 2d5df76dd8f55b83f2b8993518a11d84cc557ef0
+  DanceUIRuntime: b841af20789a0c8d385a97647b96a56b26fac994
+  MyShims: ed931ebcf0746eec361da9f4ab69635882e18f62
+  OpenCombine: 99bf5bc4fce0e34507031a9f277e927bbe25a722
+  OpenCombineDispatch: b52c5950f5f87677293b4d96931168c50b437f91
+  OpenCombineFoundation: bf2d665981bbc59fa99f34302d457a520297df8f
+  Resolver: 0e2ce51257e9366c54afe1b9e9be25059e9b9300
+  RxAnnotation: ccafdade828877d2e5cc0dda318035c51e36ea29
+  RxCoreComponents: a9619cde272fd9144ecd79847ba93d25b89fee58
+  RxFoundation: 553fe01b41b7202dffe737e69071f276b7a8fc92
+  RxInjector: 72a1ef97d6fd0e18e2853fdcab33fbcb63fb22ee
+  swift: 87cc6c9ca0c1962b48102a9db1d5017de0641f14
+
+PODFILE CHECKSUM: 79595350dc0f0c27dfd17ee23ae15e4727acc0c7
+
+COCOAPODS: 1.12.1

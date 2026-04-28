@@ -1,0 +1,69 @@
+# OS X
+.DS_Store
+
+# Xcode
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+profile
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+.build
+
+# pod
+Example/Podfile_Patch
+Example/Podfile.lock.json
+Example/pod.json
+Example/pods.json
+Example/unbinary.json
+Example/*.xcworkspace/pod.json
+ParseProjectFileMap
+TOS
+Context.txt
+version.json
+# Bundler
+.bundle
+
+# Add this line if you want to avoid checking in source code from Carthage dependencies.
+# Carthage/Checkouts
+
+Carthage/Build
+
+# We recommend against adding the Pods directory to your .gitignore. However
+# you should judge for yourself, the pros and cons are mentioned at:
+# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control
+#
+# Note: if you ignore the Pods directory, make sure to uncomment
+# `pod install` in .travis.yml
+#
+Example/DanceUIApp.xcworkspace/xcuserdata/
+Example/Pods/
+/Example/Pods/Pods.xcodeproj/project.pbxproj
+
+# SwiftUIUITest.${TestCaseClassName} is generated dynamically everytime the test is triggered
+# while DanceUIUITest..${TestCaseClassName} should be considered as the correction of those cases
+# which are implemented incorrectly by SwiftUI
+ReferenceImages_64/
+FailureDiffs/
+*TestResult
+*TestResult.xcresult/
+TestResults
+TestResults.xcresult/
+Example/*.html
+*.profdata
+*.html
+
+.swiftpm
+Package.resolved
+danceuiTmpPath
+temp

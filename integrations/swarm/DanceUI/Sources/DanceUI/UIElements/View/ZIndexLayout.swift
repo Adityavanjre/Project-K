@@ -1,0 +1,59 @@
+// Copyright (c) 2025 ByteDance Ltd. and/or its affiliates
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import Foundation
+
+@available(iOS 13.0, *)
+extension View {
+
+    /// Controls the display order of overlapping views.
+    ///
+    /// Use `zIndex(_:)` when you want to control the front-to-back ordering of
+    /// views.
+    ///
+    /// In this example there are two overlapping rotated rectangles. The
+    /// frontmost is represented by the larger index value.
+    ///
+    ///     VStack {
+    ///         Rectangle()
+    ///             .fill(Color.yellow)
+    ///             .frame(width: 100, height: 100, alignment: .center)
+    ///             .zIndex(1) // Top layer.
+    ///
+    ///         Rectangle()
+    ///             .fill(Color.red)
+    ///             .frame(width: 100, height: 100, alignment: .center)
+    ///             .rotationEffect(.degrees(45))
+    ///             // Here a zIndex of 0 is the default making
+    ///             // this the bottom layer.
+    ///     }
+    ///
+    /// - Parameter value: A relative front-to-back ordering for this view; the
+    ///   default is `0`.
+    @inlinable
+    public func zIndex(_ value: Double) -> some View {
+        _trait(ZIndexTraitKey.self, value)
+    }
+
+}
+
+@available(iOS 13.0, *)
+public struct ZIndexTraitKey: _ViewTraitKey {
+   
+    public typealias Value = Double
+   
+    @inline(__always)
+    public static var defaultValue: Double { 0 }
+
+}
