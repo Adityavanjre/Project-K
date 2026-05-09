@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import time
 import logging
+import random
 import os
 import sys
 
@@ -43,5 +44,4 @@ def run_pypi_deep_dive():
     logger.info(f"[+] Dependency Interaction Anchored.")
 
 if __name__ == "__main__":
-    import random
     run_pypi_deep_dive()

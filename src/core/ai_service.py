@@ -3,36 +3,34 @@ import json
 import logging
 import requests
 import base64
+import time
 from typing import Dict, Any, Optional
 
 
+from src.core.config_manager import config
+
 class AIService:
     """
-    Service for interacting with Groq Cloud API.
+    Service for interacting with AI models (Groq, NVIDIA NIM, Local).
     """
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None, vector_memory=None):
+    def __init__(self, cfg: Optional[Dict[str, Any]] = None, vector_memory=None):
         """Initialize the AI service."""
-        self.config = config or {}
+        self.config = cfg or {}
         self.logger = logging.getLogger(__name__)
         self.memory = vector_memory  # For semantic caching
 
         # Phase 51: Sovereign Hardware-Locked Node
-        # Phase 55: Sovereign Absolute Protocol (R-5)
         self.sovereign_only = os.getenv("KALI_SOVEREIGN_ONLY", "false").lower() == "true"
         self.sovereign_url = os.getenv("KALI_SOVEREIGN_URL")
         
+        # 🔱 SOVEREIGN REGISTRY: Unified Endpoints
+        self.api_url = config.get("sovereign.endpoints.groq")
+        self.nv_url = config.get("sovereign.endpoints.nvidia")
+        
         if self.sovereign_only:
-            self.api_url = "http://localhost:11434/api/chat"
+            self.api_url = f"{config.get('sovereign.endpoints.ollama')}/api/chat"
             self.logger.info("PROTOCOL_READY: KALI_SOVEREIGN_ONLY is ACTIVE. Cloud neural links severed.")
-        else:
-            self.api_url = (
-                self.sovereign_url
-                if self.sovereign_url
-                else "https://api.groq.com/openai/v1/chat/completions"
-            )
-
-        self.nv_url = "https://integrate.api.nvidia.com/v1/chat/completions"
 
         # Phase 4.85: Multi-Key Rotation Support
         raw_key = os.getenv("GROQ_API_KEY", "")
@@ -61,7 +59,7 @@ class AIService:
                 f"KALI AI Service Online. Active Keys: {keys_found}. Primary: {self.text_model}"
             )
         else:
-            self.logger.warning("KALI AI Service Offline (Simulation Mode Active).")
+            self.logger.warning("KALI AI Service Offline. Real neural link required for sovereign operation.")
 
     def _rotate_key(self):
         """Rotate to the next available API key if multiple are provided."""
@@ -123,6 +121,7 @@ class AIService:
         is_json: bool = False,
         temperature: float = 0.7,
         use_fallback: bool = False,
+        timeout: int = 7, # 🔱 HARD-CAP: Sovereign 7s Limit
         **kwargs,
     ):
         """Direct HTTP call to Groq."""
@@ -148,7 +147,7 @@ class AIService:
                 payload["response_format"] = {"type": "json_object"}
 
             resp = requests.post(
-                self.api_url, headers=headers, json=payload, timeout=30
+                self.api_url, headers=headers, json=payload, timeout=timeout
             )
 
             if resp.status_code == 200:
@@ -191,34 +190,15 @@ class AIService:
                         messages, is_json, temperature, use_fallback, **kwargs
                     )
 
-                if not use_fallback:
-                    self.logger.warning(
-                        "Scaling to fallback node after backoff exhaustion."
-                    )
-                    return self._generate_groq(
-                        messages, is_json, temperature, use_fallback=True
-                    )
-                return "RATE_LIMIT_CRITICAL: All neural nodes congested. Sir, please standby for cooling."
+                return "RATE_LIMIT_CRITICAL: Remote congested. Falling back..."
             else:
                 self.logger.error(
                     f"Groq Error {resp.status_code} ({target_model}): {resp.text}"
                 )
-                # Simple recursive fallback if main model fails
-                if not use_fallback:
-                    self.logger.warning(
-                        f"KALI switching to fallback node: {self.fallback_model}"
-                    )
-                    return self._generate_groq(
-                        messages, is_json, temperature, use_fallback=True
-                    )
-                return {} if is_json else ""
+                return f"REMOTE_ERROR: {resp.status_code}"
 
         except requests.exceptions.RequestException as e:
             self.logger.error(f"Groq Connection Error: {e}")
-            if not use_fallback:
-                return self._generate_groq(
-                    messages, is_json, temperature, use_fallback=True
-                )
             return f"CONNECTION_ERROR: {e}"
         except Exception as e:
             self.logger.error(f"Groq Unexpected Error: {e}")
@@ -232,17 +212,12 @@ class AIService:
         use_fallback: bool = False,
         query_model: str = "llama-3.3-70b-versatile",
         bypass_cache: bool = False,
+        timeout: int = 7, # 🔱 AGGRESSIVE TIMEOUT
         **kwargs
     ) -> str:
         """Standard text query with Sovereign Boundary (G-7) Protection."""
         if not self.is_connected and not any(self.nv_keys.values()):
-            # --- OFFLINE SIMULATION MODE ---
-            self.logger.info("OFFLINE MODE: Generating simulated response.")
-            if "Context:" in context or "Context:" in question:
-                if "Sensor" in context or "Sensor" in question:
-                    return "OFFLINE SIMULATION: I see you are asking about the Sensor. (Proved Context-Link)"
-                return "OFFLINE SIMULATION: Context received."
-            return "AI OFFLINE. (Groq API Key missing)."
+            return "AI OFFLINE: Simulation Mode Purged. System strictly requires local or verified neural link."
 
         # Phase 4.17: Semantic Cache Check
         if self.memory and not bypass_cache:
@@ -283,15 +258,15 @@ class AIService:
 
         if "/" in query_model or query_model in self.nv_keys:
             return self._generate_nvidia(
-                messages, model=query_model, temperature=temperature
+                messages, model=query_model, temperature=temperature, timeout=timeout
             )
 
         return self._generate_groq(
-            messages, temperature=temperature, use_fallback=use_fallback
+            messages, temperature=temperature, use_fallback=use_fallback, timeout=timeout
         )
 
 
-    def _generate_nvidia(self, messages: list, model: str, temperature: float = 0.7):
+    def _generate_nvidia(self, messages: list, model: str, temperature: float = 0.7, timeout: int = 7):
         """Call NVIDIA NIM API."""
         try:
             key = self.nv_keys.get(model)
@@ -320,7 +295,7 @@ class AIService:
             elif "usdcode" in model:
                 payload["extra_body"] = {"expert_type": "auto"}
 
-            resp = requests.post(self.nv_url, headers=headers, json=payload, timeout=60)
+            resp = requests.post(self.nv_url, headers=headers, json=payload, timeout=timeout)
 
             if resp.status_code == 200:
                 data = resp.json()
@@ -349,235 +324,8 @@ class AIService:
         self, system_prompt: str, user_prompt: str, temperature: float = 0.2
     ) -> Dict[str, Any]:
         """Generate JSON structure (Strict Mode)."""
-        if not self.is_connected:
-            self.logger.info("OFFLINE MODE: Generating simulated JSON.")
-
-            # Combine prompts to handle argument swapping issues robustly
-            combined_prompt = f"{system_prompt} {user_prompt}"
-
-            # --- SCENARIO 1: VISUAL EXPLAINER (3D) ---
-            if "Visual Engine" in combined_prompt or "3D SCHEMATIC" in combined_prompt:
-                return {
-                    "steps": [
-                        {
-                            "text": "Phase 1: Component Placement. We start by positioning the Microcontroller.",
-                            "audio_text": "First, we place the Arduino Uno as the central brain of our robot.",
-                            "visual_code": """
-                                // Arduino PCB (Teal)
-                                const arduino = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.2, 3.5), new THREE.MeshStandardMaterial({color: 0x008080}));
-                                arduino.position.y = 0;
-                                scene.add(arduino);
-                                
-                                // USB Port (Silver)
-                                const usb = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.4, 0.6), new THREE.MeshStandardMaterial({color: 0xC0C0C0}));
-                                usb.position.set(-0.5, 0.3, -1.6);
-                                scene.add(usb);
-                                
-                                // Chip (Black)
-                                const chip = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.1, 2), new THREE.MeshStandardMaterial({color: 0x111111}));
-                                chip.position.set(0, 0.2, 0);
-                                scene.add(chip);
-
-                                // LABEL: Arduino
-                                const canvas1 = document.createElement('canvas');
-                                const ctx1 = canvas1.getContext('2d');
-                                ctx1.font = 'Bold 40px Arial';
-                                ctx1.fillStyle = 'white';
-                                ctx1.fillText('ARDUINO UNO', 0, 50);
-                                const texture1 = new THREE.CanvasTexture(canvas1);
-                                const spriteMat1 = new THREE.SpriteMaterial({ map: texture1 });
-                                const sprite1 = new THREE.Sprite(spriteMat1);
-                                sprite1.position.set(0, 2, 0);
-                                sprite1.scale.set(3, 1.5, 1);
-                                scene.add(sprite1);
-                            """,
-                        },
-                        {
-                            "text": "Phase 2: Sensor Integration. Adding the Ultrasonic Sensor for distance measurement.",
-                            "audio_text": "Next, we mount the Ultrasonic Sensor on the front chassis.",
-                            "visual_code": """
-                                // Sensor Body (Blue)
-                                const sensor = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.5, 0.5), new THREE.MeshStandardMaterial({color: 0x0066cc}));
-                                sensor.position.set(0, 1, 2);
-                                scene.add(sensor);
-                                
-                                // Eyes (Silver Cylinders)
-                                const eyeGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 32);
-                                const eyeMat = new THREE.MeshStandardMaterial({color: 0xdddddd});
-                                
-                                const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
-                                leftEye.rotation.x = Math.PI / 2;
-                                leftEye.position.set(-0.4, 1, 2.3);
-                                scene.add(leftEye);
-                                
-                                const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
-                                rightEye.rotation.x = Math.PI / 2;
-                                rightEye.position.set(0.4, 1, 2.3);
-                                scene.add(rightEye);
-
-                                // LABEL: Sensor
-                                const canvas2 = document.createElement('canvas');
-                                const ctx2 = canvas2.getContext('2d');
-                                ctx2.font = 'Bold 40px Arial';
-                                ctx2.fillStyle = 'yellow';
-                                ctx2.fillText('ULTRASONIC SENSOR', 0, 50);
-                                const texture2 = new THREE.CanvasTexture(canvas2);
-                                const spriteMat2 = new THREE.SpriteMaterial({ map: texture2 });
-                                const sprite2 = new THREE.Sprite(spriteMat2);
-                                sprite2.position.set(0, 2.5, 2);
-                                sprite2.scale.set(4, 2, 1);
-                                scene.add(sprite2);
-                            """,
-                        },
-                    ]
-                }
-
-            # --- SCENARIO 2: PROJECT MENTOR (PLAN) ---
-            if "Project Architect" in combined_prompt:
-                # DYNAMIC RESPONSE BASED ON INPUT KEYWORDS
-                p_lower = combined_prompt.lower()
-
-                plan_data = {}
-
-                if "rocket" in p_lower or "space" in p_lower:
-                    plan_data = {
-                        "project_name": "Model Rocket Flight Computer",
-                        "summary": "Telemetry system for measuring altitude and acceleration.",
-                        "bom": [
-                            {
-                                "part": "Arduino Nano",
-                                "specs": "Small Form Factor",
-                                "estimated_cost": "$10",
-                                "reason": "Central Processing",
-                            },
-                            {
-                                "part": "BMP280",
-                                "specs": "Barometric Pressure Sensor",
-                                "estimated_cost": "$5",
-                                "reason": "Altitude Tracking",
-                            },
-                            {
-                                "part": "MPU6050",
-                                "specs": "Accelerometer/Gyro",
-                                "estimated_cost": "$4",
-                                "reason": "Orientation Data",
-                            },
-                        ],
-                        "mermaid_diagram": "graph TD; A[MPU6050] -->|I2C| B(Arduino Nano); C[BMP280] -->|I2C| B; B -->|SPI| D[SD Card Module];",
-                        "roadmap": [
-                            {
-                                "phase": "Phase 1: Sensor Test",
-                                "description": "Wire sensors to breadboard and scan I2C addresses.",
-                                "key_concept": "I2C Protocol",
-                            },
-                            {
-                                "phase": "Phase 2: Data Logging",
-                                "description": "Implement SD card write logic for high-speed logging.",
-                                "key_concept": "Write Latency",
-                            },
-                        ],
-                    }
-                elif "home" in p_lower or "automation" in p_lower or "plant" in p_lower:
-                    plan_data = {
-                        "project_name": "Smart Home Hub",
-                        "summary": "Central controller for home automation devices.",
-                        "bom": [
-                            {
-                                "part": "ESP32 Dev Module",
-                                "specs": "Wi-Fi + Bluetooth",
-                                "estimated_cost": "$8",
-                                "reason": "Wireless Connectivity",
-                            },
-                            {
-                                "part": "Relay Module",
-                                "specs": "4-Channel 5V",
-                                "estimated_cost": "$5",
-                                "reason": "High Voltage Switching",
-                            },
-                            {
-                                "part": "DHT11",
-                                "specs": "Temp/Humidity Sensor",
-                                "estimated_cost": "$2",
-                                "reason": "Environmental Monitoring",
-                            },
-                        ],
-                        "mermaid_diagram": "graph TD; A[DHT11] --> B(ESP32); B -->|WiFi| C[Cloud Dashboard]; B -->|GPIO| D[Relays];",
-                        "roadmap": [
-                            {
-                                "phase": "Phase 1: Network Setup",
-                                "description": "Configure ESP32 to connect to local WiFi.",
-                                "key_concept": "IoT Connectivity",
-                            },
-                            {
-                                "phase": "Phase 2: Web Server",
-                                "description": "Host a simple control page on the ESP32.",
-                                "key_concept": "HTTP Request Handling",
-                            },
-                        ],
-                    }
-                else:
-                    # Default (Car)
-                    plan_data = {
-                        "project_name": "Gesture Controlled Car",
-                        "summary": "A robot car controlled by hand gestures via accelerometer.",
-                        "bom": [
-                            {
-                                "part": "Arduino Uno",
-                                "specs": "R3",
-                                "estimated_cost": "$25",
-                                "reason": "Logic Control",
-                            },
-                            {
-                                "part": "L298N Motor Driver",
-                                "specs": "Dual H-Bridge",
-                                "estimated_cost": "$5",
-                                "reason": "Motor Control",
-                            },
-                            {
-                                "part": "Ultrasonic Sensor",
-                                "specs": "HC-SR04",
-                                "estimated_cost": "$3",
-                                "reason": "Obstacle Avoidance",
-                            },
-                        ],
-                        "mermaid_diagram": "graph TD; A[Arduino] --> B[Motor Driver]; B --> C[Motors];",
-                        "roadmap": [
-                            {
-                                "phase": "Phase 1: Chassis Assembly",
-                                "description": "Mount motors to chassis.",
-                                "key_concept": "Mechanical Stability",
-                            },
-                            {
-                                "phase": "Phase 2: Wiring",
-                                "description": "Connect Motor Driver to Arduino (Pins 9-11).",
-                                "key_concept": "PWM Control",
-                            },
-                        ],
-                    }
-
-                # Common Fields
-                plan_data["difficulty"] = "Intermediate"
-                plan_data["code_snippet"] = (
-                    "void setup() { Serial.begin(9600); } // Simulated Code"
-                )
-                plan_data["code_language"] = "cpp"
-                plan_data["tech_stack"] = ["C++", "Electronics", "System Design"]
-                plan_data["prerequisites"] = ["Basic Circuits", "Soldering"]
-                plan_data["calibration_guide"] = (
-                    "Verify sensor readings on Serial Monitor."
-                )
-
-                # Title and response for verification scripts
-                title = plan_data.get("project_name", "KALI Fabrication Project")
-                plan_data["response"] = f"# Title: {title}\n\n" + plan_data.get(
-                    "summary", "Analysis complete."
-                )
-
-                return plan_data
-
-            return {
-                "error": f"Unknown Offline Scenario. Prompt sample: {combined_prompt.splitlines()[0]}..."
-            }
+        if not self.is_connected and not any(self.nv_keys.values()):
+            raise ConnectionError("AI OFFLINE: Simulation Mode Purged. System strictly requires local or verified neural link.")
 
         messages = [
             {
@@ -591,7 +339,7 @@ class AIService:
 
     def analyze_image(self, image_file, prompt: str = "Analyze this image.") -> str:
         if not self.is_connected:
-            return "**OFFLINE SIMULATION**: I have analyzed the image. It appears to be a Circuit Diagram. (Vision API Unavailable)"
+            return "Vision Offline: Real neural analysis required. No simulated analysis permitted."
 
         try:
             # 1. Determine Model & Endpoint

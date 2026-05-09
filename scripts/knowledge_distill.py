@@ -6,13 +6,13 @@ import sys
 import json
 import re
 
-# sys.path injection removed per Phase 52 standards. Use PYTHONPATH.
+# sys.path injection removed per SOVEREIGN standards. Use PYTHONPATH.
 
 from src.core.processor import DoubtProcessor
 
 def run_batch_distill():
     """
-    Phase 52: KALI High-Density Batch Distillation (C-2).
+    SOVEREIGN: KALI High-Density Batch Distillation (C-2).
     Generates 10 distinct, master-level instruction pairs per request to maximize tokens.
     """
     logging.basicConfig(level=logging.INFO)

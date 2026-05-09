@@ -16,7 +16,7 @@ class Manifestor:
     def __init__(self, base_path: Optional[str] = None):
         if base_path is None:
             project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-            base_path = os.path.join(project_root, "kali_manifest")
+            base_path = os.path.join(project_root, "data", "projects")
         self.base_path = base_path
         self.base_path = os.path.abspath(base_path)
         self.logger = logging.getLogger(__name__)

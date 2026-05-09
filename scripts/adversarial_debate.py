@@ -2,6 +2,7 @@
 import time
 import logging
 import json
+import random
 import os
 import sys
 
@@ -53,5 +54,4 @@ def run_adversarial_debate():
     logger.info(f"[+] Debate Anchored. Sovereign DPO sample recorded.")
 
 if __name__ == "__main__":
-    import random
     run_adversarial_debate()

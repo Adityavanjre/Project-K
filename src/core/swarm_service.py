@@ -36,7 +36,7 @@ class SwarmService:
         self.blackboard[key] = value
         logger.info(f"KALI Blackboard: {key} updated. All 30 nodes synchronized.")
 
-    def get_neural_health(self):
+    def get_swarm_status(self):
         """Returns the [B][N][U][S] status of every node for the dashboard."""
         health = {}
         for name, info in self.nodes.items():

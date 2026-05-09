@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI RALPH LOOP - OMNI-CHANNEL 500+ MATRIX (Phase 4.70)
+KALI RALPH LOOP - OMNI-CHANNEL 500+ MATRIX (SOVEREIGN)
 Max velocity training across ALL dimensions.
 Core Identity channels are guaranteed every 3rd iteration.
 Per-skill sovereign verification runs after each channel.
@@ -13,7 +13,7 @@ import os
 import random
 import traceback
 
-# sys.path injection removed per Phase 52 standards. Use PYTHONPATH.
+# sys.path injection removed per SOVEREIGN standards. Use PYTHONPATH.
 
 # Bug B-4 fix: Moved DoubtProcessor import inside run_ralph_loop() to prevent
 # top-level circular import that crashes the entire script in non-CUDA environments.
@@ -139,7 +139,7 @@ CHANNEL_TABLE = [
 ]
 
 # ------------------------------------------------------------------
-# GLOBAL SOVEREIGN QUEUE (Phase 4.75 Progressive Mastery)
+# GLOBAL SOVEREIGN QUEUE (SOVEREIGN Progressive Mastery)
 # No priority levels. Every skill must reach 100% independently.
 # ------------------------------------------------------------------
 

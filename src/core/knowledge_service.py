@@ -49,6 +49,44 @@ class KnowledgeService:
         except Exception:
             return 0
 
-    def clear_dataset(self):
-        if os.path.exists(self.dataset_file):
-            os.remove(self.dataset_file)
+    def get_graph_data(self) -> Dict[str, List[Dict]]:
+        """Generates dynamic graph nodes and edges from real knowledge atoms."""
+        nodes = [
+            {"id": "ROOT", "label": "SOVEREIGN_CORE", "type": "origin"},
+            {"id": "N1", "label": "VEDIC_LOGIC", "type": "pillar"},
+            {"id": "N2", "label": "EXPLOIT_SYNTH", "type": "pillar"},
+            {"id": "N3", "label": "SWARM_INTEL", "type": "pillar"},
+            {"id": "N4", "label": "ECON_AUTO", "type": "pillar"}
+        ]
+        edges = [
+            {"from": "ROOT", "to": "N1"},
+            {"from": "ROOT", "to": "N2"},
+            {"from": "ROOT", "to": "N3"},
+            {"from": "ROOT", "to": "N4"}
+        ]
+
+        # Add nodes from knowledge atoms
+        atom_path = os.path.join(self.project_root, "data", "knowledge_atoms.jsonl")
+        if os.path.exists(atom_path):
+            try:
+                with open(atom_path, "r", encoding="utf-8") as f:
+                    for i, line in enumerate(f):
+                        atom = json.loads(line)
+                        atom_id = f"A{i}"
+                        nodes.append({
+                            "id": atom_id, 
+                            "label": atom.get("topic", f"ATOM_{i}"), 
+                            "type": "neuron"
+                        })
+                        # Connect to a pillar based on keywords or random if none
+                        pillar = "N1"
+                        topic = atom.get("topic", "").lower()
+                        if "exploit" in topic or "hack" in topic: pillar = "N2"
+                        elif "swarm" in topic or "agent" in topic: pillar = "N3"
+                        elif "wealth" in topic or "bounty" in topic: pillar = "N4"
+                        
+                        edges.append({"from": pillar, "to": atom_id})
+                        if i > 20: break # Limit for UI performance
+            except Exception: pass
+            
+        return {"nodes": nodes, "edges": edges}

@@ -8,10 +8,11 @@ class TaskPlanner:
     """
     ReAct-pattern task planner. KALI plans and executes multi-step internet research.
     """
-    def __init__(self, ai_service, vector_memory):
+    def __init__(self, ai_service, vector_memory, system_controller=None):
         self.ai = ai_service
         self.memory = vector_memory
         self.executor = CodeExecutor()
+        self.controller = system_controller
         self.logger = logging.getLogger(__name__)
 
     def execute(self, goal: str, max_steps: int = 5) -> dict:
@@ -59,6 +60,15 @@ class TaskPlanner:
                 script = self.ai.ask_question(f"Write ONLY the Python code to achieve this step: '{step}'").strip().strip('`').replace('python\n', '')
                 res = self.executor.execute(script)
                 log.append({"step": step, "action": "CODE", "result": res["output"] if res["success"] else res["error"]})
+
+            elif any(w in kw for w in ["terminal", "shell", "install", "run command", "execute"]):
+                if self.controller:
+                    cmd = self.ai.ask_question(f"Extract ONLY the shell command from this step: '{step}'").strip().strip('`')
+                    # Automatically authorize with a temporary mission ID if needed
+                    res = self.controller.execute_command(cmd)
+                    log.append({"step": step, "action": f"TERMINAL: {cmd}", "result": res.get("stdout", "") or res.get("error", "FAIL")})
+                else:
+                    log.append({"step": step, "action": "TERMINAL", "result": "Controller unavailable."})
 
             else:
                 context = "\n".join([f"Result: {e['result']}" for e in log])

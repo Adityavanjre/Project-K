@@ -1,64 +1,118 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="h-full flex items-center justify-center bg-black">
-    <div class="glass-panel max-w-2xl w-full p-10 text-center animate-in fade-in zoom-in duration-1000">
-        <div class="mb-8">
-            <img src="/static/branding/logo.png" alt="KALI" class="w-32 mx-auto mb-4 animate-pulse">
-            <h1 class="text-4xl font-bold text-cyan-400 tracking-[0.3em]">KALI ONBOARDING</h1>
-            <p class="text-cyan-800 font-mono text-sm mt-2">ESTABLISHING SOVEREIGN NEURAL LINK</p>
+<div class="h-full w-full flex items-center justify-center" style="background: var(--bg-main); background-image: var(--grid-pattern); background-size: 30px 30px;">
+    
+    <div class="k-card max-w-xl w-full p-10 flex flex-col items-center gap-8 relative overflow-hidden" style="border-width: 2px;">
+        <!-- Top Glow -->
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-action to-transparent opacity-50"></div>
+        
+        <div class="text-center">
+            <i class="fas fa-dna text-action text-5xl mb-4 animate-pulse"></i>
+            <h1 class="text-3xl font-display font-bold text-main tracking-[0.4em] uppercase">Sovereign Genesis</h1>
+            <div class="font-mono text-[10px] text-action tracking-widest mt-2">INITIALIZING KALI OS v5.1</div>
         </div>
 
-        <div id="onboarding-flow" class="space-y-6">
-            <div id="step-1" class="space-y-4">
-                <p class="text-cyan-200 font-mono text-lg italic">"Identify yourself. What is your primary area of expertise?"</p>
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="nextStep('Engineer')" class="btn-quantum">Engineer</button>
-                    <button onclick="nextStep('Researcher')" class="btn-quantum">Researcher</button>
-                    <button onclick="nextStep('Auditor')" class="btn-quantum">Auditor</button>
-                    <button onclick="nextStep('Philosopher')" class="btn-quantum">Philosopher</button>
+        <div id="onboarding-flow" class="w-full">
+            <!-- STEP 1 -->
+            <div id="step-1" class="flex flex-col gap-6 animate-in">
+                <p class="font-mono text-xs text-muted text-center italic">"Commander, identify your primary operational focus."</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="nextStep('engineering')" class="k-btn">
+                        <i class="fas fa-hammer"></i> ENGINEERING
+                    </button>
+                    <button onclick="nextStep('research')" class="k-btn">
+                        <i class="fas fa-flask"></i> RESEARCH
+                    </button>
+                    <button onclick="nextStep('security')" class="k-btn">
+                        <i class="fas fa-shield-halved"></i> SECURITY
+                    </button>
+                    <button onclick="nextStep('philosophy')" class="k-btn">
+                        <i class="fas fa-scroll"></i> PHILOSOPHY
+                    </button>
                 </div>
             </div>
 
-            <div id="step-2" class="hidden space-y-4">
-                <p class="text-cyan-200 font-mono text-lg italic">"And your desired level of autonomy?"</p>
-                <div class="grid grid-cols-2 gap-4">
-                    <button onclick="finishOnboarding('Low')" class="btn-quantum">Guided</button>
-                    <button onclick="finishOnboarding('High')" class="btn-quantum">Sovereign</button>
+            <!-- STEP 2 -->
+            <div id="step-2" class="hidden flex flex-col gap-6 animate-in">
+                <p class="font-mono text-xs text-muted text-center italic">"Define the neural autonomy threshold for KALI."</p>
+                <div class="flex flex-col gap-3">
+                    <button onclick="finishOnboarding('CONTROLLED')" class="k-btn flex justify-between items-center px-6">
+                        <span>CONTROLLED</span>
+                        <span class="text-[9px] text-muted">GUIDED ASSISTANCE</span>
+                    </button>
+                    <button onclick="finishOnboarding('SOVEREIGN')" class="k-btn flex justify-between items-center px-6" style="border-color: var(--action); color: var(--action);">
+                        <span>SOVEREIGN</span>
+                        <span class="text-[9px] text-action opacity-60">AUTONOMOUS_ASI</span>
+                    </button>
                 </div>
+            </div>
+            
+            <!-- FINALIZING -->
+            <div id="step-loading" class="hidden flex flex-col items-center gap-4 py-8">
+                <div class="hud-bar-track w-full"><div id="loading-bar" class="hud-bar-fill" style="width: 0%;"></div></div>
+                <div class="font-mono text-[9px] text-action uppercase tracking-widest" id="loading-text">Anchoring soul segments...</div>
             </div>
         </div>
 
-        <div class="mt-12 pt-6 border-t border-cyan-500/10">
-            <p class="text-[10px] text-cyan-900 font-mono uppercase tracking-tighter">
-                By initializing, you agree to the Law of Sovereign Consent.
+        <div class="w-full pt-6 border-top border-dim text-center">
+            <p class="text-[9px] text-dim font-mono uppercase tracking-widest">
+                By initializing, you accept the Omega Protocol & Law of Sovereign Consent.
             </p>
         </div>
     </div>
+
 </div>
 
 <script>
-    let dna = {};
+    let genesis_data = {};
 
-    function nextStep(val) {
-        dna.expertise = val;
-        document.getElementById('step-1').classList.add('hidden');
+    function nextStep(focus) {
+        genesis_data.focus = focus;
+        document.getElementById('step-1').style.display = 'none';
         document.getElementById('step-2').classList.remove('hidden');
     }
 
-    async function finishOnboarding(autonomy) {
-        dna.autonomy = autonomy;
+    async function finishOnboarding(mode) {
+        genesis_data.autonomy = mode;
+        document.getElementById('step-2').style.display = 'none';
+        document.getElementById('step-loading').classList.remove('hidden');
         
-        const res = await fetch('/api/genesis', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(dna)
-        });
-
-        const data = await res.json();
-        if (data.success) {
-            window.location.href = '/';
-        }
+        // Progress Simulation
+        let p = 0;
+        const bar = document.getElementById('loading-bar');
+        const txt = document.getElementById('loading-text');
+        const tasks = [
+            "Syncing Graph Memory...",
+            "Encrypting TOTP Vault...",
+            "Priming Swarm Nodes...",
+            "Manifesting Sovereign Link..."
+        ];
+        
+        const interval = setInterval(async () => {
+            p += 5;
+            bar.style.width = p + '%';
+            if (p % 25 === 0) txt.textContent = tasks[Math.floor(p/25)-1] || "Complete.";
+            
+            if (p >= 100) {
+                clearInterval(interval);
+                
+                try {
+                    const res = await fetch('/api/genesis', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(genesis_data)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        window.location.href = '/';
+                    }
+                } catch (e) {
+                    txt.textContent = "INITIALIZATION ERROR — LOCAL NODE DESYNC";
+                    txt.style.color = "var(--critical)";
+                }
+            }
+        }, 100);
     }
 </script>
 {% endblock %}

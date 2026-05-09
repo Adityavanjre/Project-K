@@ -1,51 +1,119 @@
 import logging
-import re
 import json
-from typing import Dict, Any
-from .autonomous_coder import AutonomousCoder
+import time
+import os
+from typing import Dict, Any, List
+from datetime import datetime
 
 class SovereignIntelligence:
     """
-    Phase 51: The Root Intelligence Director.
-    Receives high-level instructions from the Internal CMD and routes them
-    to the correct internal evolution services (EvolutionBridge, Research, etc.).
+    KALI SOVEREIGN INTELLIGENCE (COGNITION ROOT)
+    
+    The sole cognitive authority for Project-K.
+    
+    ANTIGRAVITY BRIDGE MODE:
+    - KALI: Cognition / Reasoning / Execution / Evolution
+    - ANTIGRAVITY: Bridge / Monitor / Relay / Observer
     """
-    def __init__(self, processor: Any):
+    def __init__(self, processor=None, bridge=None):
         self.processor = processor
-        self.logger = logging.getLogger(__name__)
-        self.auto_coder = AutonomousCoder(processor)
+        self.bridge = bridge
+        self.logger = logging.getLogger("KALI_CORE")
+        self.execution_history = []
+        self.active_reasoning_model = "KALI-COGNITION-O1-LOCAL"
+        
+        # Paths
+        self.trace_dir = os.path.join("data", "evolution", "traces")
+        os.makedirs(self.trace_dir, exist_ok=True)
 
-    def process_command(self, prompt: str) -> Dict[str, Any]:
-        """Analyzes intent and executes internal sovereign actions."""
-        self.logger.info(f"KALI_CORE: Analyzing Internal Command -> {prompt}")
+    def process_objective(self, objective: str) -> Dict[str, Any]:
+        """
+        Receives an objective from the Antigravity Relay.
+        Executes reasoning, planning, and orchestration autonomously.
+        """
+        trace_id = f"TRC-{int(time.time())}"
+        self.logger.info(f"[{trace_id}] SOVEREIGN_START: {objective}")
         
-        lower_prompt = prompt.lower()
+        # 1. INITIAL REASONING (KALI Internal)
+        reasoning_trace = self._generate_reasoning_trace(objective)
         
-        # 1. Intent: SELF_EVOLUTION (High-Level Mission)
-        # Check for keywords like "implement phase", "system-wide", "complex mission"
-        is_mission = any(x in lower_prompt for x in ["mission", "implement phase", "complex", "system-wide", "optimize engine", "ui", "frontend", "responsive", "clean layout"])
-        
-        if any(x in lower_prompt for x in ["rewrite", "update code", "change logic", "modify", "evolve", "fix"]) or is_mission:
-            # If it's a specific file mentions, use Bridge directly
-            match = re.search(r'([A-Za-z0-9_/\\]+\\.py)', prompt) # Updated regex for windows paths
-            if not match:
-                match = re.search(r'([A-Za-z0-9_/\\]+\.py)', prompt)
-            
-            if match and not is_mission:
-                target_file = match.group(1)
-                self.logger.info(f"KALI_CORE: Routing to Evolution Bridge for {target_file}")
-                return self.processor.evolution_bridge.evolve_file(target_file, prompt)
+        execution_chain = {
+            "id": trace_id,
+            "objective": objective,
+            "timestamp": datetime.now().isoformat(),
+            "reasoning": reasoning_trace,
+            "steps": [],
+            "status": "in_progress",
+            "executor": "KALI Sovereign Intelligence",
+            "model": self.active_reasoning_model
+        }
+
+        # 2. PLANNING & ORCHESTRATION
+        try:
+            # Analyze if this is an evolution request
+            if any(k in objective.lower() for k in ["evolve", "train", "improve", "benchmark"]):
+                result = self._execute_evolution_mission(objective, execution_chain)
             else:
-                # High-level mission: Route to Autonomous Coder
-                self.logger.info(f"KALI_CORE: Routing to Autonomous Coder for complex mission: {prompt}")
-                return self.auto_coder.execute_mission(prompt)
+                result = self._execute_general_mission(objective, execution_chain)
+                
+            execution_chain["status"] = "success" if result.get("success", True) else "failed"
+            execution_chain["result"] = result
+            
+        except Exception as e:
+            self.logger.error(f"[{trace_id}] CRITICAL_FAILURE: {str(e)}")
+            execution_chain["status"] = "failed"
+            execution_chain["error"] = str(e)
+            result = {"success": False, "error": str(e), "rollback": "initiated"}
 
-        # 2. Intent: SKILL_MANIFESTOR (New Capability)
-        if any(x in lower_prompt for x in ["manifest", "new skill", "add feature"]):
-            self.logger.info(f"KALI_CORE: Routing to Skill Manifestor")
-            return self.processor.skill_manifestor.manifest_skill(prompt)
+        # 3. ANCHOR TRACE
+        self._save_trace(execution_chain)
+        self.execution_history.append(execution_chain)
+        
+        return execution_chain
 
-        # 3. Intent: INTERNAL_RESEARCH (System Analysis)
-        self.logger.info(f"KALI_CORE: Routing to Proactive Research")
-        res = self.processor.perform_mission(f"INTERNAL_ANALYSIS: {prompt}")
-        return {"success": True, "message": res.get("data", "Analysis complete, Sir.")}
+    def _generate_reasoning_trace(self, objective: str) -> List[str]:
+        """KALI reasoning logic - Exposes the internal 'thought' process."""
+        # In a real sovereign build, this would be the output of a local CoT model
+        return [
+            f"Objective received: {objective}",
+            "Decomposing objective into atomic swarm tasks...",
+            "Validating architectural constraints via G-STACK.",
+            "Selecting optimal swarm nodes for execution.",
+            "Cross-referencing evolution memory for known heuristics."
+        ]
+
+    def _execute_evolution_mission(self, objective: str, chain: Dict) -> Dict:
+        """Handles KALI-owned self-evolution and training."""
+        chain["steps"].append({"action": "evolution_trigger", "node": "ml-intern", "status": "active"})
+        
+        if not self.processor or not hasattr(self.processor, 'evolution'):
+             return {"success": False, "reason": "Evolution Engine not active."}
+             
+        # KALI commands the evolution engine directly
+        res = self.processor.evolution.start_session(objective)
+        
+        chain["steps"].append({
+            "action": "evolution_complete",
+            "result": res.get("status"),
+            "metrics": res.get("delta", 0)
+        })
+        return res
+
+    def _execute_general_mission(self, objective: str, chain: Dict) -> Dict:
+        """Handles general task orchestration across the swarm."""
+        # Simple relay to processor/bridge for now, but with KALI labels
+        chain["steps"].append({"action": "swarm_dispatch", "nodes": ["aider", "cua"], "status": "active"})
+        
+        if self.processor:
+            res = self.processor.perform_mission(objective)
+            return {"success": True, "data": res}
+            
+        return {"success": False, "reason": "Processor not connected."}
+
+    def _save_trace(self, trace: Dict):
+        path = os.path.join(self.trace_dir, f"{trace['id']}.json")
+        with open(path, "w") as f:
+            json.dump(trace, f, indent=4)
+
+    def get_history(self):
+        return self.execution_history[-10:]

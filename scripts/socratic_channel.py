@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI SOCRATIC CHANNEL (Phase 4.40)
+KALI SOCRATIC CHANNEL (SOVEREIGN)
 Role: The Socratic Student/Teacher
 Focus: Dialectical reasoning, cross-model critique, and deep 'Why?' logic.
 """

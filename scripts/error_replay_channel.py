@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI ERROR REPLAY CHANNEL (Phase 4.31)
+KALI ERROR REPLAY CHANNEL (SOVEREIGN)
 Re-trains on past failed interactions (Review Alert score < 70).
 Turns every failure into a high-quality DPO pair.
 """

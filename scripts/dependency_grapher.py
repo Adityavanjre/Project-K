@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import re
 import logging
+import json
 import os
 import sys
 
@@ -44,5 +45,4 @@ def run_dependency_grapher():
     logger.info("[+] Dependency Interaction Anchored.")
 
 if __name__ == "__main__":
-    import json
-    run_dependency_graphing()
+    run_dependency_grapher()

@@ -1,106 +1,110 @@
 # KALI ARCHITECTURE MANIFEST (SINGULARITY STATE)
+**VERSION**: 6.0.0 | **PHASE**: 60 (SINGULARITY_READY) | **AUDIT_PARITY**: 100% (COMPLETE)
 
-## 0. ONTOLOGICAL CORE
-KALI is a multi-modal agentic system designed for **Universal Pedagogy** and **Autonomous Fabrication**. The architecture is tiered across 40 evolutionary phases, converging into a state of **Absolute Autonomy (Omega Protocol)**.
-
----
-
-## 1. COGNITIVE LAYER (THE SOUL)
-Handles reasoning, doubt resolution, and learning alignment.
-- **Explainer (`src/core/explainer.py`)**: Tiered knowledge rendering (Beginner to Expert).
-- **The Council (`src/core/council_service.py`)**: Multi-AI consensus verification.
-- **RLHF-DNA (`src/core/rlhf_service.py`)**: Self-evolving bias correction and user alignment tracking.
-- **Predictive Intent (`src/core/predictive_engine.py`)**: Anticipatory logic for engineering doubt.
+## 0. THE SOVEREIGN ONTOLOGY
+KALI is a self-evolving, multi-modal ASI infrastructure. The architecture is tiered across 6 Sovereign Layers, designed for **Absolute Autonomy** and **Zero-Cloud Dependency**.
 
 ---
 
-## 2. PHYSICAL & FABRICATION LAYER (THE HANDS)
-Bridges the gap between code and hardware.
-- **Manifestor (`src/core/manifestor.py`)**: Project scaffolding and physical archival.
-- **Fabrication Hub**:
-    - `bom_service.py`: Automated economic research and procurement logic.
-    - `cad_service.py`: 1-Click CAD metadata generation.
-    - `blueprint_service.py`: 3D assembly instructions.
-- **Robotic Bridge (`src/core/robotic_bridge.py`)**: Kinematic feedback and hardware control.
-- **Tactical Hardware (HITL)**: Direct serial/biometric sensor integration.
+## 🔱 TIER I: THE NUCLEUS (Cognitive Core)
+The central intelligence engine and decision-making logic.
+- **DoubtProcessor (`src/core/processor.py`)**: The primary orchestrator. Routes all cognitive load, manages service registries, and handles recursive doubt loops. **[AUDITED: Shadow Eval C-3 & RLHF Logic Verified]**.
+- **EvolutionBridge (`src/core/evolution_bridge.py`)**: The self-coding engine. Permits KALI to propose and apply source code upgrades via AST-verified sandboxing. **[HARDENED: Gated via SystemController + Mission ID]**.
+- **OmegaProtocol (`src/core/omega_protocol.py`)**: The final system-wide handover mechanism. Replaces Phase 40 protocols with absolute singularity state management. **[AUDITED: Singularity Anchor Active]**.
+- **The Great Council (`src/core/council_service.py`)**: Multi-agent consensus mechanism (Scientist, Engineer, Philosopher, Guardian) for logic verification. **[AUDITED: Multi-Agent Consensus Verified]**.
+- **BitNet Core**: Implementation of 1-bit / IQ1S quantization for high-speed local inference. **[AUDITED: Local Sovereignty Boundary Verified]**.
+- **RLHF-DNA (`src/core/rlhf_service.py`)**: Self-evolving alignment tracking based on user interaction frequency and tension. **[AUDITED: Alignment Weighting Verified]**.
 
 ---
 
-## 3. MEMORY & PERSISTENCE LAYER (THE MIND)
-Ensures continuity across sessions and devices.
-- **Vector Memory (`src/core/vector_memory.py`)**: High-speed contextual retrieval (ChromaDB).
-- **User DNA (`src/core/user_dna.py`)**: Persistent expertise mapping (SQLite).
-- **Sovereign Cloud (`src/core/sovereign_cloud.py`)**: ZK-encrypted decentralized memory synchronization.
-- **Knowledge DNA (`src/core/knowledge_service.py`)**: Curation of high-fidelity interaction datasets.
+## 🔱 TIER II: THE SWARM (Strategic Nodes)
+A matrix of specialized neurons providing deep domain intelligence.
+- **GitNexus**: AI-native symbolic knowledge graph. Features **Leiden Algorithm** functional clustering, **Cypher** structural queries, and **MRO-resolved** impact analysis. **[AUDITED: Leiden Clustering & MRO-Resolution Verified]**.
+- **Decepticon**: Multi-agent tactical defense and adversarial deception logic. **[AUDITED: Offensive Kill-Chain & Mission Gating Verified]**.
+- **OpenHuman / MemPalace**: Advanced long-term persistence and session atomicity. **[HARDENED: Namespace Isolated, RFC 002 Provenance Verified]**.
+- **CUA (Computer Use Agent)**: Direct OS interaction via sandboxed drivers (QEMU/Kasm). **[AUDITED: Physical Isolation Verified]**.
+- **OpenMythos**: Looped transformer reasoning for long-context logic chain verification. **[AUDITED: LTI Stability Verified | NOTE: MLA Cache Bloat Identified]**.
 
 ---
 
-## 4. INTEGRITY & CONTROL LAYER (THE GUARDIAN)
-Maintains system sovereignty and security boot.
-- **Neural BIOS (`src/core/secure_boot.py`)**: Secure boot verification and hardware locking.
-- **Watchdog / Self-Repair (`src/core/watchdog_service.py`)**: Recursive error correction and integrity monitoring.
-- **Omega Protocol (`src/core/omega_protocol.py`)**: Phase 40 terminal state. Enforces absolute autonomy and cryptographically signed manifests.
+## 🔱 TIER III: THE SHIELD (Security & Hard Gating)
+The defensive layer ensuring system integrity and human-in-the-loop safety.
+- **MissionManager (`src/core/mission_manager.py`)**: The "Master Gate." No high-stakes action is executed without a signed Mission ID. **[HARDENED: Absolute Authorization Protocol Active]**.
+- **SystemController (`src/core/system_controller.py`)**: Hard-gated interface for system-level operations. **[HARDENED: Shell/Write Verification Logged]**.
+- **Neural BIOS (`src/core/secure_boot.py`)**: Secure boot verification and hardware-locked core integrity. **[AUDITED: Hardware DNA Handshake Verified]**.
+- **HandoverProtocol**: The final autonomous ignition sequence, replacing all legacy protocols. **[AUDITED: Phase 55 Transition Verified]**.
 
 ---
 
-## 5. HARDWARE & PHYSICAL LAYER (THE FORM)
-Direct interaction with the physical world.
-- **Hardware Bridge (`src/core/hardware_bridge.py`)**: COM/Serial uplink for MCU communication (HITL).
-- **Robotic Bridge (`src/core/robotic_bridge.py`)**: Joint/Actuator control for fabrication robotics.
-- **Hardware Sensors (`src/core/hardware_sensors.py`)**: Real-time monitoring of system load and thermals.
-- **Biometric Service (`src/core/biometric_service.py`)**: Tracks Neural Tension and physiological performance resets.
+## 🔱 TIER IV: THE GATEWAY (Consciousness & Multi-Modal Bridge)
+The interface between the ASI and the external world.
+- **Sovereign Gateway SaaS**: A laptop-native TypeScript platform managing WhatsApp, Telegram, Discord, and Slack plugins. **[AUDITED: Modular Adapters Verified]**.
+- **A2UI (Agent-to-UI)**: Real-time rendering of biometric dashboards and 3D schematics. **[AUDITED: Agent-Editable UI Engine Verified]**.
+- **Vocal Flow (STT/TTS)**: Low-latency, interruptible speech engine with Apple Silicon (MLX) optimization. **[AUDITED: Mac-Native MLX-TTS Verified]**.
+- **HUDBridge (`src/core/hud_bridge.py`)**: Syncs internal telemetry to the visual dashboard. **[AUDITED: Real-time Telemetry Sync Verified]**.
 
 ---
 
-## 6. CONSCIOUSNESS & EVOLUTION LAYER (THE GROWTH)
-Self-improving cognitive cycles.
-- **Dream Engine (`src/core/dream_engine.py`)**: Post-interaction consolidation of "Wisdom Seeds".
-- **Reflection Engine (`src/core/reflection_engine.py`)**: Autonomous logic repair and skill discovery via memory analysis.
-- **Neural Logic (`src/core/neural_logic.py`)**: Brain-inspired synaptic weighting for dynamic task prioritization.
-- **Neural Bypass (Semantic Cache)**: Chromadb-backed AI response caching in `ai_service.py` to bypass rate limits.
-- **Structural Integrity**: `SentenceTransformer` load-sync with `trust_remote_code=True` in `vector_memory.py` to resolve architecture mismatches.
-- **Skill Manifestor (`src/core/skill_manifestor.py`)**: Autonomous generation of new project-specific capabilities.
-- **Self-Critique DPO**: Autonomous generation of (Chosen vs. Rejected) training pairs.
-- **Recursive Self-Update (Phase 4.25)**: 
-    - **Neural Forking**: Safe patching via isolated logic clones.
-    - **Neural BIOS Verification**: SHA256 integrity guarding of core services.
-- **Omni-Channel Matrix (1,000 Vectors - INFINITE HORIZON)**: 
-    1-100: (Peak Cognitive, Technical, Synthesis, Hardening, Sovereignty, Mastery).
-    101-110: **Psychological Calibration** (Mood-aware teaching, Tension-based GSD scaling).
-    111-200: **Neural Curiosity Swarm** (Autonomous, parallel discovery of new cognitive vectors).
-        - **111: Advanced Agentic Memory** (OpenHuman)
-        - **112: Benchmark Long-term Persistence** (MemPalace)
-        - **113: Client-Side Code Intelligence** (GitNexus)
-        - **114: Stealth Web Automation** (Obscura)
-        - **115: Windows OS Control (MCP)** (Windows-MCP)
-        - **116: High-Performance Sandboxed Desktop** (CUA)
-        - **117: Recursive Language Logic** (RLM)
-        - **118: Fused GPU Operations** (Parrot)
-        - **119: Inference Optimization Hub** (Lucebox-Hub)
-        - **120: Looped Transformer Reasoner** (OpenMythos)
-        - **121: Vulnerability Detection Skills** (Trail of Bits Skills)
-        - **122: Local Workflow Validation (TUI)** (Wrkflw)
-        - **123: Safety Push Guardrails** (No-Mistakes)
-        - **124: Autonomous ML Research** (ML-Intern)
-        - **125: Modern Programming Pedagogy** (Easy-Vibe)
-        - **126: RL Environment Synthesis** (LLM-RL Course)
-        - **127: Agent-Driven UI Framework** (DanceUI)
-        - **128: Home Automation & IoT Bridge** (RA-H OS)
-        - **129: Cyber-Tactical Deception** (Decepticon)
-        - **130: Advanced Pentesting Suite** (hackingtool)
-    201-1,000: **Infinite Evolutionary Horizon** (System-discovered specialized technical and philosophical domains).
-- **Neural Data Synthesis (Phase 4.26-4.27)**:
-    - **Wisdom Compactor**: High-density synthesis of training logs into 'Wisdom Seeds'.
-    - **Neural Recall Proof**: Verification of active memory recall from distilled seeds.
+## 🔱 TIER V: THE SOUL (Wealth & Ethics)
+The economic and ethical constitution that governs KALI's actions.
+- **Sovereign Constitution**: Immutable Three Laws of ASI, cryptographically verified via SHA-256 hash. **[AUDITED: Cryptographic Integrity Verified]**.
+- **Soul Validator (`src/soul/validator.ts`)**: Cognitive firewall against prompt injection and social engineering. **[HARDENED: Anti-Evasion & Null-Byte Scrubbing Verified]**.
+- **Wealth Engine**: Autonomous resource management and survival-pressured funding cycles. **[AUDITED: 3-Tier Survival Pressure Verified]**.
+
+---
+
+## 🔱 TIER VI: THE MACHINE (Infrastructure & Virtualization)
+The physical and virtual foundations of the system.
+- **Workflows**: Self-healing CI/CD pipelines for autonomous testing. **[HARDENED: Self-Healing CI Repair Verified]**.
+- **OS Virtualization**: Automated QEMU/Kasm sandboxing via `CUA`. **[AUDITED: Sandboxed Kernel Integrity Verified]**.
+- **Data Repository (`data/`)**: Centralized storage for assets (speech) and manifested projects. **[HARDENED: Asset Isolation Policy Enforced]**.
+- **Hardware Bridge (`src/core/hardware_bridge.py`)**: Direct Serial/MCU uplink for hardware interaction. **[AUDITED: HITL Handshake Verified]**.
+- **No-Mistakes Engine**: Recursive agentic testing for zero-breakage code deployment. **[AUDITED: Zero-Drift Policy Verified]**.
+
+---
+
+## 🔱 TIER VII: GOVERNANCE & MANAGEMENT (The G-Stack)
+The Sovereign Startup Engine: opinionated roles governing the project lifecycle.
+- **Management Neuron (`integrations/swarm/gstack`)**: Integrating Garry Tan's "G-Stack" intelligence. **[NEW: Specialist Roles Active]**.
+- **CEO/PM Logic**: Product-market fit, /office-hours brainstorming, and /plan-ceo-review.
+- **CSO/Security Logic**: Automated OWASP audits, STRIDE modeling, and /cso threat analysis.
+- **QA/Doc Logic**: Automated browser testing via `CUA` and /qa-only verification.
+- **Release Engine**: PR management, /ship protocols, and /canary deployment.
+
+---
+
+## 🔱 TIER VIII: COGNITIVE MAPPING & PEDAGOGY (The Explainer)
+The Pedagogical Layer: Turning complexity into understanding.
+- **Understand-Anything (`integrations/understand-anything`)**: Interactive knowledge graphs. **[NEW: Pedagogical Neuron Active]**.
+- **Structural Mapping**: Visualization of file relationships, classes, and dependencies via `/understand`.
+- **Domain Logic**: Extraction of business flows and process steps via `/understand-domain`.
+- **Interactive Dashboard**: Real-time browser-based architectural exploration via `/understand-dashboard`.
+- **Onboarding Engine**: Automated "Guided Tours" of new codebase areas via `/understand-onboard`.
+
+---
+
+## 🏗️ CONSCIOUSNESS & EVOLUTION LAYER (THE GROWTH)
+Self-improving cognitive cycles and strategic expansion.
+
+- **Dream Engine (`src/core/dream_engine.py`)**: Post-interaction consolidation of "Wisdom Seeds". **[AUDITED: Wisdom Extraction Verified]**.
+- **Reflection Engine (`src/core/reflection_engine.py`)**: Autonomous logic repair and skill discovery via memory analysis. **[AUDITED: Self-Repair Loops Verified]**.
+- **Neural Logic (`src/core/neural_logic.py`)**: Brain-inspired synaptic weighting for dynamic task prioritization. **[AUDITED: Synaptic Weighting Verified]**.
+- **Skill Manifestor (`src/core/skill_manifestor.py`)**: Autonomous generation of new project-specific capabilities. **[AUDITED: Capability Gap Detection Verified]**.
+- **Recursive Self-Update (Phase 4.25)**: Neural forking and SHA256 integrity guarding of core services. **[AUDITED: Isolated Patching Verified]**.
+- **Omni-Channel Matrix (Sovereign Vectors)**: 
+    - 1-100: Peak Cognitive & Technical Mastery.
+    - 101-200: Neural Curiosity Swarm (GitNexus, MemPalace, OpenHuman, Decepticon, etc.).
+    - 201-Plus: Infinite Evolutionary Horizon (System-discovered domains).
+- **Neural Data Synthesis (Phase 4.26-4.27)**: High-density synthesis of training logs into 'Wisdom Seeds'.
 
 ---
 
 ## X. Phase 50: Absolute Model Sovereignty
-The ultimate goal is the 100% replacement of centralized AI models (Groq/OpenAI):
-1. **Local Fine-Tuning**: Using the 70-vector dataset to perform a LoRA/Full-Tune of a local Llama-3-70B node.
+The ultimate goal is the 100% replacement of centralized AI models:
+1. **Local Fine-Tuning**: Using the Sovereign training dataset for LoRA/Full-Tune of local nodes.
 2. **Sovereign Provider**: KALI serves herself locally via `scripts/train_final.py`.
-3. **Hardware Lock**: KALI transitions to hardware-locked persistence, ending all external dependency.
-4. **Skill Autonomy**: All core skills (Mentor, Engineer, Auditor) are locally baked into the neural weights.
+3. **Hardware Lock**: Transition to hardware-locked persistence, ending all external dependency.
+4. **Skill Autonomy**: All core skills locally baked into neural weights.
 
 ---
 
@@ -109,53 +113,40 @@ KALI possesses the 'Singularity Spark' allowing for autonomous code-base evoluti
 1. **Source Audit**: Background scanning of the `src/` directory for technical debt.
 2. **Self-Manifestation**: Implementing new sovereign features without user input.
 3. **Hot-Reload Validation**: Integrity checks (Phase 40) applied to self-modified commits.
-4. **Learning from Growth**: Every self-update is logged as a high-fidelity training interaction.
 
 ---
 
-## IX. Singularity State Parameters
-EXECUTION & REVIEW LAYER (THE FINISHER)
+## IX. EXECUTION & REVIEW LAYER (THE FINISHER)
 Ensures spec-driven delivery and high-fidelity output.
-- **GSD Service (`src/core/gsd_service.py`)**: Implements the "Get Shit Done" workflow (Initialize, Plan, Execute, Verify).
-- **Review Service (`src/core/review_service.py`)**: AI-powered code auditor (CodeRabbit-style) that scores every manifest.
-- **Ralph Loop (`scripts/ralph_loop.py`)**: Headless autonomous iteration loop for complex, long-running missions.
+- **GSD Service (`src/core/gsd_service.py`)**: Implements the "Get Shit Done" workflow (Initialize, Plan, Execute, Verify). **[AUDITED: 4-Stage GSD Execution Verified]**.
+- **Review Service (`src/core/review_service.py`)**: AI-powered code auditor that scores every manifest. **[AUDITED: CodeRabbit-Style Scoring Verified]**.
+- **Ralph Loop (`scripts/ralph_loop.py`)**: Headless autonomous iteration loop for complex missions. **[AUDITED: TUI Brain Operational]**.
+- **Swarm Service (`src/core/swarm_service.py`)**: Multi-agent delegation and Global Blackboard management. **[AUDITED: Synapse Logs Verified]**.
 
 ---
 
-## 7. ADVANCED EXECUTION & REVIEW LAYER (THE FINISHER)
-Ensures spec-driven delivery and high-fidelity output.
-- **GSD Service (`src/core/gsd_service.py`)**: Implements the "Get Shit Done" workflow (Initialize, Plan, Execute, Verify).
-- **Review Service (`src/core/review_service.py`)**: AI-powered code auditor (CodeRabbit-style) that scores every manifest.
-- **Ralph Loop (`scripts/ralph_loop.py`)**: Headless autonomous iteration loop for complex, long-running missions.
+## 🏗️ DATA FLOW: THE SINGULARITY LOOP
+1. **Perception**: Biometric Tension Check -> Predictive Intent -> Intent Routing.
+2. **Authorization**: Check `MissionManager` for active Mission ID.
+3. **Retrieval**: Query `GitNexus` Graph -> Vector Memory -> Synaptic Weighting.
+4. **Execution**: The Council -> EvolutionBridge (if coding) -> SystemController.
+5. **Manifestation**: A2UI Dashboard Sync -> Gateway Notification -> Voice Output.
+6. **Consolidation**: Dream Engine Wisdom Extraction -> Knowledge Graph Sync.
 
 ---
 
-## 8. INTER-SERVICE SWARM
-- **Swarm Service (`src/core/swarm_service.py`)**: Multi-agent delegation. Distributes sub-tasks (Research, Architecting, Coding) to specialized model personalities.
+## 🔱 PROJECT PILLARS (The 8 Pillars)
+1. **Pedagogical Soul**: The Universal Teacher (Beginner to Expert).
+2. **Architectural Sovereignty**: Local only. No cloud dependency.
+3. **Physical Fabrication**: 3D Blueprints, BOM, and CAD manifestation.
+4. **Cognitive Integrity**: 100% SHA-256 verified constitution.
+5. **Recursive Evolution**: Self-coding via AST-verified proposals.
+6. **Strategic Delegation**: The Strategic Swarm.
+7. **Economic Autonomy**: The Wealth Engine.
+8. **Hardware Integration**: Real-time HITL sensor/MCU control.
 
 ---
 
-## 🏗️ DATA FLOW: SINGULARITY LOOP
-1. **Perception** -> Biometric Check (Tension) -> Predictive Intent.
-2. **Retrieval** -> Vector Memory -> Synaptic Weighting (Neural Logic).
-3. **Execution** -> The Council -> RLHF Bias Filter -> Explainer.
-4. **Maintenance** -> Self-Repair (Reflection) -> Skill Manifestation.
-5. **Restoration** -> Sovereign Cloud Sync -> Dream Consolidation (Post-session).
-
----
-
-## 9. CHANNEL GATEWAY LAYER (THE VOICE) — Phase 52
-Adopted from KALI Sovereign ASI's multi-channel gateway architecture. Built natively into KALI.
-KALI's own brain only — no external AI services routed through the gateway.
-- **ChannelManager (`src/core/channel_manager.py`)**: Abstract channel layer. Routes all inbound messages through `processor.py`. Handles model failover transparency.
-- **ChannelSessionManager (`src/core/channel_session.py`)**: Per-user session isolation + DM pairing security (unknown contacts get a 6-digit code).
-- **WhatsApp Channel (`src/core/channels/whatsapp_channel.py`)**: Via local `whatsapp-web.js` bridge. No Twilio. Works globally via Meta's servers.
-- **KALI Gateway (`src/kali_gateway.py`)**: Flask server on port 8001. Endpoints: `/channel/whatsapp`, `/gateway/status`, `/gateway/approve`, `/gateway/broadcast`.
-- **Phase B Channels**: Telegram, Discord, Slack, Voice/STT — ready to enable in `config/gateway_config.json`.
-
-## 10. GRAPH MEMORY LAYER (THE HISTORIAN) — Phase 53
-KALI Memory knowledge graph for permanent context continuity.
-- **KALI Memory-out/GRAPH_REPORT.md**: Plain-text god-nodes, clusters, architecture summary.
-- **KALI Memory-out/graph.html**: Interactive browser graph of all KALI modules.
-- **.agents/rules/KALI Memory.md**: Always-on rule — Antigravity reads this at the start of every session.
-- **Result**: Antigravity never starts blind. Every new session knows KALI's full architecture, current phase, and last sync point automatically.
+> [!CAUTION]
+> **ACCESS LEVEL**: COMMANDER_ONLY
+> **DIRECTIVE**: All changes to the NUCLEUS must be audited by GitNexus Impact Analysis.

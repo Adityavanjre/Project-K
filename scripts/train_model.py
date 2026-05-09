@@ -44,7 +44,7 @@ def prepare_data(log_file="data/training_data.jsonl"):
 def train(dry_run=True):
     """
     KALI Local LoRA Trainer (Functional).
-    Phase 3: Evolution.
+    SOVEREIGN: Evolution.
     """
     logger.info("Initializing KALI Local-Trainer...")
     
@@ -94,7 +94,7 @@ def train(dry_run=True):
         # Convert list to Dataset
         dataset = Dataset.from_list(data)
 
-        # Phase 52 Dynamic Compute Allocation
+        # SOVEREIGN Dynamic Compute Allocation
         batch_size = 2
         grad_accum = 4
         epochs = 3

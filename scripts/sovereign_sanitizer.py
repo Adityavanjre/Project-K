@@ -2,7 +2,7 @@ import os
 import shutil
 import logging
 
-# Phase 51: Sovereign Sanitizer
+# SOVEREIGN: Sovereign Sanitizer
 # Prepares the KALI repository for a public push to GitHub.
 # Ensures all private DNA, models, and keys are scrubbed or moved to .sovereign_cloud.
 

@@ -1,69 +1,34 @@
-#!/usr/bin/env python3
-"""
-KALI BIOMETRIC SERVICE
-Phase 21: Biometric HUD (Physiological Performance)
-Implements physiological monitoring, Neural Tension, and Neural Resets.
-"""
-
+import random
 import time
-import logging
-from typing import Dict, Any
 
 class BiometricService:
-    """Monitors simulated physiological state and system stress."""
-    
-    def __init__(self, threshold_tension: float = 80.0):
-        self.logger = logging.getLogger(__name__)
-        self.threshold_tension = threshold_tension
+    """
+    KALI BIOMETRIC SERVICE [LIGHTWEIGHT RECOVERY]
+    Tracks neural tension and physiological alignment.
+    """
+    def __init__(self):
         self.start_time = time.time()
-        self.interaction_count = 0
-        self.last_reset = time.time()
+        self.tension = 0.45
+        self.alignment = 98.2
 
-    def record_interaction(self):
-        """Increments interaction count for tension calculation."""
-        self.interaction_count += 1
-
-    def calculate_neural_tension(self, system_load: float = 0.0) -> float:
+    def get_physiological_state(self, system_load: float = 0.0) -> dict:
         """
-        Calculates Neural Tension Index (0-100).
-        Logic: Weight density of interactions over time + system load.
+        Simulates physiological state based on system load.
         """
-        elapsed = time.time() - self.last_reset
-        # Interaction density: count / (elapsed mins + 1)
-        density = self.interaction_count / ((elapsed / 60.0) + 1.0)
+        # Slight drift based on time and load
+        self.tension = 0.3 + (system_load / 100.0) * 0.4 + (random.random() * 0.1)
+        self.tension = max(0.0, min(1.0, self.tension))
         
-        # Tension = (density * 10) + (system_load * 0.5)
-        tension = (density * 5.0) + (system_load * 0.3)
-        return min(100.0, max(0.0, tension))
-
-    def get_physiological_state(self, system_load: float = 0.0) -> Dict[str, Any]:
-        """Returns the current physiological dashboard state."""
-        tension = self.calculate_neural_tension(system_load)
-        
-        state = {
-            "neural_tension": round(tension, 2),
-            "status": "STABLE" if tension < self.threshold_tension else "TENSION_HIGH",
-            "reset_suggested": tension >= self.threshold_tension,
-            "logic_load": system_load,
-            "session_duration_min": round((time.time() - self.start_time) / 60.0, 1)
+        return {
+            "neural_tension": self.tension,
+            "alignment": self.alignment,
+            "heart_rate": 65 + int(self.tension * 40),
+            "respiration": 12 + int(self.tension * 10),
+            "gsr": 0.2 + (self.tension * 0.8),
+            "timestamp": time.time()
         }
-        
-        if state["reset_suggested"]:
-            self.logger.warning("KALI ALERT: Neural instability detected. Suggesting Performance Reset.")
-            
-        return state
 
     def perform_reset(self):
-        """Resets the tension counters (simulating a performance reset)."""
-        self.interaction_count = 0
-        self.last_reset = time.time()
-        self.logger.info("KALI: Neural Tension Reset Complete. System aligned.")
-
-if __name__ == "__main__":
-    service = BiometricService()
-    # Simulate high interaction
-    for _ in range(20):
-        service.record_interaction()
-    
-    status = service.get_physiological_state(system_load=45.0)
-    print(f"[*] Cognitive HUD State: {status}")
+        """Resets biometric baselines."""
+        self.tension = 0.45
+        self.alignment = 98.2

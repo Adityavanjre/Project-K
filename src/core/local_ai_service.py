@@ -2,24 +2,51 @@ import os
 import requests
 import logging
 import json
-import re
-import base64
+import time
+import uuid
+import msvcrt # For Windows file locking
 from typing import Dict, Any, Optional, List
 
 
 class LocalAIService:
     """
     Drop-in replacement for AIService.
-    Connects to Ollama running on localhost:11434.
+    Connects to Ollama running on localhost:11435.
     All method names match AIService exactly for compatibility.
     """
 
+    _instance = None
+    _session = None
+    _lock_file = os.path.join(os.getcwd(), "data", ".neural_lock")
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(LocalAIService, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self, config: Optional[Dict[str, Any]] = None):
+        if hasattr(self, '_initialized') and self._initialized:
+            return
+            
         self.config = config or {}
-        self.default_model = os.getenv("LOCAL_MODEL", "llama3.1:8b")
-        self.model = self.default_model # Stabilizer
+        self.root = self.config.get("project_root", os.getcwd())
+        self.default_model = os.getenv("LOCAL_MODEL", "llama3.1:latest")
+        self.model = self.default_model
         
-        # Phase 55: Multi-Expert Model Map
+        # Ensure Zero-Port Infrastructure
+        os.makedirs(os.path.join(self.root, "data", "neural", "inbox"), exist_ok=True)
+        os.makedirs(os.path.join(self.root, "data", "neural", "outbox"), exist_ok=True)
+        
+        if not LocalAIService._session:
+            LocalAIService._session = requests.Session()
+            # Set high-performance adapter settings
+            adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
+            LocalAIService._session.mount('http://', adapter)
+            
+        self.session = LocalAIService._session
+        self._initialized = True
+        
+        # SOVEREIGN: Multi-Expert Model Map
         self.expert_models = {
             "scientist": os.getenv("LOCAL_SCIENTIST_MODEL", "gemma2:9b"),
             "engineer":  os.getenv("LOCAL_ENGINEER_MODEL", "deepseek-coder-v2:16b"),
@@ -28,7 +55,7 @@ class LocalAIService:
             "general":    self.default_model
         }
         
-        self.api_url = "http://localhost:11434/api/chat"
+        self.api_url = "http://127.0.0.1:11435/api/chat"
         self.logger = logging.getLogger(__name__)
         self.is_connected = self._check()
         self.available_models = self.get_available_models() if self.is_connected else []
@@ -39,20 +66,48 @@ class LocalAIService:
             self.logger.warning("Local Ollama not detected at http://localhost:11434")
 
     def _check(self) -> bool:
-        """Ping Ollama API."""
+        """Ping Neural Gateway via Pipe."""
+        import uuid
         try:
-            resp = requests.get("http://localhost:11434/api/tags", timeout=3)
-            return resp.status_code == 200
-        except Exception:
+            thought_id = str(uuid.uuid4())
+            inbox_path = os.path.join(self.root, "data", "neural", "inbox", f"{thought_id}.json")
+            outbox_path = os.path.join(self.root, "data", "neural", "outbox", f"{thought_id}.json")
+            
+            with open(inbox_path, 'w') as f:
+                json.dump({"id": thought_id, "command": "ping"}, f)
+                
+            # Short timeout for ping
+            start_time = time.time()
+            while time.time() - start_time < 5:
+                if os.path.exists(outbox_path):
+                    os.remove(outbox_path)
+                    return True
+                time.sleep(0.1)
+            return False
+        except:
             return False
 
     def get_available_models(self) -> List[str]:
-        """Fetch the inventory of loaded models from Ollama."""
+        """Fetch model inventory via Neural Gateway Pipe."""
+        import uuid
         try:
-            resp = requests.get("http://localhost:11434/api/tags", timeout=3)
-            if resp.status_code == 200:
-                tags = resp.json().get("models", [])
-                return [m["name"] for m in tags]
+            thought_id = str(uuid.uuid4())
+            inbox_path = os.path.join(self.root, "data", "neural", "inbox", f"{thought_id}.json")
+            outbox_path = os.path.join(self.root, "data", "neural", "outbox", f"{thought_id}.json")
+            
+            with open(inbox_path, 'w') as f:
+                json.dump({"id": thought_id, "command": "models"}, f)
+                
+            start_time = time.time()
+            while time.time() - start_time < 10:
+                if os.path.exists(outbox_path):
+                    with open(outbox_path, 'r') as f:
+                        data = json.load(f)
+                    os.remove(outbox_path)
+                    if data["status"] == 200:
+                        return [m["name"] for m in data["content"].get("models", [])]
+                    return []
+                time.sleep(0.1)
             return []
         except:
             return []
@@ -128,26 +183,54 @@ class LocalAIService:
         temperature: float = 0.7,
         model_override: Optional[str] = None
     ) -> str:
-        try:
+        import uuid
+        max_retries = 3
+        for attempt in range(max_retries):
+            # Generate Unique Thought ID
+            thought_id = str(uuid.uuid4())
             target = model_override or self.model
+            
+            inbox_path = os.path.join(self.root, "data", "neural", "inbox", f"{thought_id}.json")
+            outbox_path = os.path.join(self.root, "data", "neural", "outbox", f"{thought_id}.json")
+            
             payload = {
-                "model": target,
-                "messages": messages,
-                "stream": False,
-                "options": {"temperature": temperature},
+                "id": thought_id,
+                "payload": {
+                    "model": target,
+                    "messages": messages,
+                    "stream": False,
+                    "options": {"temperature": temperature}
+                }
             }
             if json_mode:
-                payload["format"] = "json"
+                payload["payload"]["format"] = "json"
 
-            resp = requests.post(self.api_url, json=payload, timeout=120)
-            if resp.status_code == 200:
-                return resp.json()["message"]["content"]
-            else:
-                self.logger.error(f"Local AI Model Error ({target}): {resp.status_code}")
-                return f"Local model error: {resp.status_code} - {resp.text}"
-        except Exception as e:
-            self.logger.error(f"Local AI call failed: {e}")
-            return f"Local connection failed: {e}"
+            self.logger.info(f"🔱 Thought Queued: {thought_id}")
+            start_time = time.time()
+            try:
+                with open(inbox_path, 'w') as f:
+                    json.dump(payload, f)
+                
+                # Monitor outbox
+                while time.time() - start_time < 300: # 🔱 5m timeout
+                    if os.path.exists(outbox_path):
+                        with open(outbox_path, 'r') as f:
+                            data = json.load(f)
+                        os.remove(outbox_path)
+                        self.logger.info(f"🔱 Thought Resolved: {thought_id} [{time.time()-start_time:.1f}s]")
+                        if data.get("status") == 200:
+                            return data.get("content", "")
+                        else:
+                            return f"Gateway Error: {data.get('content')}"
+                    time.sleep(0.5)
+                
+                return "Neural Error: Gateway Timeout"
+
+            except Exception as e:
+                self.logger.error(f"Neural Pipe Failure: {e}")
+                if os.path.exists(inbox_path): os.remove(inbox_path)
+                return f"Neural Pipe Error: {str(e)}"
+        return "Connection failed after multiple retries."
 
     def _fallback_response(self, question: str) -> str:
         return (

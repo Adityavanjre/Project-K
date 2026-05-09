@@ -2,3 +2,5 @@
 *.bin filter=lfs diff=lfs merge=lfs -text
 *.pt filter=lfs diff=lfs merge=lfs -text
 *.pth filter=lfs diff=lfs merge=lfs -text
+reports/*.md filter=lfs diff=lfs merge=lfs -text
+reports/kali_audit_final.md filter=lfs diff=lfs merge=lfs -text

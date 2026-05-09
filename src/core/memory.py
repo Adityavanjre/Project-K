@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 import threading
+import re
 
 class MemoryService:
     """
@@ -148,7 +149,6 @@ class MemoryService:
             state = {}
             # Extract phase
             if "Current Phase**:" in content or "Current Phase:" in content:
-                import re
                 match = re.search(r"Phase (\d+)", content)
                 if match:
                     state["phase"] = match.group(1)

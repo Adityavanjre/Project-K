@@ -49,7 +49,20 @@ def setup_logging(
     if format_string is None:
         format_string = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
-    logging.basicConfig(level=level, format=format_string, datefmt="%Y-%m-%d %H:%M:%S")
+    # Ensure logs directory exists
+    log_dir = os.path.join(os.getcwd(), "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    log_file = os.path.join(log_dir, "kali.log")
+
+    logging.basicConfig(
+        level=level,
+        format=format_string,
+        datefmt="%Y-%m-%d %H:%M:%S",
+        handlers=[
+            logging.StreamHandler(),
+            logging.FileHandler(log_file, encoding='utf-8')
+        ]
+    )
 
     # Set specific loggers to appropriate levels
     logging.getLogger("urllib3").setLevel(logging.WARNING)
@@ -104,6 +117,23 @@ def load_config(config_path: str) -> Dict[str, Any]:
         raise
     except Exception as e:
         logger.error(f"Error loading config file {config_path}: {e}")
+        raise
+def save_config(config_path: str, config: Dict[str, Any]) -> None:
+    """
+    Save configuration to a JSON file.
+
+    Args:
+        config_path: Path to the configuration file
+        config: Configuration dictionary to save
+    """
+    logger = logging.getLogger(__name__)
+    try:
+        os.makedirs(os.path.dirname(config_path), exist_ok=True)
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(config, f, indent=2)
+        logger.info(f"Configuration saved to: {config_path}")
+    except Exception as e:
+        logger.error(f"Error saving config file {config_path}: {e}")
         raise
 
 

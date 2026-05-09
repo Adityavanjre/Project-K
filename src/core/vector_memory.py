@@ -3,7 +3,7 @@ from chromadb.config import Settings
 import uuid
 import logging
 import os
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer (Moved to lazy-loading property)
 
 # Phase 4.18: Structural Fix for BertModel Load Verification
 # We no longer 'silence' the error; we ensure the model architecture is perfectly synced.
@@ -16,20 +16,30 @@ class VectorMemory:
     Long-term semantic memory using ChromaDB.
     Stores and recalls memories by MEANING, not keyword.
     """
-    def __init__(self, path: str = "data/vector_memory"):
+    @property
+    def embedder(self):
+        """Lazy-loading the embedding model to prevent boot-time CUDA/Torch initialization."""
+        if self._embedder is None:
+            try:
+                print(f"[DEBUG] {datetime.now().isoformat()} - Loading SentenceTransformer model: {self.model_name}", flush=True)
+                from sentence_transformers import SentenceTransformer
+                # Re-downloading with trust_remote_code=True to resolve architecture mismatches (position_ids)
+                self._embedder = SentenceTransformer(self.model_name, trust_remote_code=True)
+                print(f"[DEBUG] {datetime.now().isoformat()} - Model loaded successfully.", flush=True)
+            except Exception as e:
+                self.logger.error(f"Failed to load sentence-transformers: {e}")
+                # Fallback or re-raise
+                self._embedder = None
+        return self._embedder
+
+    def __init__(self, path: str = "data/vector_memory", model_name='all-MiniLM-L6-v2'):
         self.logger = logging.getLogger(__name__)
+        self.model_name = model_name
+        self._embedder = None  # Model will be lazy-loaded
+        
         # Ensure path is absolute
         self.path = os.path.abspath(path)
         os.makedirs(self.path, exist_ok=True)
-        
-        # Load embedding model (Structural Sync)
-        try:
-            # Re-downloading with trust_remote_code=True to resolve architecture mismatches (position_ids)
-            self.embedder = SentenceTransformer("all-MiniLM-L6-v2", trust_remote_code=True)
-            self.logger.info("[+] Embedding Model Sync: Corrected BertModel position_ids mismatch structural repair.")
-        except Exception as e:
-            self.logger.error(f"Failed to load sentence-transformers: {e}")
-            self.embedder = None
 
         # Init Chroma (Lazy Loading)
         try:
@@ -47,23 +57,38 @@ class VectorMemory:
             self._collections[name] = self.client.get_or_create_collection(name)
         return self._collections[name]
 
-    def _embed(self, text: str) -> List[float]:
+    def _embed(self, text: str) -> Optional[List[float]]:
         if not self.embedder:
-            return []
-        return self.embedder.encode(text).tolist()
+            self.logger.error("Embedder not initialized.")
+            return None
+        try:
+            emb = self.embedder.encode(text).tolist()
+            if not emb or len(emb) == 0:
+                return None
+            return emb
+        except Exception as e:
+            self.logger.error(f"Embedding generation failed: {e}")
+            return None
 
     def remember(self, text: str, collection_name: str = "knowledge", meta: Optional[Dict[str, Any]] = None):
         if not self.client:
             return
         try:
             col = self._get_collection(collection_name)
-            if col:
-                col.add(
-                    embeddings=[self._embed(text)],
-                    documents=[text],
-                    metadatas=[{"ts": datetime.now().isoformat(), **(meta or {})}],
-                    ids=[str(uuid.uuid4())]
-                )
+            if not col:
+                return
+                
+            emb = self._embed(text)
+            if emb is None:
+                self.logger.warning(f"Skipping remember for '{collection_name}': Embedding was null.")
+                return
+                
+            col.add(
+                embeddings=[emb],
+                documents=[text],
+                metadatas=[{"ts": datetime.now().isoformat(), **(meta or {})}],
+                ids=[str(uuid.uuid4())]
+            )
         except Exception as e:
             self.logger.error(f"Remember failed in {collection_name}: {e}")
 
@@ -77,7 +102,7 @@ class VectorMemory:
             
             # Embed the query
             query_emb = self._embed(query)
-            if not query_emb:
+            if query_emb is None:
                 return []
                 
             res = col.query(query_embeddings=[query_emb], n_results=n)

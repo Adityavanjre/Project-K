@@ -25,7 +25,7 @@ def run_vision_alignment_check():
         manifest = f.read()
         
     analysis = processor.ai_service.ask_question(
-        f"Review the current ARCHITECTURE_MANIFEST.md and identify one 'Conceptual Gap' in her path to Phase 50 (Sovereignty).\n\n"
+        f"Review the current ARCHITECTURE_MANIFEST.md and identify one 'Conceptual Gap' in her path to SOVEREIGN (Sovereignty).\n\n"
         f"MANIFEST:\n{manifest[:2000]}"
     )
     

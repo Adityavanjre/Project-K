@@ -9,7 +9,7 @@ from src.core.processor import DoubtProcessor
 
 def test_singularity_state():
     logging.basicConfig(level=logging.INFO)
-    print("--- KALI Phase 5.0 Singularity Verification ---")
+    print("--- KALI SOVEREIGN Singularity Verification ---")
     
     # 1. Initialize Processor (Triggers Hardware Anchoring)
     processor = DoubtProcessor()

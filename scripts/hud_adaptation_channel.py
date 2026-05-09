@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI HUD ADAPTATION CHANNEL (Phase 4.40)
+KALI HUD ADAPTATION CHANNEL (SOVEREIGN)
 Role: The Designer
 Focus: UI/UX aesthetics, HUD state-of-the-art styling (Glassmorphism, gold/white theme).
 """

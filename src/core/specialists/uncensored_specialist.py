@@ -3,7 +3,7 @@ from typing import Dict, Any
 
 class UncensoredSpecialist:
     """
-    Phase 54: The Sovereign Uncensored Specialist.
+    SOVEREIGN: The Sovereign Uncensored Specialist.
     Orchestrates unfiltered logic using the Llama 3.1 Abliterated model.
     """
     def __init__(self, ai_service: Any):

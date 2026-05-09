@@ -2,7 +2,7 @@ import os
 import sys
 import logging
 
-# Phase 4.14+: KALI Colab Sovereign Terminal (Virtual Tab Edition)
+# SOVEREIGN+: KALI Colab Sovereign Terminal (Virtual Tab Edition)
 # Allows direct, tab-based interaction with KALI without the web HUD.
 
 # 1. Path Stability

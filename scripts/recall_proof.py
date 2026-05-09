@@ -13,7 +13,7 @@ from src.core.processor import DoubtProcessor
 
 def run_recall_proof():
     """
-    KALI NEURAL RECALL PROOF (Phase 4.27)
+    KALI NEURAL RECALL PROOF (SOVEREIGN)
     Verifies that KALI can recall and apply 'Wisdom Seeds' stored in her long-term memory.
     """
     logging.basicConfig(level=logging.INFO)

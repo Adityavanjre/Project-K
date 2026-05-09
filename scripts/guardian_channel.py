@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI GUARDIAN CHANNEL (Phase 4.40)
+KALI GUARDIAN CHANNEL (SOVEREIGN)
 Role: The Guardian
 Focus: System security, cryptographic integrity, and hardware hardening.
 """

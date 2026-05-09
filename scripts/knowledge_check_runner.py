@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI KNOWLEDGE CHECK RUNNER (Phase 4.30)
+KALI KNOWLEDGE CHECK RUNNER (SOVEREIGN)
 Lightweight standalone script — does NOT init the full DoubtProcessor.
 Directly uses AIService + KnowledgeCheckEngine to avoid COM3/RoboticBridge crashes.
 
@@ -118,7 +118,7 @@ def run_knowledge_checks(max_checks: int = 20):
     # Overall stats
     stats = engine.get_pass_rate()
     
-    # Phase 4.50: Granular Atom Tracking
+    # SOVEREIGN: Granular Atom Tracking
     atom_count = 0
     if os.path.exists(engine.anchored_path):
         with open(engine.anchored_path, "r", encoding="utf-8") as f:

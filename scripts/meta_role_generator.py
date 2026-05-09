@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-KALI META-ROLE GENERATOR (Phase 4.50)
+KALI META-ROLE GENERATOR (SOVEREIGN)
 Role: The Visionary
-Focus: Dynamically inventing and training on new expert dimensions to reach 200+ channels.
+Focus: Dynamically inventing and training on new expert dimensions for infinite sovereign scaling.
 """
 
 import os
@@ -50,7 +50,7 @@ def run_meta_role_generator(iterations: int = 10):
             role_name = role_data["role"]
             mission = role_data["mission"]
             
-            # Phase 4.50: Zero-Redundancy check
+            # SOVEREIGN: Zero-Redundancy check
             # (Note: For dynamic roles, we assume the mission is new, but we check core keywords)
             if processor.knowledge_check.is_atom_mastered(role_name):
                 logger.info(f"[-] {role_name} DIMENSION ALREADY SOVEREIGN. Skipping redundant training.")

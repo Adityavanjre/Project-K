@@ -9,7 +9,7 @@ load_dotenv()
 class SovereignCheck:
     """
     KALI SOVEREIGNTY VALIDATOR
-    Phase 28: Sovereign Distributed Identity
+    SOVEREIGN: Sovereign Distributed Identity
     """
     
     def __init__(self):
@@ -39,7 +39,7 @@ class SovereignCheck:
         """
         try:
             # For now, we simulate success if the owner key is correct.
-            # In Phase 28, this will query a decentralized ledger or private API.
+            # In SOVEREIGN, this will query a decentralized ledger or private API.
             if self.owner_key == "KALI_OWNER_ALPHA_99": # Example correct key
                 return True
             return False

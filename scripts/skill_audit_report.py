@@ -12,7 +12,7 @@ from src.core.processor import DoubtProcessor
 
 def run_skill_audit():
     """
-    KALI SKILL AUDIT REPORT (Phase 4.27)
+    KALI SKILL AUDIT REPORT (SOVEREIGN)
     Asks the core skill instances (Mentor/Teacher) to reflect on their own training journey.
     """
     logging.basicConfig(level=logging.INFO)

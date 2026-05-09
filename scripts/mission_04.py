@@ -26,7 +26,7 @@ def initiate_mission():
     
     # 1. Autonomous Task Tracking
     print("[*] STEP 1: Updating Project Velocity...")
-    processor.task_tracker.update_project("Laboratory Hardening", 85, "Phase 8: Autonomy initiated.")
+    processor.task_tracker.update_project("Laboratory Hardening", 85, "SOVEREIGN: Autonomy initiated.")
     
     # 2. Autonomous Skill Generation (OpenClaw style)
     print("[*] STEP 2: Manifesting Autonomous 'Weather' Skill...")

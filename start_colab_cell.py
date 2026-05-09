@@ -24,8 +24,8 @@ else:
     # 4. INSTALL DEPENDENCIES (FAST INSTALL)
     print(">>> INSTALLING NEURAL ARCHITECTURE DEPENDENCIES...")
     # Skipping heavy torch installs as colab has them, focusing on app requirements
-    %pip install -r requirements.txt
-    %pip install pyngrok flask-cors waitress
+    os.system("pip install -r requirements.txt")
+    os.system("pip install pyngrok flask-cors waitress")
 
     # 5. START NGROK TUNNEL
     print(">>> INITIATING SECURE NGROK TUNNEL...")
@@ -38,4 +38,4 @@ else:
 
     # 6. BOOT KALI
     print(">>> BOOTING KALI OMEGA PROTOCOL...")
-    !export PYTHONPATH=$PYTHONPATH:. && python start_web.py
+    os.system("export PYTHONPATH=$PYTHONPATH:. && python start_web.py")

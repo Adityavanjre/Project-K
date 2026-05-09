@@ -32,9 +32,15 @@ def main():
     config = load_config("config/config.json")
     processor = DoubtProcessor(config)
     
+    # Ensure UTF-8 for Windows CMD compatibility
+    if sys.platform == "win32":
+        import codecs
+        sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+        sys.stdin = codecs.getreader("utf-8")(sys.stdin.detach())
+
     clear_screen()
     print("-" * 60)
-    print("🕉️  K.A.L.I. — SOVEREIGN COMMAND-LINE INTERFACE")
+    print("K.A.L.I. - SOVEREIGN COMMAND-LINE INTERFACE")
     print(f"SYSTEM STATUS: {processor.power_mode}")
     print("Sir, I am now native to your CMD.")
     print("Type 'exit' to terminate. Type 'manifest [idea]' to build projects.")

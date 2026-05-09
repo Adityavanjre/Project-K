@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-KALI AUTOPILOT COMMANDER (Phase 4.60)
+KALI AUTOPILOT COMMANDER (SOVEREIGN)
 Role: The Sovereign Architect
 Focus: Proactively scanning roadmap gaps and launching training missions without user input.
-Toward 1,000 Verified Interactions.
+Toward Sovereign Excellence.
 """
 
 import os
@@ -23,7 +23,7 @@ def run_autopilot_commander(cycles: int = 5):
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger("COMMANDER")
     
-    logger.info(f"[!] KALI: Autopilot Commander Initializing (Target: 1,000 Interactions)...")
+    logger.info(f"[!] KALI: Autopilot Commander Initializing (Sovereign Neural Synthesis)...")
     
     processor = DoubtProcessor()
     roadmap_path = os.path.join(project_root, "KALI_MASTER_PLAN.md")

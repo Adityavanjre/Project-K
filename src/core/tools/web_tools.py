@@ -5,22 +5,27 @@ from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
 from typing import List, Dict
 
+from src.core.config_manager import config
+
 class StealthLayer:
     """Provides user-agent rotation and firewall-evasion for KALI."""
-    AGENTS = [
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
-    ]
     
     @classmethod
     def get_headers(cls):
-        return {"User-Agent": random.choice(cls.AGENTS)}
+        # 🔱 SOVEREIGN REGISTRY: Unified Stealth Signatures
+        agents = config.get("sovereign.agent.user_agents")
+        if not agents:
+            return {}
+        return {"User-Agent": random.choice(agents)}
 
 def search_web(query: str, max_results: int = 5) -> list:
     """DuckDuckGo search. No API key needed."""
+    import os
+    import contextlib
     try:
-        with DDGS() as ddgs:
+        # Suppress library-level warnings and logs
+        with contextlib.redirect_stderr(open(os.devnull, 'w')):
+            ddgs = DDGS()
             results = [r for r in ddgs.text(query, max_results=max_results)]
         return results
     except Exception as e:
@@ -31,12 +36,8 @@ def harvest_domain_knowledge(domain: str) -> List[Dict[str, str]]:
     """
     Targeted search for specialized domains (e.g., ArXiv, Sacred Texts, Defense).
     """
-    domain_targets = {
-        "vedic": "site:sacred-texts.com OR site:vedabase.io",
-        "scientific": "site:arxiv.org OR site:nature.com OR site:scholar.google.com",
-        "tactical": "defense news OR military technology OR cybersecurity reports",
-        "medical": "site:pubmed.ncbi.nlm.nih.gov OR site:who.int"
-    }
+    # 🔱 SOVEREIGN REGISTRY: Unified Domain Targets
+    domain_targets = config.get("sovereign.targets.domain_knowledge", {})
     
     query_prefix = domain_targets.get(domain.lower(), "")
     enhanced_query = f"{query_prefix} {domain} knowledge" if query_prefix else domain
@@ -49,18 +50,20 @@ class AutonomousEvasionEngine:
     @classmethod
     def retry_browse(cls, url: str) -> str:
         # Strategy A: Use Google Cache
-        cache_url = f"https://webcache.googleusercontent.com/search?q=cache:{url}"
+        cache_base = config.get("sovereign.endpoints.google_cache")
+        cache_url = f"{cache_base}{url}"
         logging.info(f"KALI EVASION: Attempting Google Cache for {url}")
         res = cls._simple_fetch(cache_url)
         if "BLOCK_ALERT" not in res: return res
         
         # Strategy B: Use Wayback Machine
-        wayback_url = f"https://archive.org/wayback/available?url={url}"
+        wayback_base = config.get("sovereign.endpoints.wayback")
+        wayback_url = f"{wayback_base}{url}"
         logging.info(f"KALI EVASION: Attempting Wayback Machine for {url}")
         res = cls._simple_fetch(wayback_url)
         if "BLOCK_ALERT" not in res: return res
         
-        return "EVASION_FAILED: Universal block detected. Sir, I am currently shadow-banned on this node. Implementing long-range proxy shift."
+        return "EVASION_FAILED: Universal block detected. Sir, I am currently shadow-banned on this node."
 
     @staticmethod
     def _simple_fetch(url: str) -> str:

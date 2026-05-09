@@ -236,6 +236,13 @@ class UserDNA:
         self._save()
         self.logger.info(f"DNA Fact Anchored: {key} -> {value[:50]}...")
 
+    def _get_hardware_uid(self) -> str:
+        """Phase 55: Retrieve a stable hardware identifier (MAC address)."""
+        import uuid
+        import hashlib
+        node = uuid.getnode()
+        return hashlib.sha256(str(node).encode()).hexdigest()
+
     def get_dna_context(self) -> str:
         p = self.profile
         lines = ["=== KALI KNOWLEDGE OF USER (DNA EXCERPT) ==="]

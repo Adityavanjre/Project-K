@@ -26,32 +26,40 @@ def is_port_available(port):
 def main():
     """Start the web server on an available port."""
     # Try different ports
-    # Try port 5000 for verification stability
-    ports_to_try = [5000]
+    web_port = int(os.getenv("KALI_WEB_PORT", "5000"))
+    ports_to_try = [web_port, 5001, 8000, 8080]
     
     app = create_app()
     config = load_config("config/config.json")
     
     for port in ports_to_try:
         if is_port_available(port):
-            print(f"🚀 Starting KALI Web Interface...")
-            print(f"📍 Access the application at: http://localhost:{port}")
-            print(f"❓ KALI is ready to help!")
-            print(f"💡 Press CTRL+C to stop the server")
+            print(f"Starting KALI Web Interface...")
+            print(f"Access the application at: http://localhost:{port}")
+            print(f"KALI is ready to help!")
+            print(f"Press CTRL+C to stop the server")
             print("-" * 50)
             
             try:
                 from waitress import serve
-                serve(app, host='0.0.0.0', port=port, threads=4)
+                import logging
+                server_logger = logging.getLogger("waitress")
+                server_logger.setLevel(logging.INFO)
+                
+                serve(app, host='0.0.0.0', port=port, threads=12, _quiet=False)
+                # If serve returns, it means the server stopped.
+                print(f"Waitress server on port {port} stopped.")
                 break
             except Exception as e:
-                print(f"Server on port {port} failed: {e}")
+                print(f"CRITICAL: Server on port {port} failed: {e}")
+                import traceback
+                traceback.print_exc()
                 continue
         else:
             print(f"Port {port} is not available, trying next...")
     
     else:
-        print("❌ Could not find an available port. Please check your system.")
+        print("Could not find an available port. Please check your system.")
 
 if __name__ == "__main__":
     main()

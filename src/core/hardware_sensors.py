@@ -1,25 +1,23 @@
 import psutil
-import time
+import logging
 
 class HardwareSensors:
-    """
-    KALI PHYSICAL SENSORY SYSTEM
-    Phase 27: Multi-Modal Awareness
-    """
+    """SOVEREIGN: Real-time hardware telemetry for KALI HUD."""
     
-    @staticmethod
-    def get_system_metrics():
-        """Returns real-time system health metrics."""
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        
+    def get_system_metrics(self):
+        """Retrieve real CPU and Memory usage."""
         try:
             return {
-                "cpu_usage": psutil.cpu_percent(interval=None),
+                "cpu_usage": psutil.cpu_percent(),
                 "memory_usage": psutil.virtual_memory().percent,
-                "disk_usage": psutil.disk_usage('/').percent,
-                "timestamp": time.time()
+                "disk_usage": psutil.disk_usage('/').percent
             }
         except Exception as e:
-            return {"error": str(e)}
+            self.logger.error(f"SENSOR_FAILURE: {e}")
+            return {"cpu_usage": 0, "memory_usage": 0, "disk_usage": 0}
 
-if __name__ == "__main__":
-    sensors = HardwareSensors()
-    print(sensors.get_system_metrics())
+    def get_status(self):
+        return "OPTIMAL"

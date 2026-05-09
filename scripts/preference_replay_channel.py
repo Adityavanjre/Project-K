@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI PREFERENCE REPLAY CHANNEL (Phase 4.33)
+KALI PREFERENCE REPLAY CHANNEL (SOVEREIGN)
 Closes the RLHF loop: reads DPO pairs already logged,
 re-fires the rejected prompts, and generates an even better response.
 Trains KALI to consistently beat her own previous best output.

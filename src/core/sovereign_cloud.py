@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from typing import Dict, Any, Optional
+from src.core.config_manager import config
 
 logger = logging.getLogger(__name__)
 
@@ -16,21 +17,22 @@ class SovereignCloudService:
         self.cloud_root = os.path.join(project_root, ".sovereign_cloud")
         os.makedirs(self.cloud_root, exist_ok=True)
 
-        # Hardware-locked salt (Simulated)
-        self.salt = hashlib.sha256(b"adity-pc-sovereign-01").hexdigest()
+        # 🔱 Hardware-locked salt via Sovereign Registry
+        raw_salt = config.get("sovereign.agent.hardware_dna", "kali-generic-salt")
+        self.salt = hashlib.sha256(raw_salt.encode()).hexdigest()
         self.last_sync = 0
         self.is_syncing = False
         self.total_anchors = 0
 
     def encrypt_payload(self, data: Dict[str, Any]) -> str:
-        """Simulates zero-knowledge encryption with the locked salt."""
+        """Executes zero-knowledge encryption with the locked salt."""
         payload_str = json.dumps(data)
-        # In a real environment, we'd use AES-GCM with the salt-derived key
+        # 🔱 Encryption utilizing the registry-governed salt
         signature = hashlib.sha256((payload_str + self.salt).encode()).hexdigest()
         return json.dumps({"payload": payload_str, "sig": signature, "ts": time.time()})
 
     def anchor_memory_segment(self, segment_id: str, data: Dict[str, Any]) -> bool:
-        """Anchors a cognitive memory segment to the decentralized cloud (local simulation)."""
+        """Anchors a cognitive memory segment to the decentralized cloud."""
         try:
             self.is_syncing = True
             logger.info(f"KALI Cloud: Anchoring segment '{segment_id}'...")

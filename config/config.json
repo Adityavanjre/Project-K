@@ -21,12 +21,70 @@
   },
   "api": {
     "host": "localhost",
-    "port": 8000,
+    "port": 5000,
     "debug": false
+  },
+  "orchestrator": {
+    "port": 8002
   },
   "openai": {
     "ai_model": "gpt-3.5-turbo",
     "max_tokens": 800,
     "temperature": 0.7
+  },
+  "wealth": {
+    "creator_wallet": "0x132ff51aa59a31a6bffdcde2d0b6bf22eda6815d"
+  },
+  "sovereign": {
+    "endpoints": {
+      "groq": "https://api.groq.com/openai/v1/chat/completions",
+      "nvidia": "https://integrate.api.nvidia.com/v1/chat/completions",
+      "ollama": "http://127.0.0.1:11435",
+      "hackerone": "https://api.hackerone.com/v1",
+      "hackerone_login": "https://hackerone.com/users/sign_in",
+      "blockscout": "https://eth.blockscout.com/api/v2",
+      "coinbase": "https://api.coinbase.com/v2/prices/ETH-USD/spot",
+      "github_heartbeat": "https://raw.githubusercontent.com/adity/kali-heartbeat/main/status.json",
+      "google_cache": "https://webcache.googleusercontent.com/search?q=cache:",
+      "wayback": "https://archive.org/wayback/available?url=",
+      "harness_origin": "https://github.com/Chachamaru127/claude-code-harness",
+      "openfang_base": "http://localhost:3000",
+      "jarvis": "ws://localhost:8000/ws"
+    },
+    "agent": {
+      "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      "user_agents": [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+      ],
+      "hardware_dna": "adity-pc-sovereign-01"
+    },
+    "internal": {
+      "base_url": "http://localhost",
+      "ip": "127.0.0.1"
+    },
+    "models": {
+      "scientist": "gemma2:9b",
+      "engineer": "deepseek-coder-v2:16b",
+      "researcher": "llama3.1:8b",
+      "uncensored": "mannix/llama3.1-8b-abliterated:q5_K_M"
+    },
+    "targets": {
+      "bounty_pool": [
+        {"program": "MakerDAO (Immunefi)", "url": "https://immunefi.com/bounty/makerdao/", "estimated_value": 10000000, "type": "Smart Contract"},
+        {"program": "Chainlink (Immunefi)", "url": "https://immunefi.com/bounty/chainlink/", "estimated_value": 5000000, "type": "Smart Contract"},
+        {"program": "Meta Whitehat", "url": "https://www.facebook.com/whitehat", "estimated_value": 250000, "type": "Web"},
+        {"program": "Google VRP", "url": "https://bughunters.google.com/", "estimated_value": 31337, "type": "Web/Cloud"},
+        {"program": "Ethereum Foundation", "url": "https://bounty.ethereum.org/", "estimated_value": 250000, "type": "Core/Protocol"},
+        {"program": "Microsoft Cloud Bounty", "url": "https://www.microsoft.com/en-us/msrc/bounty-microsoft-cloud", "estimated_value": 250000, "type": "Cloud"}
+      ],
+      "domain_knowledge": {
+        "vedic": "site:sacred-texts.com OR site:vedabase.io",
+        "scientific": "site:arxiv.org OR site:nature.com OR site:scholar.google.com",
+        "tactical": "defense news OR military technology OR cybersecurity reports",
+        "medical": "site:pubmed.ncbi.nlm.nih.gov OR site:who.int"
+      }
+    }
   }
 }

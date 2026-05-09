@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class TTSGenerator:
     """Handles text-to-speech generation."""
     
-    def __init__(self, output_dir="src/static/audio"):
+    def __init__(self, output_dir="data/assets/speech"):
         """Initialize TTS generator with output directory."""
         self.output_dir = output_dir
         
@@ -35,7 +35,7 @@ class TTSGenerator:
         """
         try:
             # Check for API key presence as a proxy for internet (or just let gTTS fail)
-            # For 100% offline robustness, we return a mock value if gTTS fails
+            # For 100% offline robustness, we return a placeholder value if gTTS fails
             
             # Generate unique filename
             filename = f"speech_{uuid.uuid4().hex}.mp3"
@@ -51,8 +51,8 @@ class TTSGenerator:
                 logger.info(f"Audio saved to: {filepath}")
                 return f"audio/{filename}"
             except Exception as e:
-                logger.warning(f"TTS Offline or API Error: {e}. Returning simulation link.")
-                return "audio/simulation_mode_vocal.mp3"
+                logger.error(f"TTS_FAILURE: Offline or API Error: {e}. No mock fallback permitted in SOVEREIGN mode.")
+                return ""
             
         except Exception as e:
             logger.error(f"TTS Generation failed: {e}")

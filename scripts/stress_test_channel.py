@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI STRESS TEST CHANNEL (Phase 4.35)
+KALI STRESS TEST CHANNEL (SOVEREIGN)
 Fires all base training vectors without pause to identify weak knowledge areas.
 Any vector that the review gives < 70 is flagged for Error Replay.
 This is KALI doing a full self-assessment under pressure.

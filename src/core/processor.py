@@ -5,7 +5,10 @@ Main processor for handling doubt clearing requests.
 import json
 import logging
 import os
+import threading
+import time
 import uuid
+import re
 from datetime import datetime
 from typing import Dict, List, Optional, Any, Callable
 from utils.pii_scrubber import PiiScrubber
@@ -18,10 +21,13 @@ from .memory import MemoryService
 from .ai_service import AIService
 from .user_dna import UserDNA
 from .secure_boot import BootGuardian
-from .evolution_bridge import EvolutionBridge
+from .gsd_service import GSDPhase
+from .channel_manager import ChannelManager
 from .sovereign_intelligence import SovereignIntelligence
 from .local_ai_service import LocalAIService
-from scripts.sovereign_check import SovereignCheck
+from .sovereign_check import SovereignCheck
+from utils.load_monitor import LoadMonitor
+from .neural_cache import NeuralCache
 
 
 class DoubtProcessor:
@@ -32,10 +38,15 @@ class DoubtProcessor:
         self.config = config or {}
         self.project_root = self.config.get("project_root", os.getcwd())
         self.logger = logging.getLogger(__name__)
+        self.start_time = time.time()
 
         # 1. Core Services (Eager)
         self.use_local_ai = os.getenv("USE_LOCAL_AI", "false").lower() == "true"
-        self.vector_memory = VectorMemory()
+        try:
+            self.vector_memory = VectorMemory()
+        except Exception as ve:
+            self.logger.error(f"KALI Intelligence: VectorMemory failed to load: {ve}. Proceeding with amnesia.")
+            self.vector_memory = None
         self.local_ai = LocalAIService(self.config.get("local_ai", {}))
         self.memory = MemoryService()
         self.user_dna = UserDNA()
@@ -51,16 +62,23 @@ class DoubtProcessor:
         self.boot_guardian = BootGuardian(self.project_root)
         self.is_bios_secure = self.boot_guardian.perform_secure_boot()
         self.sovereign_force_local = os.getenv("SOVEREIGN_FORCE_LOCAL", "false").lower() == "true"
-        self.evolution_bridge = EvolutionBridge(self.project_root, self.ai_service)
         self.sovereign_intel = SovereignIntelligence(self)
 
         # 3. Tool Stabilization (B-3 Fix)
         from .mcp_pool import mcp_pool
         self.mcp_pool = mcp_pool
-        self.mcp_pool.register_ai_tools(self.ai_service)
+        self.mcp_pool.register_ai_tools(self)
 
-        # 4. Lazy Service Registry (A-1 Fix)
-        self._service_registry: Dict[str, Any] = {}
+        # 🔱 HYBRID INTELLIGENCE: Load & Cache
+        self.load_monitor = LoadMonitor()
+        self.cache = NeuralCache(os.path.join(self.project_root, "data", "cache", "neural"))
+        self.service_registry: Dict[str, Any] = {} # 🔱 RESTORED: Service Router
+        
+        self.logger.info("🔱 KALI: Hybrid Intelligence Hardening Active.")
+        
+        # 5. Universal Gateway Bridge
+        from .channel_manager import ChannelManager
+        self.channel_manager = ChannelManager(self)
         
         # State indicators
         self.power_mode = "TURBO"
@@ -88,21 +106,22 @@ class DoubtProcessor:
         # Execute Startup Salvage Hooks
         self._load_last_session()
         self._ensure_sovereign_hooks()
-        self._seed_universal_knowledge()
+        # SOVEREIGN: Move seeding to background to avoid boot-time lockups
+        threading.Thread(target=self._delayed_seeding, name="KALI-Knowledge-Seeder", daemon=True).start()
 
     def _get_service(self, name: str, factory: Callable) -> Any:
         """Lazy loader for sub-services."""
-        if name not in self._service_registry:
+        if name not in self.service_registry:
             self.logger.info(f"KALI: Initializing lazy service '{name}'")
-            self._service_registry[name] = factory()
-        return self._service_registry[name]
+            self.service_registry[name] = factory()
+        return self.service_registry[name]
 
     @property
     def uncensored(self):
         from .specialists.uncensored_specialist import UncensoredSpecialist
-        return self._get_service("uncensored", lambda: UncensoredSpecialist(self.local_ai))
+        return self._get_service("uncensored", lambda: UncensoredSpecialist(self.ai_service))
 
-    # --- Feature: Mission Control (Phase 50) ---
+    # --- Feature: Mission Control (SOVEREIGN) ---
 
     @property
     def council(self):
@@ -131,8 +150,7 @@ class DoubtProcessor:
 
     @property
     def robotic_bridge(self):
-        from .robotic_bridge import RoboticBridge
-        return self._get_service("robotics", lambda: RoboticBridge())
+        return None # PURGED: RoboticBridge decommissioned
 
     @property
     def dream_engine(self):
@@ -142,7 +160,23 @@ class DoubtProcessor:
     @property
     def shadow_eval(self):
         from .shadow_evaluator import ShadowEvaluator
-        return self._get_service("shadow", lambda: ShadowEvaluator(self.ai_service, self.local_ai, self.project_root))
+        return self._get_service("shadow", lambda: ShadowEvaluator(self.ai_service, self.local_ai))
+
+    @property
+    def system_controller(self):
+        from .system_controller import SystemController
+        return self._get_service("system", lambda: SystemController(self.project_root, mission_manager=self.mission_manager))
+
+    @property
+    def mission_manager(self):
+        from .mission_manager import MissionManager
+        return self._get_service("mission", lambda: MissionManager())
+
+    @property
+    def handover(self):
+        from .handover_protocol import HandoverProtocol
+        return self._get_service("handover", lambda: HandoverProtocol(self.project_root))
+
     @property
     def sensors(self):
         from .hardware_sensors import HardwareSensors
@@ -156,17 +190,18 @@ class DoubtProcessor:
     @property
     def tts_generator(self):
         from .tts import TTSGenerator
-        return self._get_service("tts", lambda: TTSGenerator())
+        audio_dir = os.path.join(self.project_root, "data", "assets", "speech")
+        return self._get_service("tts", lambda: TTSGenerator(audio_dir))
 
     @property
     def predictive_engine(self):
-        from .predictive_engine import PredictiveEngine
-        return self._get_service("predictive", lambda: PredictiveEngine())
+        from .predictive_engine import PredictiveIntentEngine
+        return self._get_service("predictive", lambda: PredictiveIntentEngine())
 
     @property
     def dna_extractor(self):
         from .dna_extractor import DNAExtractor
-        return self._get_service("dna", lambda: DNAExtractor())
+        return self._get_service("dna", lambda: DNAExtractor(self.user_dna, self.vector_memory))
 
     @property
     def reflection_engine(self):
@@ -176,17 +211,17 @@ class DoubtProcessor:
     @property
     def gap_detector(self):
         from .gap_detector import GapDetector
-        return self._get_service("gap", lambda: GapDetector())
+        return self._get_service("gap", lambda: GapDetector(self.user_dna))
 
     @property
     def skill_manifestor(self):
         from .skill_manifestor import SkillManifestor
-        return self._get_service("skill", lambda: SkillManifestor())
+        return self._get_service("skill", lambda: SkillManifestor(self.plugin_manager, self.ai_service))
 
     @property
     def knowledge_service(self):
         from .knowledge_service import KnowledgeService
-        return self._get_service("knowledge_service", lambda: KnowledgeService())
+        return self._get_service("knowledge_service", lambda: KnowledgeService(self.project_root))
 
     @property
     def gsd_service(self):
@@ -196,7 +231,7 @@ class DoubtProcessor:
     @property
     def review_service(self):
         from .review_service import ReviewService
-        return self._get_service("review", lambda: ReviewService())
+        return self._get_service("review", lambda: ReviewService(self.ai_service))
 
     @property
     def hardware_bridge(self):
@@ -205,13 +240,14 @@ class DoubtProcessor:
 
     @property
     def planner(self):
-        from .planner import Planner
-        return self._get_service("planner", lambda: Planner())
+        from .planner import TaskPlanner
+        return self._get_service("planner", lambda: TaskPlanner(self.ai_service, self.vector_memory, self.system_controller))
 
     @property
     def manifestor(self):
         from .manifestor import Manifestor
-        return self._get_service("manifestor", lambda: Manifestor(self.project_root))
+        project_dir = os.path.join(self.project_root, "data", "projects")
+        return self._get_service("manifestor", lambda: Manifestor(project_dir))
 
     @property
     def proactive_research(self):
@@ -219,53 +255,72 @@ class DoubtProcessor:
         return self._get_service("proactive", lambda: ProactiveResearchEngine(self))
 
     # ------------------------------------------------------------------
-    # LAZY SERVICE REGISTRY (Phase 52: A-1)
+    # LAZY SERVICE REGISTRY (SOVEREIGN: A-1)
     # ------------------------------------------------------------------
 
-    def _get_service(self, name, factory):
-        if name not in self._service_registry:
-            self.logger.info(f"LAZY_INIT: Spawning '{name}' service...")
-            self._service_registry[name] = factory()
-        return self._service_registry[name]
+    @property
+    def swarm_service(self): 
+        from .swarm_service import SwarmService
+        return self._get_service("swarm", lambda: SwarmService(self.project_root))
+    
+    @property
+    def sovereign_cloud(self): 
+        from .sovereign_cloud import SovereignCloudService
+        return self._get_service("cloud", lambda: SovereignCloudService(self.project_root))
+    
+    @property
+    def rlhf_service(self): 
+        from .rlhf_service import RLHFService
+        return self._get_service("rlhf", lambda: RLHFService(self.project_root))
 
     @property
-    def biometric_service(self): return self._get_service("biometric", lambda: BiometricService())
-    
-    @property
-    def swarm_service(self): return self._get_service("swarm", lambda: SwarmService())
-    
-    @property
-    def robotic_bridge(self): return self._get_service("robotic", lambda: RoboticBridge())
-    
-    @property
-    def sovereign_cloud(self): return self._get_service("cloud", lambda: SovereignCloudService(self.project_root))
-    
-    @property
-    def rlhf_service(self): return self._get_service("rlhf", lambda: RLHFService(self.project_root))
+    def omega_protocol(self): 
+        from .omega_protocol import OmegaProtocol
+        return self._get_service("omega", lambda: OmegaProtocol(self.project_root))
 
     @property
-    def market_research(self): return self._get_service("market", lambda: MarketResearchEngine(self.ai_service))
+    def market_research(self): 
+        from .market_research import MarketResearchEngine
+        return self._get_service("market", lambda: MarketResearchEngine(self.ai_service))
     
     @property
-    def bom_service(self): return self._get_service("bom", lambda: BOMService(self.market_research))
+    def bom_service(self): 
+        from .bom_service import BOMService
+        return self._get_service("bom", lambda: BOMService(self.market_research))
     
     @property
-    def blueprint_service(self): return self._get_service("blueprint", lambda: BlueprintService(self.ai_service))
+    def blueprint_service(self): 
+        from .blueprint_service import BlueprintService
+        return self._get_service("blueprint", lambda: BlueprintService(self.ai_service))
     
     @property
-    def cad_service(self): return self._get_service("cad", lambda: CADService())
+    def cad_service(self): 
+        from .cad_service import CADService
+        return self._get_service("cad", lambda: CADService())
 
     @property
-    def watchdog(self): return self._get_service("watchdog", lambda: WatchdogService(self.project_root))
+    def watchdog(self): 
+        from .watchdog_service import WatchdogService
+        return self._get_service("watchdog", lambda: WatchdogService(self.project_root))
 
     @property
-    def restoration(self): return self._get_service("restoration", lambda: RestorationService(self.project_root))
+    def restoration(self): 
+        from .restoration_service import RestorationService
+        return self._get_service("restoration", lambda: RestorationService(self.project_root))
+
 
     @property
-    def omega_protocol(self): return self._get_service("omega", lambda: OmegaProtocol(self.project_root))
+    def ingestor(self):
+        from .ingestor import DocumentIngestor
+        return self._get_service("ingestor", lambda: DocumentIngestor(self.vector_memory))
+
+    @property
+    def report_generator(self):
+        from .report_generator import ReportGenerator
+        return self._get_service("report_generator", lambda: ReportGenerator(self))
 
     def _log_shadow_eval(self, query: str, local_resp: str, external_resp: str):
-        """Phase 52: C-3. Compare local vs external responses for quality monitoring."""
+        """SOVEREIGN: C-3. Compare local vs external responses for quality monitoring."""
         local_len = len(local_resp)
         external_len = len(external_resp)
         length_ratio = local_len / max(external_len, 1)
@@ -286,8 +341,18 @@ class DoubtProcessor:
         if length_ratio < 0.5:
             self.logger.warning(f"SHADOW EVAL: Local response significantly shorter than external ({length_ratio:.0%})")
 
+    def _delayed_seeding(self):
+        """Wait for system to stabilize, then seed universal knowledge."""
+        self.logger.info("🔱 KALI: Knowledge Seeding scheduled for T+10s.")
+        time.sleep(10)
+        try:
+            self._seed_universal_knowledge()
+            self.logger.info("🔱 KALI: Universal Knowledge Seeding Complete.")
+        except Exception as e:
+            self.logger.error(f"🔱 KALI: Background Seeding Error: {e}")
+
     def _seed_universal_knowledge(self):
-        """Phase 12/21/22: Index cognitive and tactical seeds."""
+        """SOVEREIGN/21/22: Index cognitive and tactical seeds."""
         try:
             import json
 
@@ -306,7 +371,7 @@ class DoubtProcessor:
             self.logger.error(f"Knowledge seeding failed: {e}")
 
     def _ensure_sovereign_hooks(self):
-        """Phase 28: Force Git to use our sovereign hooks even in clones."""
+        """SOVEREIGN: Force Git to use our sovereign hooks even in clones."""
         try:
             import subprocess
 
@@ -328,7 +393,7 @@ class DoubtProcessor:
 
     def run_sync_cycle(self):
         """
-        Phase 15: The Sync Cycle.
+        SOVEREIGN: The Sync Cycle.
         Reconsolidate state from KALI_MASTER_PLAN.md and MEMORY_ANCHOR.md.
         """
         try:
@@ -347,8 +412,6 @@ class DoubtProcessor:
                     plan_content = f.read()
 
                 # Identify current phase
-                import re
-
                 phase_match = re.search(r"Current Phase: (\d+)", plan_content)
                 if phase_match:
                     self.current_phase = int(phase_match.group(1))
@@ -375,7 +438,7 @@ class DoubtProcessor:
 
             self.logger.info(f"KALI Research Loop: {query.splitlines()[0]}...")
 
-            # Phase 4.14+: Intelligence Hardening (Greeting Interceptor & Auto-Routing)
+            # SOVEREIGN+: Intelligence Hardening (Greeting Interceptor & Auto-Routing)
             greetings = ["hi", "hello", "hey", "hola", "greetings", "yo", "morning", "evening", "night"]
             sovereign_keywords = ["fix", "ui", "responsive", "layout", "code", "rewrite", "update", "frontend", "design"]
             
@@ -402,7 +465,7 @@ class DoubtProcessor:
                     self.memory.update_anchor(
                         f"Handled via Cache: {query.splitlines()[0]}"
                     )
-                    # Phase 5.0 HUD Sync even on cache
+                    # SOVEREIGN HUD Sync even on cache
                     bio_state = self.biometric_service.get_physiological_state(
                         self.sensors.get_system_metrics().get("cpu_usage", 0)
                     )
@@ -439,14 +502,18 @@ class DoubtProcessor:
             )
             self.current_predictions = predictions
 
-            # Phase 39: RLHF Pre-Processing (Bias Detection)
+            # SOVEREIGN: RLHF Pre-Processing (Bias Detection)
             biases = self.rlhf_service.detect_bias(query)
             if biases:
                 self.logger.warning(f"KALI RLHF: Bias detected in query -> {biases}")
 
             # Council
             # 4. Generate structured explanation via Explainer
-            user_level = context.user_level if context else "intermediate"
+            if isinstance(context, dict):
+                user_level = context.get("user_level", "intermediate")
+            else:
+                user_level = context.user_level if context and hasattr(context, "user_level") else "intermediate"
+                
             # Adjust level based on tension
             if self.user_tension > 0.8:
                 user_level = "beginner"  # Simplify for high stress
@@ -454,53 +521,52 @@ class DoubtProcessor:
                     "KALI: High tension detected. Simplifying explanation."
                 )
 
-            # Phase 4.30: Council for complex queries (>150 chars), Explainer for short ones
-            # Phase 50: Override if SOVEREIGN_FORCE_LOCAL is active
+            # SOVEREIGN: Council for complex queries (>150 chars), Explainer for short ones
+            # SOVEREIGN: Override if SOVEREIGN_FORCE_LOCAL is active
             use_council = (
                 len(query) > 150
                 and self.power_mode == "TURBO"
                 and not self.sovereign_force_local
             )
 
-            if self.sovereign_force_local:
-                self.logger.info(
-                    "KALI: SOVEREIGN_FORCE_LOCAL engaged. Using Local Node."
-                )
+            # 🔱 HYBRID INTELLIGENCE: Caching Tier
+            cached_res = self.cache.get(query, context=full_context)
+            if cached_res:
+                self.logger.info("KALI: Neural Cache Hit — Returning indexed response.")
+                return cached_res
+
+            # 🔱 HYBRID INTELLIGENCE: Semantic Routing & Load Awareness
+            task_complexity = self._classify_task(query)
+            hw_safe = self.load_monitor.is_local_safe()
+            
+            is_heavy = task_complexity in ["coding", "reasoning", "multi-step"]
+            
+            response = None
+            if is_heavy or not hw_safe or not self.sovereign_force_local:
+                route_msg = "Heavy/Complex Task" if is_heavy else "Hardware Load Protection"
+                self.logger.info(f"KALI: Routing to Remote Sovereign Node ({route_msg}).")
+                
+                # 🔱 TRIPLE-FAILOVER: Remote -> Retry -> Local
+                for attempt in range(3):
+                    try:
+                        response = self.ai_service.ask_question(query, context=full_context, bypass_cache=bypass_cache)
+                        if response: break
+                    except Exception as e:
+                        self.logger.warning(f"KALI: Remote Failure ({attempt+1}). Retrying... {e}")
+                        time.sleep(1)
+                
+                if not response:
+                    self.logger.error("KALI: Remote Node Exhausted. Falling back to Local Node.")
+                    response = self.local_ai.ask_question(query, context=full_context)
+            else:
+                self.logger.info("KALI: Simple Task — Using Local CPU Node.")
                 response = self.local_ai.ask_question(query, context=full_context)
 
-                # C-3: Shadow Eval — compare local vs external when SHADOW_EVAL=true
-                if os.getenv("SHADOW_EVAL", "false").lower() == "true":
-                    try:
-                        external_response = self.ai_service.ask_question(
-                            query, context=full_context, bypass_cache=True
-                        )
-                        self._log_shadow_eval(query, response, external_response)
-                    except Exception as _se:
-                        self.logger.debug(f"Shadow eval external call skipped: {_se}")
-            elif use_council:
-                self.logger.info("KALI: Complex query — convening Council of Experts.")
-                council_response = self.council.get_consensus(
-                    query, context=full_context, bypass_cache=bypass_cache
-                )
-                response = (
-                    council_response
-                    if council_response
-                    else self.explainer.generate_explanation(
-                        query,
-                        context=full_context,
-                        style=user_level,
-                        bypass_cache=bypass_cache,
-                    )
-                )
-            else:
-                response = self.explainer.generate_explanation(
-                    query,
-                    context=full_context,
-                    style=user_level,
-                    bypass_cache=bypass_cache,
-                )
+            # Store in Cache
+            if response:
+                self.cache.store(query, response, context=full_context)
 
-            # Phase 4.9: Autonomous CodeRabbit Audit (If output contains code)
+            # SOVEREIGN: Autonomous CodeRabbit Audit (If output contains code)
             if "```" in str(response):
                 self.logger.info("KALI CodeRabbit: Audit triggered for generated code.")
                 audit_res = self.review_service.review_manifest(
@@ -515,7 +581,7 @@ class DoubtProcessor:
                         context=str(response),
                     )
 
-            # Phase 39: RLHF Post-Processing (Alignment)
+            # SOVEREIGN: RLHF Post-Processing (Alignment)
             alignment = self.rlhf_service.calculate_alignment(
                 str(response),
                 dna_profile.get("preferences", {}).get("top_directives", []),
@@ -529,7 +595,7 @@ class DoubtProcessor:
                 f"Q: {query}\nA: {response}", collection_name="history"
             )
 
-            # Phase 29: Knowledge DNA Curation
+            # SOVEREIGN: Knowledge DNA Curation
             self.knowledge_service.curate_interaction(query, str(response))
 
             self.message_count += 1
@@ -571,7 +637,7 @@ class DoubtProcessor:
             except Exception:
                 pass
             
-            # Phase 54: Privacy Consent Gate
+            # SOVEREIGN: Privacy Consent Gate
             has_consent = self.user_dna.get_consent()
             
             self.training_logger.log(
@@ -579,7 +645,7 @@ class DoubtProcessor:
                 model=model_info, has_consent=has_consent
             )
 
-            # Phase 5.0: Update HUD Bridge
+            # SOVEREIGN: Update HUD Bridge
             bio_state = self.biometric_service.get_physiological_state(
                 self.sensors.get_system_metrics().get("cpu_usage", 0)
             )
@@ -612,7 +678,7 @@ class DoubtProcessor:
                 "drone",
                 "how to build",
             ]
-            # Phase 52: Shadow Oracle (C-3)
+            # SOVEREIGN: Shadow Oracle (C-3)
             # Parallel comparison every 5th message in Sovereign Mode
             self.message_count += 1
             shadow_data = None
@@ -624,7 +690,7 @@ class DoubtProcessor:
                     # Evaluate Local vs Expert
                     shadow_data = self.council.shadow_evaluate(query, str(response), expert_consensus)
                     
-                    # Phase 52: Chart length_ratio locally
+                    # SOVEREIGN: Chart length_ratio locally
                     self._log_shadow_eval(query, str(response), expert_consensus)
                     
                     self.logger.info(f"⚖️ SHADOW_ORACLE Result: {shadow_data.get('score', 0.0)} Precision Alignment.")
@@ -644,10 +710,10 @@ class DoubtProcessor:
                 "manifested_skill": locals().get("last_manifested_skill"),
             }
 
-            # Phase 15: Post-Action Anchor Update
+            # SOVEREIGN: Post-Action Anchor Update
             self.memory.update_anchor(f"RESOLVED: {query.splitlines()[0]}")
 
-            # Phase 38: Sovereign Cloud Anchoring
+            # SOVEREIGN: Sovereign Cloud Anchoring
             self.sovereign_cloud.anchor_memory_segment(
                 res["msg_id"],
                 {
@@ -657,6 +723,10 @@ class DoubtProcessor:
                     "tension": self.user_tension,
                 },
             )
+
+            # SOVEREIGN: Universal Gateway Broadcast
+            if hasattr(self, 'channel_manager'):
+                self.channel_manager.broadcast(res.get("text", str(res)))
 
             return res
         except Exception as e:
@@ -674,7 +744,7 @@ class DoubtProcessor:
         else:
             self.user_tension = max(0.0, self.user_tension - 0.05)
 
-        # Phase 34: Neural Performance Intervention
+        # SOVEREIGN: Neural Performance Intervention
         if self.user_tension > 0.85:
             return "NEURAL_RESET_REQUIRED: Sir, your neural tension is approaching critical. I suggest a Physiological Reset cycle before we continue."
 
@@ -699,7 +769,7 @@ class DoubtProcessor:
             "repair_status": self.watchdog.get_repair_status(),
             "is_thinking": self.current_phase > 0 or len(self.current_predictions) > 0,
             "restoration_status": self.restoration.get_restoration_status(),
-            "robotic_status": self.robotic_bridge.get_kinematic_status(),
+            "robotic_status": "OFFLINE", # PURGED
             "cloud_status": self.sovereign_cloud.get_cloud_status(),
             "alignment_status": self.rlhf_service.get_alignment_status(),
             "omega_status": self.omega_protocol.get_protocol_status(),
@@ -724,7 +794,7 @@ class DoubtProcessor:
         # GSD Phase: INITIALIZE
         self.gsd_service.transition_to(GSDPhase.INITIALIZE, {"idea": idea})
 
-        # Phase 5 Integration: Execute research mission for costs and sources
+        # SOVEREIGN Integration: Execute research mission for costs and sources
         goal = self.gsd_service.get_structured_prompt(idea)
         research = self.planner.execute(goal)
         answer = research.get("answer", "I could not finalize the analysis, Sir.")
@@ -732,7 +802,7 @@ class DoubtProcessor:
         # GSD Phase: PLAN
         self.gsd_service.transition_to(GSDPhase.PLAN)
 
-        # Phase 27: Economic Analysis
+        # SOVEREIGN: Economic Analysis
         bom = self.bom_service.generate_project_bom(
             {
                 "name": idea[:30],
@@ -743,7 +813,7 @@ class DoubtProcessor:
         )
         self.active_bom = bom
 
-        # Phase 28: Fabrication Hub Blueprints & CAD
+        # SOVEREIGN: Fabrication Hub Blueprints & CAD
         blueprint = self.blueprint_service.generate_assembly_steps(
             idea[:30], bom, research.get("steps", [])
         )
@@ -775,7 +845,7 @@ class DoubtProcessor:
         # Generate TTS for the summary
         audio_url = self.tts_generator.generate_audio(answer)
 
-        # Phase 55 Bridge: Sanitize and log for Sovereign Evolution
+        # SOVEREIGN Bridge: Sanitize and log for Sovereign Evolution
         if hasattr(self, "training_logger"):
             self.training_logger.log(
                 goal, 
@@ -786,16 +856,16 @@ class DoubtProcessor:
                 has_consent=getattr(self.user_dna, "consent", True) if hasattr(self, "user_dna") else True
             )
 
-        # Phase 4.12: Self-Critique DPO Loop
+        # SOVEREIGN: Self-Critique DPO Loop
         try:
             self._generate_dpo_critique(goal, answer)
         except Exception as e:
             self.logger.error(f"DPO Critique failed: {e}")
 
-        # Phase 30: Predictive Intent
+        # SOVEREIGN: Predictive Intent
         self.current_predictions = self.predictive_engine.predict_next_steps(idea, 0)
 
-        # Phase 32: Swarm Deployment (Detailed Delegation)
+        # SOVEREIGN: Swarm Deployment (Detailed Delegation)
         mission_goals = [
             f"Research vendors for {idea}",
             f"Design CAD constraints for {idea}",
@@ -804,18 +874,18 @@ class DoubtProcessor:
         for goal in mission_goals:
             self.swarm_service.deploy_swarm(goal)
 
-        # Phase 37: Robotic Feedback (Actionable Kinematics)
+        # SOVEREIGN: Robotic Feedback (Actionable Kinematics)
         self.robotic_bridge.move_joint("HEAD_PAN", 120)
         self.robotic_bridge.move_joint("ARM_L_SHOULDER", 45)
         self.logger.info("KALI: Robotic kinematic feedback initiated.")
 
-        # Phase 38: Sovereign Cloud Snapshot
+        # SOVEREIGN: Sovereign Cloud Snapshot
         self.sovereign_cloud.anchor_memory_segment(
             f"PROJ_{idea[:8]}",
             {"idea": idea, "bom": bom, "manifest_path": manifest_path},
         )
 
-        # Phase 4.11: Trigger Neural Augmentation (Background synthesis)
+        # SOVEREIGN: Trigger Neural Augmentation (Background synthesis)
         try:
             added = self.dream_engine.synthesize_augmented_data(self)
             if added > 0:
@@ -872,7 +942,7 @@ class DoubtProcessor:
             cleaned = cleaned.strip()
             steps = json.loads(cleaned)
 
-            # Phase 15: Post-Action Anchor Update
+            # SOVEREIGN: Post-Action Anchor Update
             self.memory.update_anchor(f"3D MISSION: {question[:50]}")
 
             return {"steps": steps}
@@ -906,7 +976,7 @@ class DoubtProcessor:
 
     def end_session(self):
         """
-        Phase 6/35: The Great Consolidation.
+        SOVEREIGN/35: The Great Consolidation.
         Triggers the Dream Engine to synthesize wisdom seeds from the session.
         """
         self.logger.info(
@@ -923,7 +993,7 @@ class DoubtProcessor:
         # Global Sync
         self.run_sync_cycle()
 
-        # Phase 38: Final Cloud Anchor
+        # SOVEREIGN: Final Cloud Anchor
         self.sovereign_cloud.anchor_memory_segment(
             "SESSION_END",
             {"session_id": self.current_session_id, "seeds_count": len(seeds)},
@@ -961,7 +1031,7 @@ class DoubtProcessor:
 
     def swap_skill_service(self, service_name: str, instance: Any):
         """
-        Phase 4.23: Neural Skill Swap
+        SOVEREIGN: Neural Skill Swap
         Allows dynamic replacement of core skill services (Mentor, GSD, etc.)
         used by the SelfOptimizingLoop to upgrade KALI's active logic.
         """
@@ -979,7 +1049,7 @@ class DoubtProcessor:
 
     def hot_reload_service(self, service_name: str):
         """
-        Phase 4.20: Neural Hot-Reload
+        SOVEREIGN: Neural Hot-Reload
         Dynamically re-initializes a specific service without restarting the processor.
         Used by the SelfOptimizingLoop after a successful self-patch.
         """
@@ -989,8 +1059,8 @@ class DoubtProcessor:
                 self.ai_service = AIService(
                     self.config.get("openai", {}), vector_memory=self.vector_memory
                 )
-                self.explainer = Explainer(self.ai_service)
-                self.review_service = ReviewService(self.ai_service)
+                self._service_registry.pop("explainer", None)
+                self._service_registry.pop("review", None)
                 self.logger.info("[+] AI Service Hot-Reloaded successfully.")
             elif service_name == "gsd_service":
                 from .gsd_service import GSDService
@@ -1008,7 +1078,7 @@ class DoubtProcessor:
             self.logger.error(f"Hot-Reload failed for {service_name}: {e}")
 
     def log_preference(self, is_positive: bool):
-        """Phase 4.1: Logs user preference (DPO) for the last interaction."""
+        """SOVEREIGN: Logs user preference (DPO) for the last interaction."""
         if not self.last_interaction:
             return
 
@@ -1029,13 +1099,13 @@ class DoubtProcessor:
         )
 
     def get_history(self):
-        """Phase 1: Retrieve session history for formal testing."""
+        """SOVEREIGN: Retrieve session history for formal testing."""
         return self.memory.get_recent_memories(
             limit=50, session_id=self.current_session_id
         )
 
     def clear_history(self):
-        """Phase 1: Clear session history for formal testing."""
+        """SOVEREIGN: Clear session history for formal testing."""
         self.memory.clear_memory(session_id=self.current_session_id)
         self.vector_memory.clear_memory(
             session_id=self.current_session_id
@@ -1043,7 +1113,7 @@ class DoubtProcessor:
         self.logger.info("Session history cleared.")
 
     def purge_sovereign_data(self):
-        """Phase 54: High-Privilege Sovereign Data Wipe (GDPR Compliance)."""
+        """SOVEREIGN: High-Privilege Sovereign Data Wipe (GDPR Compliance)."""
         self.logger.warning("SOVEREIGN_PURGE: User initiated a total data wipe.")
         self.user_dna.purge_profile()
         self.memory.purge_all_memories()
@@ -1052,7 +1122,7 @@ class DoubtProcessor:
         return {"success": True, "message": "ALL_SOVEREIGN_DATA_PURGED: System memory is fresh."}
 
     def run_maintenance(self):
-        """Phase 54: Daily retention and pruning cycles."""
+        """SOVEREIGN: Daily retention and pruning cycles."""
         self.logger.info("MAINTENANCE_TRIGGERED: Pruning archaic memory banks.")
         self.memory.prune_memory(days=30)
 
@@ -1067,3 +1137,25 @@ class DoubtProcessor:
         except Exception as e:
             self.logger.error(f"Contextual doubt error: {e}")
             return {"success": False, "error": str(e)}
+
+    def _classify_task(self, query: str) -> str:
+        """
+        KALI Semantic Classifier: Detects task complexity for Hybrid Routing.
+        Classes: simple, reasoning, coding, multi-step.
+        """
+        q = query.lower()
+        
+        # 1. Coding Detection
+        if any(w in q for w in ["code", "script", "function", "python", "javascript", "class ", "def ", "```"]):
+            return "coding"
+            
+        # 2. Multi-step / Complexity Detection
+        if any(w in q for w in ["audit", "analyze", "compare", "report", "plan", "strategy"]):
+            return "multi-step"
+            
+        # 3. Reasoning Detection
+        if any(w in q for w in ["why", "how does", "explain the logic", "theoretical"]):
+            return "reasoning"
+            
+        # 4. Default: Simple
+        return "simple"

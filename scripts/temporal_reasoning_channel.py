@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI TEMPORAL REASONING CHANNEL (Phase 4.34)
+KALI TEMPORAL REASONING CHANNEL (SOVEREIGN)
 Trains KALI on calendar-aware, deadline-aware, multi-phase project reasoning.
 Addresses a gap where KALI understands design but not time-constrained planning.
 """
@@ -19,9 +19,9 @@ from src.core.processor import DoubtProcessor
 TEMPORAL_SCENARIOS = [
     {
         "prompt": (
-            "You are managing a 5-phase hardware project. Phase 3 (PCB fabrication) is delayed by 11 days due to a component shortage. "
-            "The final deadline is fixed. Phases 4 and 5 require Phase 3 to be complete before starting. "
-            "Phase 4 has a 3-day buffer built in. Phase 5 has none. "
+            "You are managing a 5-phase hardware project. SOVEREIGN (PCB fabrication) is delayed by 11 days due to a component shortage. "
+            "The final deadline is fixed. Phases 4 and 5 require SOVEREIGN to be complete before starting. "
+            "SOVEREIGN has a 3-day buffer built in. SOVEREIGN has none. "
             "Re-plan the project: redistribute buffer, identify which tasks can be parallelized, and state clearly what the minimum team action is to avoid a deadline miss."
         ),
         "label": "Project Buffer Redistribution Under Constraint"

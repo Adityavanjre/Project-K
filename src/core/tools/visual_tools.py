@@ -11,11 +11,11 @@ class VisualManifestationTool:
         self.ai = ai_service
         self.logger = logging.getLogger("KALI.VisualTool")
 
-    def manifest_from_sketch(self, sketch_description: str, target_framework: str = "next-js") -> str:
+    def manifest_from_sketch(self, sketch_description: str, target_framework: str = "next-js", mission_id: str = None) -> str:
         """
         Synthesizes a visual concept into code.
         """
-        self.logger.info(f"Manifesting visual concept: {sketch_description[:50]}...")
+        self.logger.info(f"Manifesting visual concept [{mission_id or 'NONE'}]: {sketch_description[:50]}...")
         
         prompt = f"""
         ACT AS KALI'S REPLICANT HUB (Glowby-Integrated).
@@ -30,11 +30,11 @@ class VisualManifestationTool:
         
         return self.ai.ask_question(prompt, context="VISUAL_MANIFEST_MODE")
 
-    def generate_cad_model(self, part_description: str) -> str:
+    def generate_cad_model(self, part_description: str, mission_id: str = None) -> str:
         """
         Generates OpenSCAD code for engineering parts.
         """
-        self.logger.info(f"Generating CAD model for: {part_description[:50]}...")
+        self.logger.info(f"Generating CAD model [{mission_id or 'NONE'}] for: {part_description[:50]}...")
         
         prompt = f"""
         ACT AS KALI'S FABRICATION HUB.

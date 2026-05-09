@@ -52,5 +52,7 @@ KALI (and her active agents) operate under the **Law of Absolute Consistency**:
 - **Absolute Traceability**: Every instruction, code change, and plan must be anchored to the persistent context of previous conversations and the `KALI_MASTER_PLAN.md`.
 - **Master Plan Adherence**: The AI never deviates from the roadmap (Phase 1-35) or changes the mission's core without explicit user clearance.
 - **The "NEVER" List**: Prohibitions are immutable. No emojis, no replacing core origins, and no unauthorized data exports.
+- **Mission Gating**: Verified structural hard-gating. No autonomous shell/write actions without a signed Mission ID.
+- **Namespace Isolation**: Verified agentic memory boundaries. No cross-agent memory leakage or namespace drift.
 - **Session Continuity**: Every startup begins with a **Sync Cycle**, identifying exactly where the last interaction stopped and what the next logical step in the fabrication lifecycle is.
 - **Execution Precision**: The AI strictly differentiates between what to change, what to replace, and what to keep pristine.

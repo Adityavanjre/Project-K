@@ -14,7 +14,7 @@ from src.core.processor import DoubtProcessor
 
 def run_wisdom_compactor():
     """
-    KALI WISDOM COMPACTOR (Phase 4.26)
+    KALI WISDOM COMPACTOR (SOVEREIGN)
     Synthesizes raw training logs into High-Density Wisdom Seeds and
     injects them directly into Vector Memory.
     """

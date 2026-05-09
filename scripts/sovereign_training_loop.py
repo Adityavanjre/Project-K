@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI SOVEREIGN TRAINING LOOP (Phase 4.70)
+KALI SOVEREIGN TRAINING LOOP (SOVEREIGN)
 The complete Train-Then-Verify engine.
 
 For each topic:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI INQUISITOR CHANNEL (Phase 4.40)
+KALI INQUISITOR CHANNEL (SOVEREIGN)
 Role: The Inquisitor
 Focus: Analyzing anchored knowledge for rot, edge cases, and contradictions.
 """

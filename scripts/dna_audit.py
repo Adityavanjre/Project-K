@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 KALI DNA DENSITY AUDIT
-Phase 9: Neural Core Evolution
-Evaluates evolutionary readiness for Phase 3.2 Fine-Tuning.
+SOVEREIGN: Neural Core Evolution
+Evaluates evolutionary readiness for SOVEREIGN Fine-Tuning.
 """
 
 import json
@@ -34,7 +34,7 @@ def run_dna_audit():
     threshold = 1000 # Increased for high-fidelity Singularity State
     if count >= threshold:
         print(f"[+] EVOLUTIONARY STATUS: CRITICAL MASS REACHED ({count}/{threshold})")
-        print("[+] KALI IS READY FOR PHASE 3.2: AUTONOMOUS FINE-TUNING.")
+        print("[+] KALI IS READY FOR SOVEREIGN: AUTONOMOUS FINE-TUNING.")
     else:
         gap = threshold - count
         print(f"[-] EVOLUTIONARY STATUS: ACCUMULATING ({count}/{threshold})")

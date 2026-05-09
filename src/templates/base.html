@@ -1,59 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KALI SOVEREIGN | THE SINGULARITY ENGINE</title>
-    <meta name="description" content="KALI Sovereign ASI Gateway. Integrated Swarm Intelligence.">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/static/css/singularity.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-</head>
-<body class="bg-black text-white selection:bg-cyan-500/30">
-    <!-- Minimalist Global Nav -->
-    <nav class="nav-minimalist">
-        <div class="flex items-center gap-4">
-            <img src="/static/branding/logo.png" alt="KALI" class="h-6 w-auto opacity-80 hover:opacity-100 transition-opacity">
-            <span class="text-[10px] font-mono tracking-[0.4em] text-white/20">KALI SOVEREIGN</span>
-        </div>
-        <div class="flex items-center">
-            <div onclick="switchMode('learn')" id="nav-learn" class="nav-link active">Core</div>
-            <div onclick="switchMode('gateway')" id="nav-gateway" class="nav-link">Swarm</div>
-            <div onclick="switchMode('archives')" id="nav-archives" class="nav-link">Archives</div>
-            <div onclick="switchMode('agent')" id="nav-agent" class="nav-link">Agent</div>
-        </div>
-        <div class="flex items-center gap-4">
-            <div class="text-[10px] font-mono text-cyan-500/40">v5.0.1_ALPHA</div>
-            <button onclick="window.location.reload()" class="text-white/20 hover:text-cyan-400 transition-colors">
-                <i class="fas fa-sync-alt text-xs"></i>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="fixed inset-0 pt-[60px]">
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- App Logic -->
-    <script src="{{ url_for('static', filename='js/main.js') }}?v={{ range(1, 10000) | random }}"></script>
-
-    <script>
-        function switchMode(mode) {
-            console.log("Switching to mode:", mode);
-            // Sync UI active state
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            const activeLink = document.getElementById(`nav-${mode}`);
-            if (activeLink) activeLink.classList.add('active');
-
-            if (window.app) {
-                window.app.switchMode(mode);
-            } else {
-                window.dispatchEvent(new CustomEvent('modeChanged', { detail: { mode: mode } }));
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KALI SOVEREIGN — v5.0 [GOVERNED]</title>
+  
+  <!-- Tailwind Play CDN (KALI Dynamic Engine) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            main: '#08090a',
+            action: '#38bdf8',
+            critical: '#fb7185',
+            success: '#34d399',
+            warning: '#fbbf24',
+            dim: '#334155',
+            muted: '#64748b',
+          }
         }
-    </script>
+      }
+    }
+  </script>
+
+  <meta name="description" content="KALI Sovereign ASI Command Center. Integrated Swarm Intelligence. 8 Pillars of Mastery.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- KALI OS Design System & Core Scripts -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/kali.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/modules.js') }}" defer></script>
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Three.js (for Build 3D Visualizer) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- GSAP (animations) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+
+  <!-- Governance Status -->
+  <div id="governance-status" class="fixed top-2 left-1/2 -translate-x-1/2 z-[9999] flex gap-4 px-3 py-1 bg-black/80 border border-action/30 rounded-full font-mono text-[8px] uppercase tracking-widest backdrop-blur-md pointer-events-none">
+      <div class="flex items-center gap-1.5">
+          <span class="w-1 h-1 bg-action rounded-full animate-pulse"></span>
+          <span class="text-dim">Execution:</span>
+          <span class="text-white">KALI</span>
+      </div>
+      <div class="w-px h-2 bg-white/10 self-center"></div>
+      <div class="flex items-center gap-1.5">
+          <span class="text-dim">Relay:</span>
+          <span class="text-white">ANTIGRAVITY</span>
+      </div>
+  </div>
+
+  <!-- ============ TOP NAVIGATION ============ -->
+  <nav id="kali-nav">
+    <div class="nav-brand">
+      <span class="pulse-dot"></span>
+      <span class="font-display">KALI OS</span>
+      <span class="text-muted" style="font-size:9px; letter-spacing:0.15em;">v5.1 · SOVEREIGN</span>
+      <span id="connection-status" class="status-indicator"></span>
+    </div>
+
+    <div class="nav-tabs">
+      <button id="tab-core" class="nav-tab active" onclick="switchPanel('core')">
+        <i class="fas fa-terminal" style="margin-right:5px;"></i>KALI Core
+      </button>
+      <button id="tab-evolution" class="nav-tab" onclick="switchPanel('evolution')">
+        <i class="fas fa-dna" style="margin-right:5px;"></i>Evolution
+      </button>
+      <button id="tab-handover" class="nav-tab handover" onclick="kaliApp.openHandoverModal()">
+        <i class="fas fa-key" style="margin-right:5px;"></i>Handover
+      </button>
+    </div>
+  </nav>
+
+  <!-- ============ HUD STRIP ============ -->
+  <div id="kali-hud-strip">
+    <div class="hud-metric">
+      <span>CPU</span><span class="val" id="hud-cpu">—</span>
+    </div>
+    <div class="hud-metric">
+      <span>MEM</span><span class="val" id="hud-mem">—</span>
+    </div>
+    <div class="hud-metric">
+      <span>TENSION</span><span class="val" id="hud-tension">—</span>
+    </div>
+    <div class="hud-metric">
+      <span>SWARM</span><span class="val" id="hud-swarm-count">20/20</span>
+    </div>
+    <div class="hud-metric">
+      <span>CLOUD</span><span class="val" id="hud-cloud" style="color:var(--success);">SYNC</span>
+    </div>
+    <div class="hud-metric">
+      <span id="hud-power-badge" class="hud-badge sovereign">SOVEREIGN</span>
+    </div>
+    <div class="hud-metric">
+      <span class="font-mono" style="font-size:8px; color:var(--text-dim);" id="hud-time">—</span>
+    </div>
+  </div>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <div id="kali-main">
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- ============ JARVIS COGNITIVE CORE (UNIFIED) ============ -->
+  <div id="jarvis-unified-container" class="hidden">
+    <div class="jarvis-label">COGNITIVE_CORE</div>
+    <div id="jarvis-orb-placeholder" class="w-full h-full flex items-center justify-center text-[9px] text-muted italic">Core Integrated.</div>
+  </div>
+
+
+  <!-- ============ SWARM DEPLOY DRAWER ============ -->
+  <div id="drawer-overlay" class="drawer-overlay" onclick="closeDrawer(event)">
+    <div class="drawer" id="swarm-drawer">
+      <div class="flex justify-between items-center">
+        <span class="section-header" style="border:none; padding:0;">DEPLOY MISSION</span>
+        <button class="icon-btn" onclick="closeDrawerDirect()"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="drawer-node-name" class="font-mono" style="font-size:11px; color:var(--action); letter-spacing:0.1em;"></div>
+      <textarea id="drawer-mission-input"
+        style="background:var(--bg-main); border:1px solid var(--border-dim); border-radius:var(--radius); color:var(--text-main); font-family:var(--font-body); font-size:12px; padding:10px; resize:vertical; min-height:120px; outline:none; width:100%;"
+        placeholder="Define the mission objective for this agent node..."></textarea>
+      <button class="k-btn" onclick="deployMission()">
+        <i class="fas fa-paper-plane"></i>&nbsp; DEPLOY TO NODE
+      </button>
+      <button class="k-btn" onclick="broadcastAll()" style="border-color:rgba(129,140,248,0.4); background:rgba(129,140,248,0.06); color:var(--swarm-violet);">
+        <i class="fas fa-broadcast-tower"></i>&nbsp; BROADCAST TO ALL 20 NODES
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ PERMISSION OVERLAY ============ -->
+  <div id="permission-overlay" class="drawer-overlay">
+    <div class="drawer permission-card">
+        <div class="section-header critical">PERMISSION REQUIRED</div>
+        <div class="flex flex-col gap-3 mt-3">
+            <div id="perm-module-name" class="font-mono text-xs text-action">MODULE: AIDER</div>
+            <div id="perm-action-type" class="text-sm font-semibold">ACTION: FILE_WRITE</div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-muted">RISK LEVEL:</span>
+                <span id="perm-risk-badge" class="hud-badge critical">HIGH</span>
+            </div>
+            <div class="k-card bg-black/40 p-3 italic text-xs text-muted" id="perm-reason">
+                "KALI needs to modify core/processor.py to optimize the neural loop."
+            </div>
+            
+            <div class="flex flex-col gap-2 mt-2">
+                <button class="k-btn success" onclick="kaliIntel.approveAction('once')">APPROVE ONCE</button>
+                <button class="k-btn" onclick="kaliIntel.approveAction('always')">ALWAYS ALLOW FOR THIS TASK</button>
+                <button class="k-btn critical" onclick="kaliIntel.approveAction('deny')">DENY ACTION</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- ============ OVERRIDE MODAL ============ -->
+  <div id="override-modal" class="drawer-overlay">
+    <div class="drawer">
+        <div class="section-header">MODULE OVERRIDE</div>
+        <div class="hud-label mb-2">SELECT REPLACEMENT MODULE</div>
+        <div id="override-module-list" class="flex flex-col gap-2">
+            <!-- Injected by JS -->
+        </div>
+        <button class="k-btn mt-4" onclick="document.getElementById('override-modal').classList.remove('open')">CANCEL</button>
+    </div>
+  </div>
+
+  <!-- ============ SCRIPTS ============ -->
+  <!-- Main JS (loaded in index page for cache busting) -->
+  {% block scripts %}{% endblock %}
+
+  <script>
+    // ---- Panel Switcher ----
+    const PANELS = ['core','swarm','evolution','research','build','workspace','security','nexus','roadmap'];
+
+    function switchPanel(name) {
+      console.log("[KALI UI] Switching to panel:", name);
+      PANELS.forEach(p => {
+        const el = document.getElementById('panel-' + p);
+        const tab = document.getElementById('tab-' + p);
+        if (el)  el.classList.toggle('active', p === name);
+        if (tab) tab.classList.toggle('active', p === name);
+      });
+      
+      if (window.kaliApp) {
+        window.kaliApp.currentPanel = name;
+        if (window.kaliApp.onPanelSwitch) {
+          window.kaliApp.onPanelSwitch(name);
+        }
+      }
+    }
+
+    // ---- HUD Clock ----
+    function updateClock() {
+      const el = document.getElementById('hud-time');
+      if (el) el.textContent = new Date().toLocaleTimeString('en-IN', {hour12: false});
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+
+    // ---- Drawer ----
+    let activeNode = null;
+    function openDrawer(nodeName) {
+      activeNode = nodeName;
+      document.getElementById('drawer-node-name').textContent = '// NODE: ' + nodeName.toUpperCase();
+      document.getElementById('drawer-overlay').classList.add('open');
+      document.getElementById('drawer-mission-input').focus();
+    }
+    function closeDrawer(e) {
+      if (e && e.target !== document.getElementById('drawer-overlay')) return;
+      closeDrawerDirect();
+    }
+    function closeDrawerDirect() {
+      document.getElementById('drawer-overlay').classList.remove('open');
+      activeNode = null;
+    }
+    async function deployMission() {
+      const mission = document.getElementById('drawer-mission-input').value.trim();
+      if (!mission) return;
+      try {
+        await fetch('/api/agent', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({goal: mission, node: activeNode})
+        });
+        closeDrawerDirect();
+      } catch(e) { console.error(e); }
+    }
+    async function broadcastAll() {
+      const mission = document.getElementById('drawer-mission-input').value.trim();
+      if (!mission) return;
+      try {
+        await fetch('/api/agent', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({goal: mission, broadcast: true})
+        });
+        closeDrawerDirect();
+      } catch(e) { console.error(e); }
+    }
+  </script>
 </body>
 </html>

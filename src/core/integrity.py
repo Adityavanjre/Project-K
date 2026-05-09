@@ -2,11 +2,12 @@ import os
 import hashlib
 import json
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
 class IntegrityService:
-    """Phase 26: Cryptographic System Integrity and Sovereignty."""
+    """SOVEREIGN: Cryptographic System Integrity and Sovereignty."""
     
     CORE_PATHS = [
         "src/core",
@@ -50,7 +51,12 @@ class IntegrityService:
         logger.info(f"KALI Integrity: Manifest Generated [{len(self.signatures)} files]")
         return True
 
-    def verify_integrity(self):
+    def reset_sovereignty(self):
+        """SOVEREIGN: Emergency Sovereignty Anchor Reset."""
+        logger.warning("KALI Integrity: RESET_SOVEREIGNTY triggered. Re-anchoring BIOS...")
+        return self.generate_signatures()
+
+    def verify_integrity(self, auto_repair=False):
         """Verify system state against manifest. Returns (is_intact, violations)."""
         if not os.path.exists(self.MANIFEST_FILE):
             logger.warning("KALI Integrity: No Manifest found. Initializing security anchor...")
@@ -70,11 +76,17 @@ class IntegrityService:
             abs_path = os.path.join(self.root_dir, rel_path)
             
             if not os.path.exists(abs_path):
+                if auto_repair:
+                    if self._attempt_repair(rel_path):
+                        continue
                 violations.append({"path": rel_path, "error": "MISSING"})
                 continue
             
             actual_hash = self._hash_file(abs_path)
             if actual_hash != expected_hash:
+                if auto_repair:
+                    if self._attempt_repair(rel_path):
+                        continue
                 violations.append({
                     "path": rel_path, 
                     "error": "MODIFIED", 
@@ -83,6 +95,22 @@ class IntegrityService:
                 })
 
         return len(violations) == 0, violations
+
+    def _attempt_repair(self, rel_path):
+        """Try to restore a file from the recovery fork."""
+        recovery_path = os.path.join(self.root_dir, "data", "recovery", os.path.basename(rel_path))
+        target_path = os.path.join(self.root_dir, rel_path)
+        
+        if os.path.exists(recovery_path):
+            try:
+                import shutil
+                os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                shutil.copy2(recovery_path, target_path)
+                logger.info(f"KALI Integrity: Self-Healed {rel_path} from recovery baseline.")
+                return True
+            except Exception as e:
+                logger.error(f"KALI Integrity: Failed to repair {rel_path}: {e}")
+        return False
 
     def _hash_file(self, file_path):
         """Standard SHA-256 Utility."""

@@ -77,7 +77,7 @@ class SelfOptimizingLoop:
             self.logger.error(f"Self-Optimization Cycle Failed: {e}")
 
     def _apply_patch(self, target_file: str, patch_code: str, gap_summary: str):
-        """Phase 4.25: Neural Forking (Isolated patch verification)."""
+        """SOVEREIGN: Neural Forking (Isolated patch verification)."""
         self.logger.info(f"[*] KALI: Initiating Neural Fork for {os.path.basename(target_file)}")
         
         # 1. Backup
@@ -101,7 +101,7 @@ class SelfOptimizingLoop:
                 self.logger.info(f"[*] Evolution: {gap_summary}")
                 # 5. Log to Digital Soul
                 self.processor.training_logger.log(f"Self-Update: {os.path.basename(target_file)}", gap_summary)
-                # 6. Hot-Reload the affected service in memory (Phase 4.20)
+                # 6. Hot-Reload the affected service in memory (SOVEREIGN)
                 # Determine which core service corresponds to the patched file
                 file_stem = os.path.basename(target_file).replace(".py", "")
                 service_map = {
@@ -123,7 +123,7 @@ class SelfOptimizingLoop:
                 shutil.copy2(backup_path, target_file)
 
     def _verify_bios_integrity(self, file_path: str) -> bool:
-        """Phase 4.22: Neural BIOS Verification (Hash-based integrity check)"""
+        """SOVEREIGN: Neural BIOS Verification (Hash-based integrity check)"""
         if not os.path.exists(self.bios_manifest_path): return True
         try:
             import hashlib

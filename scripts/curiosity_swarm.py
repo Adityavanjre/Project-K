@@ -13,7 +13,7 @@ from src.core.processor import DoubtProcessor
 
 def run_curiosity_swarm():
     """
-    KALI CURIOSITY SWARM (Phase 4.26)
+    KALI CURIOSITY SWARM (SOVEREIGN)
     Spawns 10 parallel probes to discover new cognitive vectors.
     """
     logging.basicConfig(level=logging.INFO)

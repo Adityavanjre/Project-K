@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI ECONOMIST CHANNEL (Phase 4.40)
+KALI ECONOMIST CHANNEL (SOVEREIGN)
 Role: The Economist
 Focus: Market pricing, compute-cost optimization, and supply chain logistics.
 """

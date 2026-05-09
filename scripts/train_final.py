@@ -3,12 +3,12 @@ import json
 from datetime import datetime
 import argparse
 
-# Phase 50: Sovereign Weight-Bake (Unsloth Edition)
+# SOVEREIGN: Sovereign Weight-Bake (Unsloth Edition)
 # This script performs the actual fine-tuning of KALI's LLM.
 
 def train_kali(data_path=None, output_dir=None):
     """
-    Refined Sovereign Training Pipeline for Phase 52.
+    Refined Sovereign Training Pipeline for SOVEREIGN
     """
     # Defensive imports for non-CUDA environments
     try:
@@ -29,7 +29,7 @@ def train_kali(data_path=None, output_dir=None):
     if output_dir is None:
         output_dir = os.path.join(project_root, "kali_weights")
 
-    print(f"🔥 KALI: Initiating Sovereign Weight-Bake (Phase 52) on {data_path}...")
+    print(f"🔥 KALI: Initiating Sovereign Weight-Bake (SOVEREIGN) on {data_path}...")
     
     # 1. Load Model and Tokenizer
     max_seq_length = 2048
@@ -45,7 +45,7 @@ def train_kali(data_path=None, output_dir=None):
         r = 16,
         target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
         lora_alpha = 16,
-        lora_dropout = 0.05, # Phase 52: Added regularization
+        lora_dropout = 0.05, # SOVEREIGN: Added regularization
         bias = "none",
         use_gradient_checkpointing = True,
         random_state = 3407,
@@ -95,7 +95,7 @@ def train_kali(data_path=None, output_dir=None):
 
     full_dataset = Dataset.from_list(formatted_data)
     
-    # Phase 52: Add 90/10 Validation Split
+    # SOVEREIGN: Add 90/10 Validation Split
     dataset_split = full_dataset.train_test_split(test_size=0.1, seed=3407)
     train_dataset = dataset_split["train"].map(formatting_prompts_func, batched = True,)
     eval_dataset = dataset_split["test"].map(formatting_prompts_func, batched = True,)
@@ -137,7 +137,7 @@ def train_kali(data_path=None, output_dir=None):
     print(f"[*] Starting Fine-Tune on {len(train_dataset)} training / {len(eval_dataset)} eval samples...")
     train_result = trainer.train()
     
-    # Phase 52: T-4 Evaluation Gate Check
+    # SOVEREIGN: T-4 Evaluation Gate Check
     metrics = trainer.evaluate()
     eval_loss = metrics.get("eval_loss", 999)
     print(f"[*] Post-Bake Evaluation: Loss = {eval_loss:.4f}")

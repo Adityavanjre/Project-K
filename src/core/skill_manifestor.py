@@ -76,16 +76,4 @@ class SkillManifestor:
             return None
 
 
-if __name__ == "__main__":
-    # Mocking for standalone test
-    class MockPM:
-        def load_plugins(self):
-            print("[*] PM: Plugins Reloaded")
-
-    class MockAI:
-        def ask_question(self, p):
-            return "class AutonomousSkill:\n    def execute(self, c):\n        return {'status': 'Manifested'}"
-
-    manifestor = SkillManifestor(MockPM(), MockAI())
-    res = manifestor.manifest_skill("Analyze 3D STL Volume")
-    print(f"[*] Manifestation Result: {res}")
+# 🔱 KALI SOVEREIGN MODE: Standalone tests moved to dedicated test suite.

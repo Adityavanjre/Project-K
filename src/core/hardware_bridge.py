@@ -7,7 +7,7 @@ from typing import Dict, Any, List, Optional
 logger = logging.getLogger(__name__)
 
 class HardwareBridge:
-    """Phase 31: Hardware-In-The-Loop (HITL) Integration."""
+    """SOVEREIGN: Hardware-In-The-Loop (HITL) Integration."""
     
     def __init__(self, port: str = "COM3", baud: int = 115200):
         self.port = port

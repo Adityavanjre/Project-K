@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-KALI SKILL SYNTHESIS CHANNEL (Phase 4.32)
+KALI SKILL SYNTHESIS CHANNEL (SOVEREIGN)
 Forces cross-domain synthesis by combining 3 random skill areas into one query.
 Trains KALI to integrate knowledge, not just recall it in isolation.
 """
