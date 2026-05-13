@@ -1,0 +1,252 @@
+name: CI
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "*.md"
+      - LICENSE
+      - docs/**
+      - assets/**
+      - demo/**
+      - .gitignore
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "*.md"
+      - LICENSE
+      - docs/**
+      - assets/**
+      - demo/**
+      - .gitignore
+
+permissions:
+  contents: read
+
+jobs:
+  # Compute which areas of the repo were touched. Downstream jobs gate on
+  # these so a Go-only or docs-only change doesn't run the entire suite.
+  # Any change to ci.yml itself triggers everything (safety net).
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      python: ${{ steps.app.outputs.python }}
+      cli: ${{ steps.app.outputs.cli }}
+      web: ${{ steps.app.outputs.web }}
+      docker-images: ${{ steps.docker.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: app
+        with:
+          filters: |
+            python:
+              - 'decepticon/**'
+              - 'tests/**'
+              - 'pyproject.toml'
+              - 'uv.lock'
+              - '.github/workflows/ci.yml'
+            cli:
+              - 'clients/cli/**'
+              - 'clients/shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - '.github/workflows/ci.yml'
+            web:
+              - 'clients/web/**'
+              - 'clients/shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - '.github/workflows/ci.yml'
+      # Per-image filter: filter name == image name so the matrix can pull
+      # `outputs.changes` directly as the list of images to build.
+      - uses: dorny/paths-filter@v3
+        id: docker
+        with:
+          filters: |
+            langgraph:
+              - 'containers/langgraph.Dockerfile'
+              - 'decepticon/**'
+              - 'pyproject.toml'
+              - 'uv.lock'
+              - 'skills/**'
+              - '.github/workflows/ci.yml'
+            litellm:
+              - 'containers/litellm.Dockerfile'
+              - 'config/litellm.yaml'
+              - '.github/workflows/ci.yml'
+            sandbox:
+              - 'containers/sandbox.Dockerfile'
+              - '.github/workflows/ci.yml'
+            cli:
+              - 'containers/cli.Dockerfile'
+              - 'clients/cli/**'
+              - 'clients/shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - '.github/workflows/ci.yml'
+            web:
+              - 'containers/web.Dockerfile'
+              - 'clients/web/**'
+              - 'clients/cli/**'
+              - 'clients/shared/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - '.github/workflows/ci.yml'
+            c2-sliver:
+              - 'containers/c2-sliver.Dockerfile'
+              - '.github/workflows/ci.yml'
+
+  python:
+    name: Python (lint + typecheck + test)
+    needs: changes
+    if: needs.changes.outputs.python == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.8.15"
+          enable-cache: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: uv sync --dev
+      - name: Ruff lint
+        run: uv run ruff check .
+      - name: Ruff format
+        run: uv run ruff format --check .
+      - name: basedpyright (errors only)
+        run: |
+          # Fail on errors only — pre-existing warnings on langchain dynamic
+          # interfaces are tracked but non-blocking. Ratchet up over time.
+          uv run basedpyright --outputjson > /tmp/bp.json || true
+          python3 -c "
+          import json, sys
+          d = json.load(open('/tmp/bp.json'))
+          s = d['summary']
+          print(f\"basedpyright: {s['errorCount']} errors, {s['warningCount']} warnings, {s['informationCount']} info\")
+          sys.exit(1 if s['errorCount'] > 0 else 0)
+          "
+      - name: Pytest with coverage
+        # -n auto runs tests in parallel across available CPUs (2 vCPU on
+        # GitHub-hosted ubuntu-latest, ~2x speedup). pytest-cov + xdist
+        # combine results correctly.
+        run: uv run pytest -n auto --cov --cov-report=xml --cov-report=term --cov-fail-under=30
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: ignore
+
+  cli:
+    name: CLI (typecheck + test)
+    needs: changes
+    if: needs.changes.outputs.cli == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: cd clients/cli && npm run typecheck
+      - name: Run CLI tests
+        run: cd clients/cli && npm test --if-present
+
+  web:
+    name: Web (lint + build)
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Generate Prisma client
+        run: cd clients/web && npx prisma generate
+      - name: Lint
+        run: cd clients/web && npx eslint src/ --max-warnings 0
+      - name: Build
+        run: cd clients/web && npm run build
+        env:
+          NEXT_PUBLIC_DECEPTICON_EDITION: oss
+
+  docker-build:
+    name: Docker build (${{ matrix.image }})
+    needs: changes
+    if: needs.changes.outputs.docker-images != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.changes.outputs.docker-images) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: containers/${{ matrix.image }}.Dockerfile
+          push: false
+          load: true
+          tags: decepticon-${{ matrix.image }}:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: decepticon-${{ matrix.image }}:ci
+          format: sarif
+          output: trivy-${{ matrix.image }}.sarif
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "0"
+      - name: Upload Trivy SARIF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-${{ matrix.image }}
+          path: trivy-${{ matrix.image }}.sarif
+          if-no-files-found: ignore
+
+  # Security scans always run regardless of which paths changed —
+  # vulnerability databases update independently of repo state.
+  security:
+    name: Security (pip-audit + gitleaks)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install pip-audit
+        run: uv tool install pip-audit
+      - name: Export requirements
+        run: uv export --format requirements-txt --no-hashes --no-dev > requirements.txt
+      - name: Run pip-audit
+        run: uv tool run pip-audit --requirement requirements.txt --ignore-vuln GHSA-xxxx-xxxx-xxxx || true
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        continue-on-error: true
+        env:
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
