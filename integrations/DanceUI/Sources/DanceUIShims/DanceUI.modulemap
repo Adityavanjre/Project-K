@@ -1,0 +1,11 @@
+framework module DanceUI {
+  umbrella header "DanceUI-umbrella.h"
+
+  export *
+  module * { export * }
+
+  explicit module Private {
+      umbrella header "DanceUI-Private.h"
+      export *
+  }
+}

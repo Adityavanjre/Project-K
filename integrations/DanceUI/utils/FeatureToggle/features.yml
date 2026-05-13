@@ -1,0 +1,157 @@
+features:
+  -
+    name: enabledUIHookFreeViewInitHook
+    desc: "DanceUI UIHookFreeView initWithFrame Hook Feature"
+    module: Foundation
+    type: Bool
+    value: true
+    enable: false
+  -
+    name: enablePopoverAutoAdjustAnchor
+    desc: "DanceUI Popover auto Adjust Anchor"
+    module: Popover
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: enableCollectionViewAsyncApplyData
+    desc: "DanceUI collection view async apply data"
+    module: CollectionView
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: enableCollectionViewInfoLog
+    desc: "DanceUI collection view info log for release"
+    module: CollectionView
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: enableLoadableInfoLog
+    desc: "DanceUI loadable info log for release"
+    module: Loadable
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: enableHostingConfigurationSupportPopover
+    desc: "DanceUI UIHostingConfiguration support Popover"
+    module: UIHostingConfiguration
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: enableAnimatedImage
+    desc: "DanceUI Image support animated Image"
+    module: Image
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: imageDecodeForDisplay
+    desc: "DanceUI image async decode before display"
+    module: Image
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: hostingVCForCell
+    desc: "HostingViewController for cell opt"
+    module: Hosting
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: monitor
+    desc: "DanceUI monitor and settings"
+    module: Hosting
+    type: Bool
+    value: false
+    enable: true
+  -
+    name: composeBenchmark
+    desc: "DanceUI compose benchmark"
+    module: Hosting
+    type: Bool
+    value: false
+    enable: true
+    complieOnly: true
+  -
+    name: activePremainLoading
+    desc: "DanceUI 激活 +load 启动配置"
+    module: foundation
+    type: Bool
+    value: false
+    enable: false
+    complieOnly: true
+  -
+    name: gestureContainer
+    desc: "Gesture Container"
+    module: Gesture
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: unifiedHitTesting
+    desc: "Unified Hit-Testing"
+    module: Gesture
+    type: Bool
+    value: false # Shall only enable when Apple enabled
+    enable: false
+  -
+    name: fixedUITouchMajorRadius
+    desc: "Use fixed -[UITouch majorRadius] value instead of the system's."
+    module: Gesture
+    type: Bool
+    value: true
+    enable: false # non-compile-time feature. Does not effect anything.
+  -
+    name: hostingConfigurationReaderAsyncComputerSize
+    desc: "DanceUI HostingConfigurationReader async computer size"
+    module: Layout
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: fixIOS18Dot3UIViewRepresentableNoLongerRespondsToSizeChange
+    desc: "Fix DanceUI UIViewRepresentable no longer responds to size change on iOS 18.3.x"
+    module: ViewRepresentable
+    type: Bool
+    value: true # enable by-default. This toggle is in case of potential crash case increment.
+    enable: false
+  -
+    name: observation
+    desc: "DanceUIObservation support"
+    module: DataFlow
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: textFieldSupportsPinyinTransform
+    desc: "Simplied Chinese IME on iOS sometimes may transform \"we\" into \"w e\" and then transform back to \"we\". If this happens in one run loop cycle, it will interrupt the pinyin stage of the Chinese inputting."
+    module: TextField
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: componentUsageTraceEnable
+    desc: ""
+    module: Foundation
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: badge
+    desc: "Identify the DanceUI views from UIKit views"
+    module: Hosting
+    type: Bool
+    value: false
+    enable: false
+  -
+    name: viewInfoTrace
+    desc: "DanceUI View Info Trace"
+    module: Foundation
+    type: Bool
+    value: false # runtime switch
+    enable: true # compilation switch
