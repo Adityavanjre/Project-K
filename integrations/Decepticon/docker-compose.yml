@@ -1,0 +1,305 @@
+services:
+  # LiteLLM Proxy — LLM API Gateway
+  # Handles model routing, authentication, usage tracking, billing
+  litellm:
+    image: ghcr.io/purpleailab/decepticon-litellm:${DECEPTICON_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: containers/litellm.Dockerfile
+    container_name: decepticon-litellm
+    volumes:
+      - ./config/litellm.yaml:/app/config.yaml:ro
+      - ${CLAUDE_CREDENTIALS_VOLUME:-/dev/null}:/root/.claude/.credentials.json:ro
+    entrypoint: ["python", "/app/litellm_startup.py"]
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    ports:
+      - "127.0.0.1:${LITELLM_PORT:-4000}:4000"
+    env_file: .env
+    environment:
+      - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY:-sk-decepticon-master}
+      - LITELLM_SALT_KEY=${LITELLM_SALT_KEY:-sk-decepticon-salt}
+      - DATABASE_URL=postgresql://decepticon:${POSTGRES_PASSWORD:-decepticon}@postgres:5432/litellm
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Cold-start cost (prisma migrate + model-routing load + uvicorn bind):
+    # measured 136s on a fresh PostgreSQL volume; varies with disk speed.
+    # start_period absorbs environment variability — failures during this
+    # window don't count toward retries. test success at any moment flips
+    # healthy immediately, so the cushion costs no time on fast hosts.
+    # retries is the post-cushion grace for transient failures only;
+    # the launcher's --wait-timeout (DECEPTICON_STARTUP_TIMEOUT_SECONDS)
+    # is the single user-facing patience knob.
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4000/health/readiness')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 300s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - decepticon-net
+    restart: unless-stopped
+  # PostgreSQL — Persistent storage for LiteLLM
+  # Stores: virtual keys, spend logs, user budgets, rate limits
+  postgres:
+    image: postgres:17-alpine
+    container_name: decepticon-postgres
+    environment:
+      POSTGRES_DB: litellm
+      POSTGRES_USER: decepticon
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-decepticon}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Auto-create decepticon_web DB on first startup (empty volume only).
+      # Existing deployments: run the SQL manually or `docker volume rm postgres_data`.
+      - ./containers/postgres-init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - decepticon-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U decepticon -d litellm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Neo4j — Attack Chain Graph (the agent's persistent working memory)
+  # On sandbox-net so cypher-shell from inside sandbox reaches bolt://neo4j:7687
+  neo4j:
+    image: neo4j:5.24-community
+    container_name: decepticon-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-decepticon-graph}
+      NEO4J_server_memory_heap_initial__size: 128m
+      NEO4J_server_memory_heap_max__size: 384m
+      NEO4J_server_memory_pagecache_size: 128m
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+      NEO4J_apoc_export_file_enabled: "true"
+      NEO4J_apoc_import_file_enabled: "true"
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    ports:
+      - "127.0.0.1:7474:7474"
+      - "127.0.0.1:7687:7687"
+    networks:
+      - sandbox-net
+      - decepticon-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:7474 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 90s
+    restart: unless-stopped
+
+  # Evasive Red Team Sandbox
+  # Isolated container for executing red-team tools (nmap, whois, etc.)
+  # Runs on sandbox-net only — NO access to infra (litellm, postgres, langgraph).
+  # LangGraph reaches sandbox via docker exec (Docker socket), not the network.
+  sandbox:
+    image: ghcr.io/purpleailab/decepticon-sandbox:${DECEPTICON_VERSION:-latest}
+    # Multi-arch image — linux/amd64 + linux/arm64. Apple Silicon and
+    # Linux arm64 hosts pull the native manifest; no Rosetta needed.
+    # On an unusual arch the manifest list won't match — force a
+    # fallback by adding `platform: linux/amd64` to this service.
+    build:
+      context: .
+      dockerfile: containers/sandbox.Dockerfile
+    container_name: decepticon-sandbox
+    networks:
+      - sandbox-net
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+      - NET_BIND_SERVICE
+    environment:
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-decepticon-graph}
+    volumes:
+      # Bind is engagement-scoped. The launcher sets DECEPTICON_ENGAGEMENT_WORKSPACE
+      # to <home>/workspace/<slug> after the engagement picker, so the agent only
+      # ever sees its own engagement at /workspace. When the launcher is not in
+      # play (raw `make dev`, benchmark harness, dev workflows), the fallback is
+      # the whole tree under <home>/workspace.
+      - ${DECEPTICON_ENGAGEMENT_WORKSPACE:-${DECEPTICON_HOME:-~/.decepticon}/workspace}:/workspace
+      # NOTE: ``/skills/`` is baked into the sandbox image (containers/sandbox.Dockerfile)
+      # so OSS installs work without a host-side ./skills/ directory. Devs
+      # iterating on skill files override the baked copy via the bind mount in
+      # docker-compose.override.yml.
+    mem_limit: 4g
+    cpus: 2.0
+    pids_limit: 1024
+    depends_on:
+      neo4j:
+        condition: service_started
+    restart: unless-stopped
+
+  # LangGraph Platform — Agent API Server
+  # Exposes all agents (decepticon, soundwave, recon, exploit, postexploit)
+  # as a streaming API on port 2024. Ink CLI connects here.
+  langgraph:
+    image: ghcr.io/purpleailab/decepticon-langgraph:${DECEPTICON_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: containers/langgraph.Dockerfile
+      args:
+        # Stamps pyproject.toml's version field at build time. Independent
+        # of the image tag selector above — VERSION can be unset locally
+        # (defaults to 0.0.0 sentinel) while the tag is still ":dev".
+        VERSION: ${VERSION:-0.0.0}
+    container_name: decepticon-langgraph
+    ports:
+      - "127.0.0.1:${LANGGRAPH_PORT:-2024}:2024"
+    env_file: .env
+    environment:
+      - DECEPTICON_LLM__PROXY_URL=http://litellm:4000
+      - DECEPTICON_LLM__PROXY_API_KEY=${LITELLM_MASTER_KEY:-sk-decepticon-master}
+      - DECEPTICON_DOCKER__SANDBOX_CONTAINER_NAME=decepticon-sandbox
+      - DECEPTICON_NEO4J_URI=bolt://neo4j:7687
+      - DECEPTICON_NEO4J_USER=neo4j
+      - DECEPTICON_NEO4J_PASSWORD=${NEO4J_PASSWORD:-decepticon-graph}
+      # Neo4j is the sole KG backend (no DECEPTICON_KG_BACKEND needed)
+      # BENCHMARK_MODE flows in via `env_file: .env` above — no need to
+      # re-declare it here. Set BENCHMARK_MODE=1 in .env to engage CTF/XBOW
+      # benchmark mode (rule overrides + challenge context inject).
+    volumes:
+      # The host source path is overridable for non-default Docker runtimes
+      # (colima → ~/.colima/default/docker.sock, Podman → /run/user/$UID/podman/podman.sock,
+      # rootless Docker → ~/.docker/run/docker.sock). The container always
+      # sees /var/run/docker.sock so the agent code stays runtime-agnostic.
+      - ${DECEPTICON_DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock:ro
+    # Wait for litellm to be healthy: langgraph has retry logic but the launcher
+    # uses `compose up --wait` and needs healthy as the single readiness signal.
+    depends_on:
+      litellm:
+        condition: service_healthy
+      sandbox:
+        condition: service_started
+      neo4j:
+        condition: service_healthy
+    # python urllib — same pattern as the litellm healthcheck. Runs entirely
+    # inside the container so host OS (Linux / macOS / Windows) is irrelevant;
+    # avoids relying on curl/wget being present in the langgraph base image.
+    # start_period covers FastAPI + graph-server boot after litellm flips
+    # healthy; retries is post-cushion grace.
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:2024/ok')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 90s
+    networks:
+      - decepticon-net
+    restart: unless-stopped
+
+  # Web Dashboard — Next.js UI
+  # Migrations run automatically at startup via web-entrypoint.sh (prisma migrate deploy).
+  web:
+    image: ghcr.io/purpleailab/decepticon-web:${DECEPTICON_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: containers/web.Dockerfile
+      args:
+        VERSION: ${VERSION:-0.0.0}
+    container_name: decepticon-web
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3000}:3000"
+      - "127.0.0.1:${TERMINAL_PORT:-3003}:3003"
+    env_file: .env
+    environment:
+      - NEXT_PUBLIC_DECEPTICON_EDITION=oss
+      - LANGGRAPH_API_URL=http://langgraph:2024
+      - NEXT_PUBLIC_LANGGRAPH_API_URL=http://localhost:${LANGGRAPH_PORT:-2024}
+      - NEXT_PUBLIC_TERMINAL_WS_URL=ws://localhost:${TERMINAL_PORT:-3003}
+      - DATABASE_URL=postgresql://decepticon:${POSTGRES_PASSWORD:-decepticon}@postgres:5432/decepticon_web
+      - WORKSPACE_PATH=/workspace
+    volumes:
+      - ${DECEPTICON_HOME:-~/.decepticon}/workspace:/workspace
+    depends_on:
+      langgraph:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    # node http.get — Next.js standalone images include node but not curl/wget.
+    # `r.resume()` drains the body so the request finishes; without it the
+    # callback can resolve before close, leaving the process hanging until
+    # docker's healthcheck timeout fires. start_period covers prisma migrate
+    # + Next.js boot; retries is post-cushion grace.
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/', r => { r.resume(); process.exit(r.statusCode < 500 ? 0 : 1); }).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 90s
+    networks:
+      - decepticon-net
+    restart: unless-stopped
+
+  # Ink CLI — Interactive terminal UI
+  # Runs via: docker compose run --rm cli
+  cli:
+    image: ghcr.io/purpleailab/decepticon-cli:${DECEPTICON_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: containers/cli.Dockerfile
+      args:
+        VERSION: ${VERSION:-0.0.0}
+    container_name: decepticon-cli
+    stdin_open: true
+    tty: true
+    environment:
+      - DECEPTICON_API_URL=http://langgraph:2024
+      - TERM=xterm-256color
+      - COLORTERM=truecolor
+      - DECEPTICON_VERSION=${DECEPTICON_VERSION:-}
+    depends_on:
+      langgraph:
+        condition: service_healthy
+    networks:
+      - decepticon-net
+    profiles:
+      - cli
+
+  # ── C2 Infrastructure (profile-based, default: c2-sliver) ───────────
+  # Each C2 framework runs as a profile-based service on sandbox-net.
+  # Default: COMPOSE_PROFILES=c2-sliver in .env → starts with `docker compose up -d`
+  # Swap: change COMPOSE_PROFILES to c2-havoc, etc.
+  # Agent connects via: sliver-client (pre-installed in sandbox)
+  c2-sliver:
+    image: ghcr.io/purpleailab/decepticon-c2-sliver:${DECEPTICON_VERSION:-latest}
+    # Multi-arch image — see decepticon-sandbox above for the same notes.
+    build:
+      context: .
+      dockerfile: containers/c2-sliver.Dockerfile
+    container_name: decepticon-c2-sliver
+    networks:
+      - sandbox-net
+    cap_add:
+      - NET_BIND_SERVICE
+    volumes:
+      - sliver_data:/home/sliver/.sliver
+    mem_limit: 2g
+    cpus: 1.0
+    pids_limit: 512
+    restart: unless-stopped
+    profiles:
+      - c2-sliver
+
+volumes:
+  postgres_data:
+  sliver_data:
+  neo4j_data:
+  neo4j_logs:
+
+networks:
+  decepticon-net:
+    driver: bridge
+  sandbox-net:
+    driver: bridge
