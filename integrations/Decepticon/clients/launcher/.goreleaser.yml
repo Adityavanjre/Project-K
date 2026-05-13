@@ -1,0 +1,54 @@
+version: 2
+
+project_name: decepticon
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: decepticon
+    dir: .
+    main: ./main.go
+    binary: decepticon
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/PurpleAILAB/Decepticon/clients/launcher/cmd.version={{.Version}}
+
+archives:
+  - id: binaries
+    format: binary
+    name_template: "decepticon-{{ .Os }}-{{ .Arch }}"
+
+checksum:
+  name_template: "checksums.txt"
+
+release:
+  github:
+    owner: PurpleAILAB
+    name: Decepticon
+  # Publish as draft so the GitHub `releases/latest` endpoint (used by the
+  # launcher's auto-update) does NOT see this version until every Docker
+  # image is verified on GHCR. The publish-release job in
+  # .github/workflows/release.yml flips draft → published once all images
+  # exist, closing the release-atomicity gap that previously let the
+  # launcher pull a tag whose images were still mid-push.
+  draft: true
+  prerelease: auto
+  name_template: "v{{.Version}}"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
