@@ -1,17 +1,17 @@
 {
   "biometrics": {
-    "neural_tension": 0.7089789895105535,
+    "neural_tension": 0.3849652617577923,
     "alignment": 98.2,
-    "heart_rate": 93,
-    "respiration": 19,
-    "gsr": 0.7671831916084428,
-    "timestamp": 1778296694.7062922
+    "heart_rate": 80,
+    "respiration": 15,
+    "gsr": 0.5079722094062338,
+    "timestamp": 1779443069.1793628
   },
   "hardware": {
-    "cpu_usage": 37.5,
-    "memory_usage": 87.5,
-    "disk_usage": 64.7
+    "cpu_usage": 0.0,
+    "memory_usage": 6.7,
+    "disk_usage": 15.3
   },
-  "timestamp": 1778296694.7184045,
+  "timestamp": 1779443069.1795268,
   "status": "SOVEREIGN_CONNECTED"
 }

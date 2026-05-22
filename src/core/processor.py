@@ -28,6 +28,7 @@ from .local_ai_service import LocalAIService
 from .sovereign_check import SovereignCheck
 from utils.load_monitor import LoadMonitor
 from .neural_cache import NeuralCache
+from .plugin_manager import PluginManager
 
 
 class DoubtProcessor:
@@ -76,6 +77,10 @@ class DoubtProcessor:
         
         self.logger.info("🔱 KALI: Hybrid Intelligence Hardening Active.")
         
+        # Initialize plugins
+        self.plugin_manager = PluginManager(self.config.get("plugin_dir", "plugins"))
+        self.plugin_manager.load_plugins()
+
         # 5. Universal Gateway Bridge
         from .channel_manager import ChannelManager
         self.channel_manager = ChannelManager(self)

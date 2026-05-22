@@ -68,6 +68,18 @@ def main():
                     print(f"[VOCAL SIGNATURE]: http://localhost:5000{result.get('audio_url')}")
                 continue
 
+            if query.lower().startswith("tool "):
+                parts = query[5:].strip().split()
+                if not parts:
+                    print("Usage: tool <plugin_name> [args...]")
+                    continue
+                plugin_name = parts[0]
+                args = parts[1:]
+                print(f"[*] EXECUTING EXTENSION: {plugin_name}...")
+                result = processor.plugin_manager.execute_plugin(plugin_name, *args)
+                print(f"\n[KALI TOOL RESPONSE]\n{result}")
+                continue
+
             # Default Interaction
             print("[*] PROCESSING COGNITIVE SEED...")
             result = processor.process_doubt(query)

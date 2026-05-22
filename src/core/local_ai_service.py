@@ -4,7 +4,10 @@ import logging
 import json
 import time
 import uuid
-import msvcrt # For Windows file locking
+try:
+    import msvcrt # For Windows file locking
+except ImportError:
+    msvcrt = None
 from typing import Dict, Any, Optional, List
 
 

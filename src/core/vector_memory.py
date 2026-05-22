@@ -1,5 +1,11 @@
-import chromadb
-from chromadb.config import Settings
+try:
+    import chromadb
+except ImportError:
+    chromadb = None
+try:
+    from chromadb.config import Settings
+except ImportError:
+    Settings = None
 import uuid
 import logging
 import os
