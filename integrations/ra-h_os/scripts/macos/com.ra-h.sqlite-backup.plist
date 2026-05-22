@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.ra-h.sqlite-backup</string>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>/bin/bash</string>
+      <string>-lc</string>
+      <string>cd /Users/bradleymorris/Desktop/dev/ra-h && bash scripts/database/sqlite-backup.sh</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/bradleymorris/Desktop/dev/ra-h</string>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+      <key>Hour</key>
+      <integer>2</integer>
+      <key>Minute</key>
+      <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/bradleymorris/Library/Logs/ra-h-sqlite-backup.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/bradleymorris/Library/Logs/ra-h-sqlite-backup.log</string>
+  </dict>
+</plist>
+

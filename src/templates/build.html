@@ -1,0 +1,98 @@
+<div id="panel-build" class="panel">
+    <div class="panel-3col w-full h-full">
+        <!-- LEFT: PROJECT DEFINITION -->
+        <aside class="panel-left">
+            <div class="section-header">PROJECT ARCHITECT</div>
+            <div class="k-card p-3 flex flex-col gap-3">
+                <!-- Reactive Sync Marker -->
+                <div id="build-sync-status" class="p-2 border border-dim rounded bg-black/20 text-[9px] text-muted font-mono">
+                    NEURAL_STATUS: WAITING_FOR_RESEARCH_DATA
+                </div>
+                
+                <div class="hud-widget">
+                    <div class="hud-label">PROJECT NAME</div>
+                    <input type="text" id="project-name" class="omega-confirm-input" placeholder="e.g. Hexapod Drone" style="text-align:left; padding:8px;">
+                </div>
+                <div class="hud-widget">
+                    <div class="hud-label">DESCRIPTION</div>
+                    <textarea id="project-desc" class="omega-confirm-input" placeholder="Define fabrication objective..." style="text-align:left; padding:8px; min-height:80px; resize:none;"></textarea>
+                </div>
+                <button class="k-btn" onclick="kaliApp.generateBlueprint()">
+                    <i class="fas fa-magic"></i> GENERATE BLUEPRINT
+                </button>
+            </div>
+
+            <div class="hud-divider mt-4"></div>
+            
+            <div class="section-header">BOM ANALYZER</div>
+            <div class="k-card p-2 overflow-x-auto">
+                <table class="w-full text-[10px] font-mono">
+                    <thead>
+                        <tr class="text-muted border-bottom border-dim">
+                            <th class="text-left p-1">PART</th>
+                            <th class="text-right p-1">QTY</th>
+                            <th class="text-right p-1">COST</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bom-body">
+                        <!-- BOM rows injected by JS -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="text-action border-top border-dim">
+                            <td class="p-1">TOTAL</td>
+                            <td></td>
+                            <td id="bom-total" class="text-right p-1">$0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </aside>
+
+        <!-- CENTER: 3D VISUALIZER -->
+        <main class="panel-center p-0 overflow-hidden relative">
+            <div id="three-container" class="w-full h-full bg-black">
+                <!-- Three.js Canvas injected here -->
+            </div>
+            <div class="absolute top-4 left-4 flex flex-col gap-2 pointer-events-none">
+                <div class="section-header" style="border:none;">3D_RENDER_VIEW</div>
+                <div class="hud-badge sovereign w-max">ORBIT_LOCKED</div>
+            </div>
+            <div class="absolute bottom-4 right-4 flex gap-2">
+                <button class="icon-btn k-card p-2" onclick="kaliApp.resetCamera()"><i class="fas fa-video"></i></button>
+                <button class="icon-btn k-card p-2" onclick="kaliApp.toggleWireframe()"><i class="fas fa-border-all"></i></button>
+            </div>
+        </main>
+
+        <!-- RIGHT: BLUEPRINT & CODE EVOLUTION -->
+        <aside class="panel-right">
+            <div class="section-header">CODE_EVOLUTION (Aider)</div>
+            <div class="k-card p-3 mb-4 flex flex-col gap-2">
+                <div class="hud-label">NEURAL_REFACTOR</div>
+                <div class="flex flex-col gap-1">
+                    <button class="k-btn-tool" onclick="kaliApp.possessNeuron('aider', 'refactor')">AUTO_OPTIMIZE_DNA</button>
+                    <button class="k-btn-tool" onclick="kaliApp.possessNeuron('aider', 'feature')">GENERATE_NEW_CAPABILITY</button>
+                </div>
+                <div class="text-[9px] text-muted italic mt-1">Aider engine engaged. Ready for self-modification.</div>
+            </div>
+
+            <div class="section-header">SYSTEM_MAP (JCode)</div>
+            <div class="k-card p-3 mb-4 flex flex-col gap-2">
+                <div id="jcode-status" class="flex justify-between items-center text-[10px]">
+                    <span class="text-muted">FILES_MAPPED:</span>
+                    <span class="text-action">1,240</span>
+                </div>
+                <button class="k-btn-tool" onclick="kaliApp.possessNeuron('jcode', 'map')">RE-MAP_COGNITIVE_PATHS</button>
+            </div>
+
+            <div class="section-header">WRKFLW_AUTOMATION</div>
+            <div class="k-card p-3">
+                <div id="workflow-steps" class="flex flex-col gap-2">
+                    <!-- Workflow steps injected by JS -->
+                </div>
+                <button class="k-btn mt-3" onclick="kaliApp.deployToSwarm()">
+                    <i class="fas fa-upload"></i> DEPLOY TO SWARM
+                </button>
+            </div>
+        </aside>
+    </div>
+</div>

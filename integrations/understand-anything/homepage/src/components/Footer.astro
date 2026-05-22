@@ -1,0 +1,63 @@
+---
+const githubUrl = 'https://github.com/Lum1104/Understand-Anything';
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-logo">Understand Anything</span>
+    <div class="footer-links">
+      <a href={githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
+      <span class="footer-sep">&middot;</span>
+      <a href="/demo/">Live Demo</a>
+      <span class="footer-sep">&middot;</span>
+      <a href={`${githubUrl}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer">MIT License</a>
+    </div>
+    <p class="footer-note">Graphs that teach. Built for AI coding assistants.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: 4rem 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-logo {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    color: var(--text);
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .footer-links {
+    margin-bottom: 1rem;
+  }
+
+  .footer-links a {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover {
+    color: var(--accent);
+  }
+
+  .footer-sep {
+    color: var(--border);
+    margin: 0 0.6rem;
+  }
+
+  .footer-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+</style>

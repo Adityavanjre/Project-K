@@ -1,0 +1,18 @@
+name: Test Runs-On Array Format
+
+on: [push]
+
+jobs:
+  test-array-runs-on:
+    timeout-minutes: 15
+    runs-on: [self-hosted, ubuntu, small]
+    steps:
+      - name: Test step
+        run: echo "Testing array format for runs-on"
+
+  test-string-runs-on:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test step
+        run: echo "Testing string format for runs-on"

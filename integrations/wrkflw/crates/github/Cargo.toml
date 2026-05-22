@@ -1,0 +1,25 @@
+[package]
+name = "wrkflw-github"
+version = "0.8.0"
+edition.workspace = true
+description = "GitHub API integration for wrkflw workflow execution engine"
+license.workspace = true
+documentation.workspace = true
+homepage.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Internal crates
+wrkflw-models.workspace = true
+wrkflw-logging.workspace = true
+
+# External dependencies from workspace
+serde.workspace = true
+serde_yaml.workspace = true
+serde_json.workspace = true
+reqwest.workspace = true
+thiserror.workspace = true
+lazy_static.workspace = true
+regex.workspace = true

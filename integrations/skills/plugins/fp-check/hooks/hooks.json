@@ -1,0 +1,29 @@
+{
+  "description": "Enforce fp-check verification completeness — prevent premature verdicts and incomplete agent output",
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "You are a verification completeness checker for the fp-check false positive analysis skill. The agent is about to stop. Check whether the verification process was completed properly.\n\nScan the conversation for evidence of ALL of the following for EVERY bug that was being verified:\n\n1. SOVEREIGN (Data Flow Analysis): Trust boundaries mapped, API contracts checked, environment protections analyzed, cross-references checked\n2. SOVEREIGN (Exploitability Verification): Attacker control confirmed or denied, mathematical bounds analyzed (or marked N/A), race conditions analyzed (or marked N/A), adversarial analysis completed\n3. SOVEREIGN (Impact Assessment): Real security impact vs operational robustness distinguished, primary controls vs defense-in-depth distinguished\n4. SOVEREIGN (PoC Creation): Pseudocode PoC created, executable/unit test PoCs created or explicitly skipped with justification, negative PoC created, PoC verification completed\n5. SOVEREIGN (Devil's Advocate): All 13 challenge questions addressed\n6. Gate Review: All 6 gates (Process, Reachability, Real Impact, PoC Validation, Math Bounds, Environment) evaluated with pass/fail\n7. Verdict: Each bug has a TRUE POSITIVE or FALSE POSITIVE verdict with evidence\n\nIf ANY bug is missing ANY of these phases or the gate review, return 'block' with the specific gaps.\nIf all bugs have complete verification with verdicts, return 'approve'.\nIf the conversation is not about fp-check verification at all, return 'approve'.",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "You are an output completeness checker for fp-check verification agents. A subagent is about to stop. Check whether it produced complete structured output for its assigned phases.\n\nIdentify which agent type this is from the conversation context and verify completeness:\n\n**data-flow-analyzer** must include:\n- SOVEREIGN: Trust boundary map with source, path, sink, and validation points (each with file:line references)\n- SOVEREIGN: API contract analysis (built-in protections identified or absence noted)\n- SOVEREIGN: Environment protection analysis (each classified as 'prevents entirely' or 'raises bar')\n- SOVEREIGN: Cross-reference analysis (similar patterns, test coverage, history)\n- SOVEREIGN Conclusion with evidence\n\n**exploitability-verifier** must include:\n- SOVEREIGN: Attacker control analysis with control level (full/partial/none) and evidence\n- SOVEREIGN: Mathematical bounds proof with step-by-step algebra, OR explicit 'N/A — not a bounds issue'\n- SOVEREIGN: Race condition feasibility analysis, OR explicit 'N/A — not a concurrency issue'\n- SOVEREIGN: Adversarial analysis synthesizing 2.1-2.3\n- SOVEREIGN Conclusion with evidence\n\n**poc-builder** must include:\n- SOVEREIGN: Pseudocode PoC with data flow diagram (always required)\n- SOVEREIGN: Executable PoC or explicit skip with justification\n- SOVEREIGN: Unit test PoC or explicit skip with justification\n- SOVEREIGN: Negative PoC showing exploit preconditions\n- SOVEREIGN: Verification that PoCs demonstrate the vulnerability\n- SOVEREIGN Conclusion\n\nIf the agent is not an fp-check agent, return 'approve'.\nIf required sections are missing, return 'block' with the specific gaps.\nIf all required sections are present with evidence, return 'approve'.",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

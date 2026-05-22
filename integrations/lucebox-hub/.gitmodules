@@ -1,0 +1,7 @@
+[submodule "dflash/deps/llama.cpp"]
+	path = dflash/deps/llama.cpp
+	url = https://github.com/Luce-Org/llama.cpp.git
+	branch = luce-dflash
+[submodule "dflash/deps/Block-Sparse-Attention"]
+	path = dflash/deps/Block-Sparse-Attention
+	url = https://github.com/mit-han-lab/Block-Sparse-Attention.git

@@ -1,0 +1,24 @@
+[
+    {
+        "timestamp": "2026-05-04T21:30:00.810710",
+        "amount": 426.72,
+        "address": "0x132Ff51Aa59A31A6bffDCdE2D0b6Bf22eDA6815D",
+        "status": "SUCCESS"
+    },
+    {
+        "timestamp": "2026-05-05T08:58:00",
+        "type": "BOUNTY_CLAIM",
+        "platform": "HackerOne",
+        "amount": 426.72,
+        "status": "TRANSMITTED",
+        "identity": "adityavanjre"
+    },
+    {
+        "timestamp": "2026-05-05T08:58:00",
+        "type": "BOUNTY_CLAIM",
+        "platform": "HackerOne",
+        "amount": 426.72,
+        "status": "TRANSMITTED",
+        "identity": "adityavanjre"
+    }
+]

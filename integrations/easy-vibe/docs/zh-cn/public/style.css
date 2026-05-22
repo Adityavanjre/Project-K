@@ -1,0 +1,182 @@
+:root {
+  /* 调整侧边栏分组之间的间距 */
+  --vp-sidebar-nav-section-gap: 8px;
+  --ev-doc-font-size: 13px;
+  --ev-doc-line-height: 1.65;
+}
+
+.vp-doc {
+  font-size: var(--ev-doc-font-size);
+  line-height: var(--ev-doc-line-height);
+  --el-font-size-extra-large: calc(var(--ev-doc-font-size) + 6px);
+  --el-font-size-large: calc(var(--ev-doc-font-size) + 4px);
+  --el-font-size-medium: calc(var(--ev-doc-font-size) + 2px);
+  --el-font-size-base: var(--ev-doc-font-size);
+  --el-font-size-small: calc(var(--ev-doc-font-size) - 1px);
+  --el-font-size-extra-small: calc(var(--ev-doc-font-size) - 2px);
+  --el-font-line-height-primary: var(--ev-doc-line-height);
+}
+
+.vp-doc p,
+.vp-doc ul,
+.vp-doc ol {
+  line-height: var(--ev-doc-line-height) !important;
+}
+
+.vp-doc :where(p, ul, ol, table, blockquote, pre, details, figure) {
+  margin: 10px 0;
+}
+
+.vp-doc blockquote {
+  font-size: 0.9em !important;
+  color: var(--vp-c-text-2);
+}
+
+.vp-doc blockquote p {
+  font-size: inherit !important;
+  line-height: 1.4 !important;
+}
+
+.vp-doc :where(li) {
+  margin: 4px 0;
+}
+
+.vp-doc :where(ul, ol) {
+  padding-left: 1.15em;
+}
+
+.vp-doc :where(h1, h2, h3, h4, h5, h6) {
+  line-height: 1.3;
+}
+
+.vp-doc :where(h1) {
+  margin: 22px 0 12px;
+}
+
+.vp-doc :where(h2) {
+  margin: 20px 0 10px;
+}
+
+.vp-doc h2 {
+  margin: 16px 0 8px !important;
+  padding-top: 10px !important;
+  border-top: 0 !important;
+}
+
+.vp-doc h2 .header-anchor {
+  top: 10px !important;
+}
+
+.vp-doc :where(h3) {
+  margin: 18px 0 8px;
+}
+
+.vp-doc :where(h4, h5, h6) {
+  margin: 16px 0 8px;
+}
+
+.vp-doc :where(hr) {
+  margin: 14px 0;
+}
+
+.vp-doc :where(th, td) {
+  padding: 6px 10px;
+}
+
+.vp-doc :where(:not(pre) > code) {
+  font-size: 0.95em;
+}
+
+/* 减少一级标题（如"前端开发"）底部的间距 */
+.VPSidebarItem.level-0 {
+  padding-bottom: 4px !important;
+}
+
+/* 减少一级标题文字与下方子菜单的间距 */
+.VPSidebarItem.level-0 > .item {
+  padding-bottom: 2px !important;
+}
+
+/* 调整子菜单项之间的间距 - 针对所有层级 */
+.VPSidebarItem.level-1 .item,
+.VPSidebarItem.level-2 .item,
+.VPSidebarItem.level-3 .item,
+.VPSidebarItem.level-4 .item {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  min-height: 24px !important; /* 强制减小最小高度 */
+}
+
+/* 针对可能存在的特定类名进行覆盖，确保紧凑 */
+.VPSidebarGroup {
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+/* 进一步压缩分组标题与第一项之间的间距 */
+.VPSidebarItem.level-0 + .VPSidebarItem.level-1 {
+  margin-top: -2px !important;
+}
+
+/* 压缩分组标题本身的行高 */
+.VPSidebarItem.level-0 .text {
+  line-height: 1.3 !important;
+}
+
+/* 压缩子项的行高 */
+.VPSidebarItem.level-1 .text,
+.VPSidebarItem.level-2 .text,
+.VPSidebarItem.level-3 .text {
+  line-height: 1.4 !important;
+  padding: 0 !important; /* 移除文字本身的内边距 */
+}
+
+/* 强制链接本身没有额外的边距 */
+.VPSidebarItem .VPLink {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  min-height: auto !important;
+}
+
+/* 图片高度限制策略：根据长宽比调整最大高度 */
+/* 越高的图片（长宽比越大），限制的高度越小，避免占用过多纵向空间 */
+.vp-doc img.img-tall {
+  max-height: 380px !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.vp-doc img.img-very-tall {
+  max-height: 280px !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.vp-doc img.img-ultra-tall {
+  max-height: 200px !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.vp-doc img.img-limit-width {
+  max-width: 100% !important;
+  max-height: 320px !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.vp-doc img.img-limit-height {
+  max-height: 450px !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Fix tagline wrapping issues */
+.VPHomeHero .tagline {
+  white-space: nowrap;
+  max-width: none !important;
+}

@@ -1,0 +1,76 @@
+<div id="panel-dashboard" class="panel">
+    <div class="section-header">SOVEREIGN ACCOUNT DASHBOARD</div>
+    
+    <div class="metrics-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="k-card p-4">
+            <h3 class="text-muted text-xs uppercase mb-1">Global Mastery</h3>
+            <div class="text-2xl font-display text-action">100%</div>
+            <div class="text-[10px] text-muted">Graduation Complete</div>
+        </div>
+        <div class="k-card p-4">
+            <h3 class="text-muted text-xs uppercase mb-1">Active Capabilities</h3>
+            <div class="text-2xl font-display text-main">42</div>
+            <div class="text-[10px] text-muted">Swarm Neurons Synced</div>
+        </div>
+        <div class="k-card p-4">
+            <h3 class="text-muted text-xs uppercase mb-1">Sovereign Wealth</h3>
+            <div id="dash-wealth-val" class="text-2xl font-display text-success">$0.00</div>
+            <div id="dash-wealth-status" class="text-[10px] text-muted">Awaiting Verification...</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Vault / Auth Section -->
+        <section class="k-card p-4">
+            <div class="flex justify-between items-center mb-4 border-bottom pb-2">
+                <h2 class="text-sm font-bold"><i class="fas fa-vault mr-2 text-action"></i>Universal Possession Vault</h2>
+                <button class="k-btn-xs" onclick="kaliDashboard.refreshAuth()"><i class="fas fa-sync-alt"></i></button>
+            </div>
+            <div id="vault-list" class="flex flex-col gap-3">
+                <div class="text-center py-8 text-muted italic text-xs">Accessing secure credentials...</div>
+            </div>
+        </section>
+
+        <!-- Operations Section -->
+        <section class="k-card p-4">
+            <div class="flex justify-between items-center mb-4 border-bottom pb-2">
+                <h2 class="text-sm font-bold"><i class="fas fa-globe mr-2 text-action"></i>Live Multi-Platform Status</h2>
+            </div>
+            <div id="ops-list" class="flex flex-col gap-3 mb-4">
+                <!-- HackerOne Status -->
+                <div class="flex items-center justify-between p-2 bg-white/5 rounded border border-white/5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 flex items-center justify-center bg-black rounded"><i class="fas fa-shield-alt text-main"></i></div>
+                        <div>
+                            <div class="text-xs font-bold">HackerOne</div>
+                            <div id="h1-status-text" class="text-[10px] text-muted">DISCONNECTED</div>
+                        </div>
+                    </div>
+                    <div id="h1-status-indicator" class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+                </div>
+                <!-- Bugcrowd Status -->
+                <div class="flex items-center justify-between p-2 bg-white/5 rounded border border-white/5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 flex items-center justify-center bg-black rounded"><i class="fas fa-bug text-main"></i></div>
+                        <div>
+                            <div class="text-xs font-bold">Bugcrowd</div>
+                            <div class="text-[10px] text-muted">IDLE</div>
+                        </div>
+                    </div>
+                    <div class="w-2 h-2 rounded-full bg-dim"></div>
+                </div>
+            </div>
+            <button class="k-btn w-full" onclick="kaliDashboard.initiateRegistration()">
+                <i class="fas fa-user-plus mr-2"></i>Link New Research Account
+            </button>
+        </section>
+    </div>
+
+    <div class="k-card p-3 mt-6">
+        <div class="hud-label border-bottom pb-1 mb-2">NEURAL ACTIVITY STREAM</div>
+        <div id="dash-log-body" class="font-mono text-[10px] h-32 overflow-y-auto flex flex-col gap-1 p-2 bg-black/40 rounded">
+            <div class="text-muted">[SYSTEM] KALI Universal Payout Hub initialized.</div>
+            <div class="text-muted">[SYSTEM] Reading anchored credentials from secure vault.</div>
+        </div>
+    </div>
+</div>

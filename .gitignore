@@ -1,0 +1,75 @@
+# Environments and API Tokens
+.env
+.env.*
+
+# Python caches and metadata
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Large model weights and assets
+kali_weights/
+models/
+*.gguf
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.onnx
+
+# Archives and backup bundles
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.bundle
+project-k-day-zero.bundle
+Project-K-Sovereign-Core.zip
+
+# Large data/manifest files
+Project-K-Absolute-Manifest.txt
+*.log
+kali_boot.log
+data/logs/
+
+# SQLite databases and dynamic data directories
+*.db
+*.sqlite
+data/user_dna.db
+data/vector_memory/
+
+# Temp and session directories (Google Drive upload, WhatsApp Web session cache)
+.tmp.driveupload/
+.wwa_session/
+
+# Cache directories for code understanding / knowledge graph
+graphify-out/cache/
+.understand-anything/
+
+# Node modules
+node_modules/
+
+# Videos and precompiled binary formats to prevent heavy payloads
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.exe
+*.dll
+*.so
+*.dylib
+*.msi
+*.gif
+
+# Large generated files and reports
+graphify-out/
+reports/

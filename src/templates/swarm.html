@@ -1,0 +1,51 @@
+<div id="panel-swarm" class="panel">
+    <div class="panel-3col w-full h-full">
+        <!-- LEFT: MISSION CONTROL -->
+        <aside class="panel-left">
+            <div class="section-header">MISSION_MANIFEST</div>
+            <div class="k-card p-3 flex flex-col gap-3">
+                <div class="hud-widget">
+                    <div class="hud-label">GOAL_PARAMETERS</div>
+                    <textarea id="swarm-mission-goal" class="omega-confirm-input w-full h-24" placeholder="Describe the mission for the 20-node agent swarm..." style="text-align:left; padding:8px;"></textarea>
+                </div>
+                <button class="k-btn" onclick="kaliApp.deploySwarm()">
+                    <i class="fas fa-broadcast-tower"></i> BROADCAST_TO_ALL
+                </button>
+            </div>
+
+            <div class="hud-divider mt-4"></div>
+            
+            <div class="section-header">NETWORK_HEALTH</div>
+            <div class="k-card p-3 flex flex-col gap-2">
+                <div class="flex justify-between font-mono text-[10px]">
+                    <span class="text-muted">COHERENCE:</span>
+                    <span class="text-success">98.4%</span>
+                </div>
+                <div class="hud-bar-track"><div class="hud-bar-fill" style="width: 98%;"></div></div>
+                <div class="flex justify-between font-mono text-[10px] mt-2">
+                    <span class="text-muted">VECTORS:</span>
+                    <span class="text-action">200 / 200</span>
+                </div>
+                <div class="hud-bar-track"><div class="hud-bar-fill" style="width: 100%;"></div></div>
+            </div>
+        </aside>
+
+        <!-- CENTER: NODE GRID -->
+        <main class="panel-center">
+            <div class="section-header">ACTIVE_NEURAL_NODES (20)</div>
+            <div id="swarm-node-grid" class="swarm-grid">
+                <!-- 20 Node cards injected by JS -->
+            </div>
+        </main>
+
+        <!-- RIGHT: SWARM LOGS -->
+        <aside class="panel-right">
+            <div class="section-header">SWARM_SYNC_LOG</div>
+            <div id="swarm-logs" class="log-feed k-card p-3 h-full">
+                <div class="text-[10px] text-muted mb-2">Authenticated: Master Link Active</div>
+                <div class="text-[10px] text-success">Node_01: Heartbeat OK</div>
+                <div class="text-[10px] text-success">Node_02: Synapse Active</div>
+            </div>
+        </aside>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+{
+  "name": "ra-h-mcp-server",
+  "version": "3.2.4",
+  "description": "Connect Claude Code/Desktop to your RA-H knowledge base. Direct SQLite access to an existing RA-H database.",
+  "main": "index.js",
+  "bin": {
+    "ra-h-mcp-server": "index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "validate:syntax": "node --check index.js && node --check cli.js && node --check services/*.js",
+    "validate:publish": "npm run validate:syntax && npm pack --dry-run >/dev/null",
+    "prepublishOnly": "node ../../scripts/dev/sync-skills.mjs --check && npm run validate:publish"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "claude-code",
+    "claude-desktop",
+    "knowledge-base",
+    "knowledge-management",
+    "sqlite",
+    "ra-h",
+    "rah",
+    "pkm",
+    "second-brain"
+  ],
+  "author": "Bradley Morris <bradwmorriswork@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bradwmorris/ra-h_os.git"
+  },
+  "homepage": "https://ra-h.app",
+  "bugs": {
+    "url": "https://github.com/bradwmorris/ra-h_os/issues"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "better-sqlite3": "^11.0.0",
+    "zod": "^3.23.0"
+  },
+  "engines": {
+    "node": ">=18.0.0 <24.0.0"
+  },
+  "files": [
+    "index.js",
+    "cli.js",
+    "services/",
+    "skills/",
+    "README.md"
+  ]
+}

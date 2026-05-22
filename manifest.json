@@ -1,0 +1,260 @@
+{
+  "name": ".",
+  "domain": "development",
+  "capabilities": [
+    {
+      "id": "local_ai_inference",
+      "name": "Local AI Inference Engine",
+      "description": "On-device language model inference using Ollama or local GGUF models.",
+      "trigger_keywords": [
+        "local ai",
+        "inference",
+        "ollama",
+        "llm",
+        "generate",
+        "ask ai",
+        "language model"
+      ],
+      "execution_type": "service",
+      "start_command": "python src/core/local_ai_service.py",
+      "stop_command": "kill",
+      "working_directory": ".",
+      "input_schema": {
+        "prompt": "string",
+        "model": "string"
+      },
+      "output_type": "stream",
+      "ui_mode": "none",
+      "dependencies": [
+        "python",
+        "ollama"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    },
+    {
+      "id": "swarm_orchestrator",
+      "name": "Neural Swarm Activator",
+      "description": "Activates and coordinates multiple swarm neurons for complex multi-step tasks.",
+      "trigger_keywords": [
+        "swarm",
+        "activate all",
+        "neural link",
+        "coordinate",
+        "multi-step",
+        "deploy agents"
+      ],
+      "execution_type": "service",
+      "start_command": "python src/core/swarm_service.py",
+      "stop_command": "kill",
+      "working_directory": ".",
+      "input_schema": {
+        "goal": "string"
+      },
+      "output_type": "stream",
+      "ui_mode": "none",
+      "dependencies": [
+        "python"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    },
+    {
+      "id": "code_auditor",
+      "name": "Autonomous Code Auditor",
+      "description": "Scans codebase for security vulnerabilities, anti-patterns, and logic flaws.",
+      "trigger_keywords": [
+        "audit code",
+        "security audit",
+        "code scan",
+        "vulnerability",
+        "static analysis",
+        "semgrep"
+      ],
+      "execution_type": "cli",
+      "start_command": "python src/core/audit_engine.py",
+      "stop_command": "kill",
+      "working_directory": ".",
+      "input_schema": {
+        "path": "string"
+      },
+      "output_type": "structured",
+      "ui_mode": "none",
+      "dependencies": [
+        "python",
+        "semgrep"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    },
+    {
+      "id": "git_nexus",
+      "name": "GitNexus Repository Engine",
+      "description": "Autonomous git operations: commit, push, pull-request generation, branch strategy.",
+      "trigger_keywords": [
+        "git",
+        "commit",
+        "push",
+        "pull request",
+        "branch",
+        "merge",
+        "repository"
+      ],
+      "execution_type": "cli",
+      "start_command": "python integrations/gitnexus/main.py",
+      "stop_command": "none",
+      "working_directory": ".",
+      "input_schema": {
+        "action": "string",
+        "message": "string"
+      },
+      "output_type": "log",
+      "ui_mode": "none",
+      "dependencies": [
+        "python",
+        "git"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    },
+    {
+      "id": "memory_service",
+      "name": "KALI Long-Term Memory",
+      "description": "Stores and retrieves episodic memory, context, and learned patterns across sessions.",
+      "trigger_keywords": [
+        "remember",
+        "recall",
+        "memory",
+        "store",
+        "what did I",
+        "past session",
+        "context"
+      ],
+      "execution_type": "service",
+      "start_command": "python integrations/mem0/main.py",
+      "stop_command": "kill",
+      "working_directory": ".",
+      "input_schema": {
+        "query": "string"
+      },
+      "output_type": "structured",
+      "ui_mode": "none",
+      "dependencies": [
+        "python",
+        "mem0"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    },
+    {
+      "id": "crypto_miner",
+      "name": "AgentFM Compute Monetizer",
+      "description": "Background P2P compute contribution for passive income generation.",
+      "trigger_keywords": [
+        "mine",
+        "compute",
+        "monetize",
+        "agentfm",
+        "passive income",
+        "earn"
+      ],
+      "execution_type": "service",
+      "start_command": "python integrations/agentfm/agent.py",
+      "stop_command": "python integrations/agentfm/agent.py --stop",
+      "working_directory": ".",
+      "input_schema": {},
+      "output_type": "log",
+      "ui_mode": "none",
+      "dependencies": [
+        "python"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    },
+    {
+      "id": "browser_cua",
+      "name": "Computer Use Agent (CUA)",
+      "description": "Autonomous browser control and web interaction for scraping, form-filling, and research.",
+      "trigger_keywords": [
+        "browse",
+        "open browser",
+        "click",
+        "web automation",
+        "cua",
+        "computer use",
+        "navigate"
+      ],
+      "execution_type": "service",
+      "start_command": "python integrations/cua/browser_agent.py",
+      "stop_command": "kill",
+      "working_directory": ".",
+      "input_schema": {
+        "url": "string",
+        "task": "string"
+      },
+      "output_type": "structured",
+      "ui_mode": "ui",
+      "dependencies": [
+        "python",
+        "playwright"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    },
+    {
+      "id": "voice_interface",
+      "name": "Voice Command Interface",
+      "description": "Real-time speech recognition and text-to-speech for hands-free KALI control.",
+      "trigger_keywords": [
+        "voice",
+        "speak",
+        "listen",
+        "stt",
+        "tts",
+        "speech",
+        "microphone"
+      ],
+      "execution_type": "service",
+      "start_command": "python integrations/voice/voice_service.py",
+      "stop_command": "kill",
+      "working_directory": ".",
+      "input_schema": {},
+      "output_type": "stream",
+      "ui_mode": "none",
+      "dependencies": [
+        "python",
+        "whisper",
+        "pyttsx3"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    },
+    {
+      "id": "report_generator",
+      "name": "Intelligence Report Generator",
+      "description": "Compiles findings into professional security reports for clients or platforms.",
+      "trigger_keywords": [
+        "report",
+        "generate report",
+        "write report",
+        "compile findings",
+        "document"
+      ],
+      "execution_type": "cli",
+      "start_command": "python src/core/report_gen.py",
+      "stop_command": "none",
+      "working_directory": ".",
+      "input_schema": {
+        "findings": "array",
+        "format": "string"
+      },
+      "output_type": "structured",
+      "ui_mode": "none",
+      "dependencies": [
+        "python"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    }
+  ]
+}

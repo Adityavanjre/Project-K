@@ -1,0 +1,78 @@
+{
+  "$schema": "./claude-code-harness.config.schema.json",
+  "version": "1.0",
+
+  "i18n": {
+    "language": "en",
+    "comment": "en: English default / ja: Japanese opt-in - keep generated files, docs, and messages aligned"
+  },
+
+  "constitution": {
+    "path": "docs/constitution.md",
+    "comment": "品質ゲート・DoD・原則を集約したファイル（プロジェクトごとにカスタマイズ可）"
+  },
+
+  "work": {
+    "auto_commit": true,
+    "commit_on_pm_approve": false,
+    "comment": "commit_on_pm_approve: true にすると 2-Agent モードで PM 承認後にコミット"
+  },
+
+  "safety": {
+    "mode": "dry-run",
+    "require_confirmation": true,
+    "max_auto_retries": 3
+  },
+
+  "git": {
+    "allow_auto_commit": false,
+    "allow_auto_push": false,
+    "protected_branches": ["main", "master", "production"],
+    "commit_prefix": "fix:"
+  },
+
+  "paths": {
+    "allowed_modify": [
+      "src/",
+      "app/",
+      "components/",
+      "lib/",
+      "pages/",
+      "Plans.md",
+      "AGENTS.md",
+      "CLAUDE.md"
+    ],
+    "protected": [
+      ".github/",
+      ".gitlab/",
+      "infra/",
+      "k8s/",
+      "terraform/",
+      ".env",
+      ".env.*",
+      "credentials/",
+      "secrets/"
+    ],
+    "plans_file": "Plans.md",
+    "agents_file": "AGENTS.md"
+  },
+
+  "ci": {
+    "provider": "auto",
+    "enable_auto_fix": false,
+    "require_gh_cli": true
+  },
+
+  "scaffolding": {
+    "tech_choice_mode": "ask",
+    "allow_web_search": true
+  },
+
+  "destructive_commands": {
+    "allow_rm_rf": false,
+    "allow_npm_install": true,
+    "require_size_check": true,
+    "max_files_to_modify": 20
+  }
+}
+

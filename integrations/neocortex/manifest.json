@@ -1,0 +1,33 @@
+{
+  "name": "neocortex",
+  "domain": "development",
+  "capabilities": [
+    {
+      "id": "neocortex_vision",
+      "name": "Neocortex Screen Intelligence",
+      "description": "Real-time screen awareness and proactive context synthesis from desktop.",
+      "trigger_keywords": [
+        "watch screen",
+        "vision",
+        "see screen",
+        "screen capture",
+        "visual analysis",
+        "neocortex"
+      ],
+      "execution_type": "service",
+      "start_command": "python neocortex_main.py",
+      "stop_command": "python neocortex_main.py --stop",
+      "working_directory": "integrations/neocortex",
+      "input_schema": {},
+      "output_type": "stream",
+      "ui_mode": "none",
+      "dependencies": [
+        "python",
+        "pillow",
+        "opencv"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    }
+  ]
+}

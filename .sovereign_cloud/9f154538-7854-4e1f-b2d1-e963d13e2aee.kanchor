@@ -1,0 +1,1 @@
+{"payload": "{\"query\": \"hi\", \"response\": \"Gateway Error: Neural Tunnel Collapse: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))\", \"alignment\": 92.5, \"tension\": 0.0}", "sig": "c84185a907ff3b94b2afd5e1a1142027de8d91c83f5b5a98f921a49289d1af6e", "ts": 1778566282.5582469}

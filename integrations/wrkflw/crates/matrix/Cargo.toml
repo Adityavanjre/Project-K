@@ -1,0 +1,21 @@
+[package]
+name = "wrkflw-matrix"
+version = "0.8.0"
+edition.workspace = true
+description = "Matrix job parallelization for wrkflw workflow execution engine"
+license.workspace = true
+documentation.workspace = true
+homepage.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Internal crates
+wrkflw-models.workspace = true
+
+# External dependencies
+indexmap.workspace = true
+serde.workspace = true
+serde_yaml.workspace = true
+thiserror.workspace = true

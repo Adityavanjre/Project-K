@@ -1,0 +1,11 @@
+name = "jcode-telemetry"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "jcode-telemetry"
+database_id = "abaa524c-3e90-4ba9-a569-027e78a083c6"
+
+[vars]
+ALLOWED_ORIGIN = "*"

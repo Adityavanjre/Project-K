@@ -1,0 +1,78 @@
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.package]
+version = "0.8.0"
+edition = "2021"
+description = "A GitHub Actions workflow validator and executor"
+documentation = "https://github.com/bahdotsh/wrkflw"
+homepage = "https://github.com/bahdotsh/wrkflw"
+repository = "https://github.com/bahdotsh/wrkflw"
+keywords = ["workflows", "github", "local"]
+categories = ["command-line-utilities"]
+license = "MIT"
+
+[workspace.dependencies]
+# Internal crate dependencies
+wrkflw-models = { path = "crates/models", version = "0.8.0" }
+wrkflw-evaluator = { path = "crates/evaluator", version = "0.8.0" }
+wrkflw-executor = { path = "crates/executor", version = "0.8.0" }
+wrkflw-github = { path = "crates/github", version = "0.8.0" }
+wrkflw-gitlab = { path = "crates/gitlab", version = "0.8.0" }
+wrkflw-logging = { path = "crates/logging", version = "0.8.0" }
+wrkflw-matrix = { path = "crates/matrix", version = "0.8.0" }
+wrkflw-parser = { path = "crates/parser", version = "0.8.0" }
+wrkflw-runtime = { path = "crates/runtime", version = "0.8.0" }
+wrkflw-secrets = { path = "crates/secrets", version = "0.8.0" }
+wrkflw-ui = { path = "crates/ui", version = "0.8.0" }
+wrkflw-utils = { path = "crates/utils", version = "0.8.0" }
+wrkflw-trigger-filter = { path = "crates/trigger-filter", version = "0.8.0" }
+wrkflw-watcher = { path = "crates/watcher", version = "0.8.0" }
+wrkflw-validators = { path = "crates/validators", version = "0.8.0" }
+
+# External dependencies
+clap = { version = "4.3", features = ["derive"] }
+colored = "2.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+serde_json = "1.0"
+jsonschema = "0.17"
+tokio = { version = "1.28", features = ["full"] }
+async-trait = "0.1"
+bollard = "0.14"
+futures-util = "0.3"
+futures = "0.3"
+chrono = "0.4"
+uuid = { version = "1.3", features = ["v4"] }
+tempfile = "3.6"
+tar = "0.4"
+dirs = "5.0"
+thiserror = "1.0"
+log = "0.4"
+which = "4.4"
+crossterm = "0.28"
+ratatui = { version = "0.28", features = ["crossterm"] }
+once_cell = "1.19.0"
+itertools = "0.11.0"
+indexmap = { version = "2.0.0", features = ["serde"] }
+rayon = "1.7.0"
+num_cpus = "1.16.0"
+regex = "1.10"
+lazy_static = "1.4"
+reqwest = { version = "0.11", default-features = false, features = [
+    "rustls-tls",
+    "json",
+] }
+libc = "0.2"
+nix = { version = "0.27.1", features = ["fs"] }
+urlencoding = "2.1.3"
+wiremock = "0.5"
+glob = "0.3"
+notify = "7"
+sha2 = "0.10"
+shlex = "1.3"
+
+[profile.release]
+codegen-units = 1
+lto = true

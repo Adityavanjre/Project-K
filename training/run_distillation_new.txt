@@ -1,0 +1,61 @@
+    def run_distillation(self):
+        self.log_message("[START] Beginning Automated Sovereignty Extraction...")
+        
+        # Check existing progress
+        existing_pillars = set()
+        if os.path.exists(OUTPUT_FILE):
+            with open(OUTPUT_FILE, "r") as f:
+                for line in f:
+                    try:
+                        entry = json.loads(line)
+                        existing_pillars.add(entry.get("pillar"))
+                    except: continue
+
+        for category, pillars in SYLLABUS.items():
+            specialist = SPECIALISTS.get(category, TEACHER_MODEL)
+            
+            for pillar in pillars:
+                if pillar in existing_pillars:
+                    self.log_message(f"[SKIP] {pillar} already distilled.")
+                    continue
+
+                success = False
+                retries = 0
+                
+                while not success and retries < 3:
+                    self.log_message(f"[TEACHING] {pillar} | Expert: {specialist} | Attempt: {retries+1}")
+                    
+                    prompt = f"As KALI, explain the deep architecture and strategic implementation of {pillar}. Use ASI-level terminology."
+                    
+                    # 1. Get Wisdom from Specialist/Teacher
+                    wisdom = self.ask_model(specialist, prompt)
+                    
+                    if not wisdom:
+                        self.log_message(f"[FALLBACK] Specialist {specialist} failed. Reverting to Teacher: {TEACHER_MODEL}")
+                        wisdom = self.ask_model(TEACHER_MODEL, prompt)
+                    
+                    # 2. Validate Wisdom
+                    if self.validate_response(pillar, wisdom):
+                        # 3. Test on Target (Sanity Check)
+                        self.log_message(f"[OK] Wisdom Validated. Testing on {TARGET_MODEL}...")
+                        test_response = self.ask_model(TARGET_MODEL, f"Summary of {pillar}: {wisdom}\n\nWhat is the core takeaway?")
+                        
+                        if test_response and len(test_response) > 20:
+                            self.save_training_entry(pillar, prompt, wisdom)
+                            self.log_message(f"[SUCCESS] {pillar} encoded and verified.")
+                            
+                            # 4. Anchor to Knowledge Graph (Instant Recall)
+                            self._anchor_to_graph(pillar, wisdom)
+                            
+                            success = True
+                            
+                            # 5. Batch Knowledge Check (Every 5 entries)
+                            if self.get_entry_count() % 5 == 0:
+                                self.perform_knowledge_check()
+                        else:
+                            self.log_message(f"[WARN] Target {TARGET_MODEL} struggled with this seed. Retrying...")
+                    else:
+                        self.log_message(f"[FAIL] Wisdom for {pillar} failed quality check. Adjusting parameters...")
+                    
+                    retries += 1
+                    time.sleep(5) # Delay for Ollama memory management

@@ -1,0 +1,35 @@
+name: Safe Workflow Test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  safe_operations:
+    name: Safe Operations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: List files
+        run: ls -la
+      
+      - name: Show current directory
+        run: pwd
+      
+      - name: Echo message
+        run: echo "Hello, this is a safe command!"
+      
+      - name: Create and read file
+        run: |
+          echo "test content" > safe-file.txt
+          cat safe-file.txt
+          rm safe-file.txt
+      
+      - name: Show environment (safe)
+        run: echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+      
+      - name: Check if Rust is available
+        run: which rustc && rustc --version || echo "Rust not found"
+        continue-on-error: true

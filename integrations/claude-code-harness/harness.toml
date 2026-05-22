@@ -1,0 +1,107 @@
+# Harness v4 Configuration
+# Edit this file, then run `harness sync` to generate CC plugin files.
+
+[project]
+name = "claude-code-harness"
+version = "4.5.1"
+description = "Claude harness - A harness for solo developers (Vibecoders) to handle full-cycle contract development."
+homepage = "https://github.com/Chachamaru127/claude-code-harness"
+repository = "https://github.com/Chachamaru127/claude-code-harness"
+license = "MIT"
+keywords = ["claude-code", "plugin", "vibecoder", "workflow", "plan-work-review"]
+outputStyles = "./output-styles/"
+
+[project.author]
+name = "Chachamaru"
+url = "https://github.com/Chachamaru127"
+
+[env]
+CLAUDE_CODE_SUBPROCESS_ENV_SCRUB = "1"
+
+[safety.permissions]
+# main/master への直接 push の扱い。
+# ask: 実行前にユーザー確認（既定） / deny: 禁止 / allow: 確認なしで許可
+protectedBranchPush = "ask"
+deny = [
+  "Bash(sudo:*)",
+  "Bash(rm -rf:*)",
+  "Bash(rm -fr:*)",
+  "Bash(psql:*)",
+  "Bash(mysql:*)",
+  "Bash(mongod:*)",
+  "Bash(mongo:*)",
+  "mcp__codex__*",
+  "Read(./.env)",
+  "Read(./.env.*)",
+  "Read(./secrets/**)",
+  "Read(**/*.pem)",
+  "Read(**/*.key)",
+  "Read(**/*id_rsa*)",
+  "Read(**/*id_ed25519*)",
+  "Read(**/.aws/**)",
+  "Read(**/.ssh/**)",
+  "Read(**/.npmrc)",
+]
+ask = [
+  "Bash(rm -r:*)",
+  "Bash(git reset --hard:*)",
+  "Bash(git push -f:*)",
+  "Bash(git push --force:*)",
+  "Bash(git push --force-with-lease:*)",
+  "Bash(git clean -f:*)",
+  "Bash(git clean -fdx:*)",
+  "Bash(git clean -fx:*)",
+  "Bash(git rebase:*)",
+  "Bash(git merge:*)",
+  "Bash(npm install:*)",
+  "Bash(npm exec:*)",
+  "Bash(npx:*)",
+  "Bash(bun install:*)",
+  "Bash(pnpm install:*)",
+]
+
+[safety.sandbox]
+failIfUnavailable = true
+
+[safety.sandbox.network]
+deniedDomains = [
+  "169.254.169.254",
+  "metadata.google.internal",
+  "metadata.azure.com",
+]
+
+[safety.sandbox.filesystem]
+denyRead = [
+  ".env",
+  ".env.*",
+  "!.env.example",
+  "secrets/**",
+  "**/*.pem",
+  "**/*.key",
+  "**/*id_rsa*",
+  "**/*id_ed25519*",
+  "**/.aws/**",
+  "**/.ssh/**",
+]
+allowRead = [
+  ".env.example",
+  ".env.sample",
+  "config/public-*",
+  "docs/**",
+]
+
+# Worker が commit 前に自己検証する rule セット。Worker は `worker-report.v1` の
+# self_review[] にそれぞれ {rule, verified: true, evidence: "<実コマンド出力>"} を
+# 埋めて返す。Lead は verified=false または evidence="" の rule が 1 件でもあれば
+# Reviewer を spawn せずに Worker に自動差し戻す（同一セッション内 最大 2 回、3 回目で escalate）。
+# project 固有 rule を追加したい場合は `extra_rules` 配列に追記する（default 5 とは独立）。
+[worker.self_review]
+default_rules = [
+  "dry-violation-none",                  # DRY 違反ゼロ（実装も import 共有）
+  "plans-cc-markers-untouched",          # Plans.md cc:* マーカー未書換
+  "all-declared-symbols-called",         # 宣言した関数/クラスは全て呼び出し経路あり
+  "dod-items-verified-with-evidence",    # DoD 各項目に検証方法と evidence
+  "no-existing-test-regression",         # 既存テスト回帰なし
+]
+extra_rules = []                         # project 固有 rule を追加する場合はここに列挙
+max_retries_before_escalate = 2          # 3 回目の差し戻しで Lead に escalate

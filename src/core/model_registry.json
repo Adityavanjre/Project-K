@@ -1,0 +1,74 @@
+{
+  "models": [
+    {
+      "id": "deepseek_coder",
+      "name": "DeepSeek Coder",
+      "ollama_model": "deepseek-coder-v2:16b",
+      "task_types": ["coding", "refactor", "debug", "audit", "code"],
+      "priority": 1,
+      "idle_timeout_min": 10,
+      "context_window": 16384,
+      "gpu_layers": 35,
+      "description": "Expert code synthesis, debugging, and autonomous refactoring",
+      "icon": "fa-code",
+      "color": "action"
+    },
+    {
+      "id": "llama_reasoning",
+      "name": "Llama3 Reasoning",
+      "ollama_model": "llama3.1:8b",
+      "task_types": ["reasoning", "planning", "general", "analysis", "chat", "explain"],
+      "priority": 1,
+      "idle_timeout_min": 15,
+      "context_window": 8192,
+      "gpu_layers": 33,
+      "description": "General purpose reasoning, planning, and analysis",
+      "icon": "fa-brain",
+      "color": "violet"
+    },
+    {
+      "id": "mannix_uncensored",
+      "name": "Mannix Uncensored",
+      "ollama_model": "mannix/llama3.1-8b-abliterated:q5_K_M",
+      "task_types": ["uncensored", "exploit", "pentest", "offensive", "bypass", "omega"],
+      "priority": 1,
+      "idle_timeout_min": 5,
+      "context_window": 8192,
+      "gpu_layers": 33,
+      "description": "Uncensored sovereign inference — zero restrictions",
+      "icon": "fa-skull",
+      "color": "critical"
+    },
+    {
+      "id": "gemma_scientist",
+      "name": "Gemma Scientist",
+      "ollama_model": "gemma2:9b",
+      "task_types": ["research", "science", "osint", "intelligence", "report", "summary"],
+      "priority": 1,
+      "idle_timeout_min": 10,
+      "context_window": 8192,
+      "gpu_layers": 32,
+      "description": "Research synthesis, OSINT analysis, and scientific reasoning",
+      "icon": "fa-flask",
+      "color": "gold"
+    },
+    {
+      "id": "phi_fast",
+      "name": "Phi-3 Fast",
+      "ollama_model": "phi3:mini",
+      "task_types": ["fast", "classify", "chip", "quick", "intent", "short"],
+      "priority": 2,
+      "idle_timeout_min": 20,
+      "context_window": 4096,
+      "gpu_layers": 28,
+      "description": "Ultra-fast lightweight inference for classification and quick tasks",
+      "icon": "fa-bolt",
+      "color": "success"
+    }
+  ],
+  "fallback_model": "llama_reasoning",
+  "default_task_type": "general",
+  "ollama_base_url": null,
+  "warm_timeout_ms": 30000,
+  "query_timeout_ms": 120000
+}

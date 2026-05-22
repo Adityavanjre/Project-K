@@ -1,0 +1,602 @@
+:root {
+  /* Easy-Vibe Theme Fix v2025-01-12 */
+  /* 通过变量控制分组底部留白（默认 24px） */
+  --vp-sidebar-nav-section-gap: 8px;
+  --ev-doc-font-size: 14px;
+  --ev-doc-line-height: 1.65;
+  --vp-c-brand-1: #0071e3;
+  --vp-c-brand-2: #0077ed;
+  --vp-c-brand-3: #0066cc;
+  --vp-c-brand-soft: rgba(0, 113, 227, 0.14);
+}
+
+.vp-doc {
+  font-size: var(--ev-doc-font-size);
+  line-height: var(--ev-doc-line-height);
+  --el-font-size-extra-large: calc(var(--ev-doc-font-size) + 6px);
+  --el-font-size-large: calc(var(--ev-doc-font-size) + 4px);
+  --el-font-size-medium: calc(var(--ev-doc-font-size) + 2px);
+  --el-font-size-base: var(--ev-doc-font-size);
+  --el-font-size-small: calc(var(--ev-doc-font-size) - 1px);
+  --el-font-size-extra-small: calc(var(--ev-doc-font-size) - 2px);
+  --el-font-line-height-primary: var(--ev-doc-line-height);
+}
+
+.vp-doc p,
+.vp-doc ul,
+.vp-doc ol {
+  line-height: var(--ev-doc-line-height) !important;
+}
+
+.vp-doc :where(p, ul, ol, table, blockquote, pre, details, figure) {
+  margin: 10px 0;
+}
+
+.vp-doc blockquote {
+  font-size: inherit !important;
+  line-height: var(--ev-doc-line-height) !important;
+  color: var(--vp-c-text-2);
+  margin: 16px 0 !important;
+  padding: 0 0 0 16px !important;
+}
+
+.vp-doc blockquote p {
+  font-size: inherit !important;
+  line-height: inherit !important;
+  margin: 8px 0 !important;
+}
+
+.vp-doc blockquote p:first-child {
+  margin-top: 0 !important;
+}
+
+.vp-doc blockquote p:last-child {
+  margin-bottom: 0 !important;
+}
+
+.vp-doc :where(li) {
+  margin: 4px 0;
+}
+
+.vp-doc :where(ul, ol) {
+  padding-left: 1.15em;
+}
+
+.vp-doc :where(h1, h2, h3, h4, h5, h6) {
+  line-height: 1.3;
+  scroll-margin-top: calc(var(--vp-nav-height, 64px) + 24px);
+}
+
+.vp-doc :where(h1) {
+  margin: 22px 0 12px;
+}
+
+.vp-doc :where(h2) {
+  margin: 20px 0 10px;
+}
+
+.vp-doc h2 {
+  margin: 16px 0 8px !important;
+  padding-top: 10px !important;
+  border-top: 0 !important;
+}
+
+.vp-doc h2 .header-anchor {
+  top: 10px !important;
+}
+
+.vp-doc :where(h3) {
+  margin: 18px 0 8px;
+}
+
+.vp-doc :where(h4, h5, h6) {
+  margin: 16px 0 8px;
+}
+
+.vp-doc :where(hr) {
+  margin: 14px 0;
+}
+
+.vp-doc :where(th, td) {
+  padding: 6px 10px;
+}
+
+.vp-doc :where(:not(pre) > code) {
+  font-size: 0.95em;
+}
+
+/* 生产环境（带 data-v-* 的 scoped 样式）会比 class 选择器更高优先级。
+   为避免 build/preview 时被覆盖，这里显式匹配 scoped 属性并加 !important。 */
+:where(html) .VPSidebarItem.level-0,
+:where(html) .VPSidebarItem.level-0[data-v-d81de50c] {
+  padding-bottom: 8px !important;
+}
+
+/* 减少一级标题文字与下方子菜单的间距 */
+:where(html) .VPSidebarItem.level-0 > .item,
+:where(html) .VPSidebarItem.level-0[data-v-d81de50c] > .item {
+  padding-bottom: 4px !important;
+}
+
+/* 调整子菜单项之间的间距 - 针对所有层级 */
+:where(html) .VPSidebarItem.level-1 .item,
+:where(html) .VPSidebarItem.level-1[data-v-d81de50c] .item,
+:where(html) .VPSidebarItem.level-2 .item,
+:where(html) .VPSidebarItem.level-2[data-v-d81de50c] .item,
+:where(html) .VPSidebarItem.level-3 .item,
+:where(html) .VPSidebarItem.level-3[data-v-d81de50c] .item,
+:where(html) .VPSidebarItem.level-4 .item,
+:where(html) .VPSidebarItem.level-4[data-v-d81de50c] .item {
+  padding-top: 3px !important;
+  padding-bottom: 3px !important;
+  min-height: 26px !important; /* 稍微放大便于点击 */
+}
+
+/* 针对可能存在的特定类名进行覆盖，确保紧凑 */
+:where(html) .VPSidebarGroup,
+:where(html) .VPSidebarGroup[data-v-8d50c081] {
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+/* 进一步压缩分组标题与第一项之间的间距 */
+:where(html) .VPSidebarItem.level-0 + .VPSidebarItem.level-1,
+:where(html)
+  .VPSidebarItem.level-0[data-v-d81de50c]
+  + .VPSidebarItem.level-1[data-v-d81de50c] {
+  margin-top: -2px !important;
+}
+
+/* 压缩分组标题本身的行高 */
+:where(html) .VPSidebarItem.level-0 .text,
+:where(html) .VPSidebarItem.level-0[data-v-d81de50c] .text {
+  line-height: 1.3 !important;
+}
+
+/* 压缩子项的行高 */
+:where(html) .VPSidebarItem.level-1 .text,
+:where(html) .VPSidebarItem.level-1[data-v-d81de50c] .text,
+:where(html) .VPSidebarItem.level-2 .text,
+:where(html) .VPSidebarItem.level-2[data-v-d81de50c] .text,
+:where(html) .VPSidebarItem.level-3 .text,
+:where(html) .VPSidebarItem.level-3[data-v-d81de50c] .text {
+  line-height: 1.4 !important;
+  padding: 0 !important; /* 移除文字本身的内边距 */
+}
+
+/* 强制链接本身没有额外的边距 */
+:where(html) .VPSidebarItem .VPLink,
+:where(html) .VPSidebarItem[data-v-d81de50c] .VPLink {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  min-height: auto !important;
+}
+
+/* 清空 sidebar item 自带的 margin，避免垂直间距被放大 */
+:where(html) .VPSidebarItem .item,
+:where(html) .VPSidebarItem[data-v-d81de50c] .item {
+  margin-bottom: 0 !important;
+}
+
+/* 图片默认居中显示 */
+.vp-doc img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 图片高度限制策略：根据长宽比调整最大高度 */
+/* 越高的图片（长宽比越大），限制的高度越小，避免占用过多纵向空间 */
+.vp-doc img.img-tall {
+  max-height: 380px !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.vp-doc img.img-very-tall {
+  max-height: 280px !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.vp-doc img.img-ultra-tall {
+  max-height: 200px !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.vp-doc img.img-limit-width {
+  max-width: 100% !important;
+  max-height: 320px !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* 布局调整：增加内容区域的最大宽度，并适当增加内边距 */
+@media (min-width: 960px) {
+  .VPDoc:not(.has-sidebar) .container {
+    max-width: 1280px !important;
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+  }
+  .VPDoc.has-sidebar .container {
+    max-width: 100% !important; /* 移除强制宽度限制，让内容自然对齐 */
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+  }
+  /* 强制统一首页 Hero 区域的宽度和边距，使其与下方 Features 区域对齐 */
+  .VPHomeHero .container {
+    max-width: 1280px !important;
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+  }
+}
+
+.vp-doc img.img-limit-height {
+  max-height: 450px !important;
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Fix tagline wrapping issues */
+.VPHomeHero .tagline {
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: none !important;
+}
+
+@media (min-width: 960px) {
+  .VPHomeHero .tagline {
+    white-space: nowrap;
+  }
+}
+
+/* 移除链接下划线，改善阅读体验 */
+.vp-doc a {
+  text-decoration: none !important;
+  border-bottom: 1px solid transparent;
+  transition: border-bottom-color 0.2s ease-in-out;
+}
+
+.vp-doc a:hover {
+  border-bottom-color: var(--vp-c-brand-1, #646cff);
+}
+
+/* 链接保持无下划线，只在悬停时显示 */
+.VPDoc a,
+.VPLink a {
+  text-decoration: none !important;
+}
+
+/* 侧边栏链接无下划线 */
+.VPSidebarItem .VPLink {
+  text-decoration: none !important;
+}
+
+.VPSidebarItem .VPLink:hover {
+  text-decoration: none !important;
+}
+
+/* iOS/Apple Style Enhancements */
+
+/* System Font Stack */
+:root {
+  --vp-font-family-base:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol';
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.VPHome .reading-progress {
+  display: none !important;
+}
+
+body:has(.VPHome) .reading-progress {
+  display: none !important;
+}
+
+.dark .glass {
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hero Section Refinements */
+.VPHomeHero .name,
+.VPHomeHero .name.clip {
+  position: relative;
+  top: -8px;
+  background-image: linear-gradient(
+    100deg,
+    #06b6d4 0%,
+    #0ea5e9 18%,
+    #3b82f6 36%,
+    #9d4edd 56%,
+    #ff3c81 74%,
+    #f97316 88%,
+    #06b6d4 100%
+  );
+  background-size: 220% 220%;
+  background-position: 0% 50%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 22px rgba(59, 130, 246, 0.26));
+  animation: ev-hero-name-flow 8s ease-in-out infinite alternate;
+}
+
+@keyframes ev-hero-name-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 35% 50%;
+  }
+}
+
+.VPHomeHero .text {
+  display: none !important;
+  font-weight: 600;
+  color: #1d1d1f;
+  letter-spacing: -0.02em;
+}
+
+.VPHomeHero .action .VPButton.brand {
+  border-radius: 999px;
+  background-image: none;
+  background-color: #0071e3;
+  border: none;
+  box-shadow: none;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+}
+
+.VPHomeHero .action .VPButton.brand:hover {
+  transform: scale(1.02);
+  background-color: #0077ed;
+  opacity: 1;
+}
+
+.VPHomeHero .action .VPButton.alt {
+  border-radius: 999px;
+  border: 1px solid #0071e3;
+  background-color: #fff;
+  color: #0071e3;
+  font-weight: 500;
+  box-shadow: none;
+  transition:
+    transform 0.2s,
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.VPHomeHero .action .VPButton.alt:hover {
+  transform: scale(1.02);
+  background-color: rgba(0, 113, 227, 0.08);
+  color: #0066cc;
+}
+
+/* HomeFeatures Sections Scroll Offset */
+.section-container {
+  scroll-margin-top: 80px;
+}
+
+/* Home Hero Full Screen */
+.VPHomeHero {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding-top: var(--vp-nav-height, 64px) !important;
+  padding-bottom: 18vh !important;
+  box-sizing: border-box;
+}
+
+/* ============================================
+   Outline 侧边栏指示标滚动修复
+   问题：当页面内容很长时，outline 中的指示标(marker)
+   会移动到可见区域之外，用户看不到当前阅读位置
+   ============================================ */
+
+/* 让 outline 容器可以独立滚动 */
+.VPDocAsideOutline {
+  max-height: calc(100vh - var(--vp-nav-height, 64px) - 32px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* 隐藏滚动条但保持滚动功能 */
+.VPDocAsideOutline::-webkit-scrollbar {
+  width: 4px;
+}
+
+.VPDocAsideOutline::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.VPDocAsideOutline::-webkit-scrollbar-thumb {
+  background: var(--vp-c-divider);
+  border-radius: 2px;
+}
+
+.VPDocAsideOutline::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-c-text-3);
+}
+
+/* Firefox 滚动条样式 */
+.VPDocAsideOutline {
+  scrollbar-width: thin;
+  scrollbar-color: var(--vp-c-divider) transparent;
+}
+
+/* 确保 outline 内容区域正确显示 */
+.VPDocAsideOutline .content {
+  position: relative;
+  min-height: min-content;
+}
+
+/* 确保 marker 指示标始终在可见区域内 */
+.VPDocAsideOutline.has-outline .outline-marker {
+  position: absolute;
+  will-change: top;
+}
+
+/* Unified demo info-box label alignment */
+.vp-doc .info-box {
+  display: flex;
+  gap: 0.25rem;
+  align-items: flex-start;
+}
+
+.vp-doc .info-box strong {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Mermaid diagrams */
+.vp-doc .mermaid-diagram {
+  margin: 18px 0 22px;
+  padding: 0;
+  overflow-x: auto;
+  position: relative;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: zoom-in;
+}
+
+.vp-doc .mermaid-diagram svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.vp-doc .mermaid-diagram-error {
+  min-height: 80px;
+}
+
+.dark .vp-doc .mermaid-diagram {
+  border: 0;
+  background: transparent;
+}
+
+.vp-doc .mermaid-diagram:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
+}
+
+.mermaid-viewer-source {
+  position: fixed;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.mermaid-viewer-open .viewer-backdrop {
+  background: rgba(245, 247, 250, 0.96);
+}
+
+body.mermaid-viewer-open .viewer-canvas {
+  background: rgba(248, 250, 252, 0.98) !important;
+}
+
+body.mermaid-viewer-open .viewer-canvas img {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Long code blocks */
+.vp-doc div[class*='language-'].is-collapsible-code {
+  position: relative;
+}
+
+.vp-doc div[class*='language-'].is-collapsible-code pre {
+  position: relative;
+  transition: max-height 0.24s ease;
+}
+
+.vp-doc div[class*='language-'].is-collapsible-code.is-code-collapsed pre {
+  max-height: 320px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.vp-doc
+  div[class*='language-'].is-collapsible-code.is-code-collapsed
+  pre::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 88px;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    var(--vp-code-block-bg) 72%
+  );
+}
+
+.vp-doc .code-collapse-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 132px;
+  margin: 12px auto 2px;
+  padding: 7px 14px;
+  border: 1px solid rgba(0, 113, 227, 0.2);
+  border-radius: 999px;
+  background: rgba(0, 113, 227, 0.06);
+  color: var(--vp-c-brand-1);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.vp-doc .code-collapse-toggle:hover {
+  border-color: rgba(0, 113, 227, 0.32);
+  background: rgba(0, 113, 227, 0.1);
+  transform: translateY(-1px);
+}
+
+.vp-doc .code-collapse-toggle:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
+
+.dark .vp-doc .code-collapse-toggle {
+  border-color: rgba(96, 165, 250, 0.24);
+  background: rgba(96, 165, 250, 0.12);
+}
+
+.dark .vp-doc .code-collapse-toggle:hover {
+  border-color: rgba(96, 165, 250, 0.38);
+  background: rgba(96, 165, 250, 0.18);
+}

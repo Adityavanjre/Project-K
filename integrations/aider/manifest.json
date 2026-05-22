@@ -1,0 +1,35 @@
+{
+  "name": "aider",
+  "domain": "development",
+  "capabilities": [
+    {
+      "id": "auto_refactor",
+      "name": "Aider Evolutionary Coding",
+      "description": "Autonomous code optimization and feature synthesis via AI pair-programmer.",
+      "trigger_keywords": [
+        "refactor",
+        "optimize",
+        "rewrite",
+        "fix code",
+        "improve",
+        "evolve",
+        "upgrade code"
+      ],
+      "execution_type": "cli",
+      "start_command": "aider --auto-commit",
+      "stop_command": "kill",
+      "working_directory": "integrations/aider",
+      "input_schema": {
+        "instruction": "string"
+      },
+      "output_type": "stream",
+      "ui_mode": "tui",
+      "dependencies": [
+        "python",
+        "aider"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    }
+  ]
+}

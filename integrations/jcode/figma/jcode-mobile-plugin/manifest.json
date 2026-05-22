@@ -1,0 +1,7 @@
+{
+  "name": "jcode Mobile Screens",
+  "id": "com.jcode.mobile.screens",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"]
+}

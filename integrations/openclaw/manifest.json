@@ -1,0 +1,89 @@
+{
+  "name": "openclaw",
+  "domain": "identity_management",
+  "capabilities": [
+    {
+      "id": "identity_sync",
+      "name": "Researcher Identity Link",
+      "description": "Synchronizes researcher profiles across HackerOne, Bugcrowd, and more.",
+      "trigger_keywords": [
+        "link",
+        "identity",
+        "account",
+        "hackerone",
+        "bugcrowd",
+        "profile",
+        "intigriti"
+      ],
+      "execution_type": "cli",
+      "start_command": "node openclaw.mjs --link",
+      "stop_command": "none",
+      "working_directory": "integrations/openclaw",
+      "input_schema": {
+        "platform": "string"
+      },
+      "output_type": "structured",
+      "ui_mode": "ui",
+      "dependencies": [
+        "node"
+      ],
+      "priority": 0.9,
+      "domain": "identity_management"
+    },
+    {
+      "id": "bounty_hunter",
+      "name": "Bug Bounty Submission Engine",
+      "description": "Structures and submits security findings to HackerOne, Bugcrowd, and similar platforms.",
+      "trigger_keywords": [
+        "bounty",
+        "submit report",
+        "report bug",
+        "hackerone submit",
+        "vulnerability report"
+      ],
+      "execution_type": "api",
+      "start_command": "node openclaw.mjs --submit",
+      "stop_command": "none",
+      "working_directory": "integrations/openclaw",
+      "input_schema": {
+        "title": "string",
+        "severity": "string",
+        "description": "string",
+        "platform": "string"
+      },
+      "output_type": "structured",
+      "ui_mode": "ui",
+      "dependencies": [
+        "node"
+      ],
+      "priority": 0.9,
+      "domain": "cybersecurity"
+    },
+    {
+      "id": "wealth_tracker",
+      "name": "Sovereign Wealth Matrix",
+      "description": "Tracks bounty earnings, pending payouts, and financial metrics across platforms.",
+      "trigger_keywords": [
+        "wealth",
+        "earnings",
+        "balance",
+        "payout",
+        "money",
+        "income",
+        "finance"
+      ],
+      "execution_type": "api",
+      "start_command": "node openclaw.mjs --earnings",
+      "stop_command": "none",
+      "working_directory": "integrations/openclaw",
+      "input_schema": {},
+      "output_type": "structured",
+      "ui_mode": "ui",
+      "dependencies": [
+        "node"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    }
+  ]
+}

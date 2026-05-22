@@ -1,0 +1,122 @@
+/* 
+   KALI Sovereign UI v5
+   Cyber-Minimalism / Ultra-Premium Design System
+*/
+
+:root {
+    --primary: #00E5FF;
+    --secondary: #FFD600;
+    --bg: #050505;
+    --surface: rgba(10, 10, 10, 0.8);
+    --text: #F5F5F5;
+    --accent: #00B0FF;
+    --glass-border: rgba(0, 229, 255, 0.2);
+    --glass-blur: 20px;
+    --neon-glow: 0 0 15px rgba(0, 229, 255, 0.3);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&family=Outfit:wght@300;600&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.5px;
+    overflow: hidden;
+}
+
+/* The Singularity Core */
+.singularity-core {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2px;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 100px 20px var(--primary);
+    opacity: 0.1;
+    z-index: -1;
+    animation: core-breath 8s infinite alternate ease-in-out;
+}
+
+@keyframes core-breath {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.05; box-shadow: 0 0 50px 10px var(--primary); }
+    100% { transform: translate(-50%, -50%) scale(5); opacity: 0.2; box-shadow: 0 0 200px 40px var(--primary); }
+}
+
+/* Minimalist Navigation */
+.nav-minimalist {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    background: rgba(5, 5, 5, 0.5);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 1000;
+}
+
+.nav-link {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.4s ease;
+    margin: 0 15px;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary);
+    text-shadow: var(--neon-glow);
+}
+
+/* Glass Panels v5 */
+.sovereign-panel {
+    background: var(--surface);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    padding: 20px;
+    transition: border 0.4s ease, box-shadow 0.4s ease;
+}
+
+.sovereign-panel:hover {
+    border-color: var(--primary);
+    box-shadow: var(--neon-glow);
+}
+
+/* Typography */
+h1, h2 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+}
+
+.data-stream {
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.65rem;
+    color: var(--primary);
+    opacity: 0.6;
+}
+
+/* Transitions */
+.fade-in {
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

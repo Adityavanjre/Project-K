@@ -1,0 +1,92 @@
+name: Security Demo Workflow
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  safe_commands:
+    name: Safe Commands (Will Pass)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: List project files
+        run: ls -la
+      
+      - name: Show current directory
+        run: pwd
+      
+      - name: Echo a message
+        run: echo "This command is safe and will execute successfully"
+      
+      - name: Check Rust version (if available)
+        run: rustc --version || echo "Rust not installed"
+      
+      - name: Build documentation
+        run: echo "Building docs..." && mkdir -p target/doc
+      
+      - name: Show environment
+        run: env | grep GITHUB
+
+  dangerous_commands:
+    name: Dangerous Commands (Will Be Blocked)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # These commands will be blocked in secure emulation mode
+      - name: Dangerous file deletion
+        run: rm -rf /tmp/* # This will be BLOCKED
+        continue-on-error: true
+      
+      - name: System modification attempt
+        run: sudo apt-get update # This will be BLOCKED
+        continue-on-error: true
+      
+      - name: Network download attempt
+        run: wget https://example.com/script.sh # This will be BLOCKED
+        continue-on-error: true
+      
+      - name: Process manipulation
+        run: kill -9 $$ # This will be BLOCKED
+        continue-on-error: true
+
+  resource_intensive:
+    name: Resource Limits Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: CPU intensive task
+        run: |
+          echo "Testing resource limits..."
+          # This might hit CPU or time limits
+          for i in {1..1000}; do
+            echo "Iteration $i"
+            sleep 0.1
+          done
+        continue-on-error: true
+
+  filesystem_test:
+    name: Filesystem Access Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create files in allowed location
+        run: |
+          mkdir -p ./test-output
+          echo "test content" > ./test-output/safe-file.txt
+          cat ./test-output/safe-file.txt
+      
+      - name: Attempt to access system files
+        run: cat /etc/passwd # This may be blocked
+        continue-on-error: true
+      
+      - name: Show allowed file operations
+        run: |
+          echo "Safe file operations:"
+          touch ./temp-file.txt
+          echo "content" > ./temp-file.txt
+          cat ./temp-file.txt
+          rm ./temp-file.txt
+          echo "File operations completed safely"

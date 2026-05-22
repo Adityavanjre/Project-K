@@ -1,0 +1,435 @@
+/* Import Google Fonts for trust and professionalism */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+
+/* Tailwind CSS imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base layer - Typography and fundamental styles */
+@layer base {
+  /* Set default font and improve text rendering */
+  html {
+    font-family:
+      'Inter',
+      -apple-system,
+      BlinkMacSystemFont,
+      'SF Pro Display',
+      'SF Pro Text',
+      system-ui,
+      'Segoe UI',
+      Roboto,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    color: #171717;
+  }
+
+  body {
+    @apply text-stone-900;
+    @apply font-sans;
+    line-height: 1.6;
+
+    background: #f5f5f5;
+    color: #171717;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  html[data-window='overlay'],
+  html[data-window='overlay'] body,
+  html[data-window='overlay'] #root {
+    background: transparent;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  @keyframes overlay-bubble-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.92);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  * {
+    color: inherit;
+  }
+
+  /* Heading hierarchy for clear information architecture */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sans font-semibold;
+    @apply text-stone-900;
+    line-height: 1.2;
+  }
+
+  h1 {
+    @apply text-3xl lg:text-4xl;
+  }
+  h2 {
+    @apply text-2xl lg:text-3xl;
+  }
+  h3 {
+    @apply text-xl lg:text-2xl;
+  }
+  h4 {
+    @apply text-lg lg:text-xl;
+  }
+
+  /* Complete focus outline suppression - no borders, no rings, no outlines */
+  * {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  *:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border: inherit !important;
+    border-color: inherit !important;
+  }
+
+  /* Specific overrides for common elements that might show blue outlines */
+  button:focus,
+  a:focus,
+  input:focus,
+  textarea:focus,
+  select:focus,
+  [role='button']:focus,
+  [tabindex]:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: inherit !important;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Component layer - Reusable patterns */
+@layer components {
+  /* Button variants for consistent interaction design */
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 active:bg-primary-700;
+    @apply text-white font-medium;
+    @apply px-4 py-2 rounded-lg;
+    @apply transition-all duration-200 ease-in-out;
+    @apply shadow-soft hover:shadow-medium;
+    @apply focus:outline-none;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-stone-900 hover:bg-stone-800 active:bg-stone-700;
+    @apply text-white font-medium;
+    @apply px-4 py-2 rounded-lg border border-stone-300;
+    @apply transition-all duration-200 ease-in-out;
+    @apply focus:outline-none;
+  }
+
+  .btn-success {
+    @apply bg-sage-500 hover:bg-sage-600 active:bg-sage-700;
+    @apply text-white font-medium;
+    @apply px-4 py-2 rounded-lg;
+    @apply transition-all duration-200 ease-in-out;
+    @apply shadow-soft hover:shadow-medium;
+    @apply focus:outline-none;
+  }
+
+  .btn-danger {
+    @apply bg-coral-500 hover:bg-coral-600 active:bg-coral-700;
+    @apply text-white font-medium;
+    @apply px-4 py-2 rounded-lg;
+    @apply transition-all duration-200 ease-in-out;
+    @apply shadow-soft hover:shadow-medium;
+    @apply focus:outline-none;
+  }
+
+  /* Card components for content organization */
+  .card {
+    @apply bg-white rounded-xl shadow-soft border border-stone-200;
+    @apply p-6 text-stone-900;
+    @apply transition-shadow duration-200;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-medium;
+  }
+
+  .app-dotted-canvas {
+    background-color: transparent;
+    background-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.5) 1px, transparent 1px);
+    background-size: 18px 18px;
+    background-position: 0 0;
+  }
+
+  /* Input components with consistent styling */
+  .input-primary {
+    @apply w-full px-4 py-3 rounded-lg;
+    @apply border border-stone-200 focus:border-primary-500;
+    @apply bg-white text-stone-900 placeholder-stone-400;
+    @apply transition-colors duration-200;
+    @apply focus:outline-none;
+  }
+
+  /* Status indicators */
+  .status-online {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply bg-sage-100 text-sage-700;
+  }
+
+  .status-offline {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply bg-stone-100 text-stone-600;
+  }
+
+  .status-warning {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply bg-amber-100 text-amber-700;
+  }
+
+  /* Navigation styles */
+  .nav-item {
+    @apply flex items-center px-4 py-2 text-sm font-medium rounded-lg;
+    @apply text-stone-600 hover:text-stone-900 hover:bg-stone-100;
+    @apply transition-colors duration-150;
+  }
+
+  .nav-item-active {
+    @apply nav-item bg-stone-100 text-stone-900;
+  }
+
+  /* Message/chat specific styles */
+  .message-bubble {
+    @apply max-w-xs lg:max-w-md px-4 py-2 rounded-2xl;
+    @apply break-words;
+  }
+
+  .message-sent {
+    @apply message-bubble bg-primary-500 text-white ml-auto;
+  }
+
+  .message-received {
+    @apply message-bubble bg-stone-200/80 text-stone-900;
+  }
+
+  /* Loading states */
+  .loading-pulse {
+    @apply animate-pulse bg-stone-100 rounded;
+  }
+
+  /* Crypto price styling */
+  .price-positive {
+    @apply text-market-bullish font-mono font-medium;
+  }
+
+  .price-negative {
+    @apply text-market-bearish font-mono font-medium;
+  }
+
+  .price-neutral {
+    @apply text-market-neutral font-mono font-medium;
+  }
+}
+
+/* Utility layer - Custom utilities */
+@layer utilities {
+  /* Scrollbar styling for better UX */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(163 163 163) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgb(163 163 163);
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(115 115 115);
+  }
+
+  /* Hide scrollbar while keeping scroll behavior */
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Text selection styling */
+  .select-primary::selection {
+    @apply bg-primary-600 text-white;
+  }
+
+  /* Glass effect for light theme */
+  .glass {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Animation utilities */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Modal animations */
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Safe area padding for mobile devices */
+  .safe-area-padding {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Skills table container */
+  .skills-table-container {
+    position: relative;
+    max-height: calc(3 * 2.5rem + 2.5rem + 1px); /* Header + 3 rows + border */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .skills-table-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: calc(3 * 2.5rem + 2.5rem + 1px);
+  }
+
+  .skills-table-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Gradient fade overlay at bottom */
+  .skills-table-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(to bottom, transparent, rgba(245, 245, 245, 0.9));
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Hover overlay */
+  .skills-table-overlay {
+    z-index: 20;
+  }
+
+  .skills-table-container:hover .skills-table-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Light mode (default) */
+:root {
+  color-scheme: light;
+}
+
+/* Command palette + help overlay — scoped tokens. */
+:root {
+  --cmd-accent: #2f6ef4;
+  --cmd-surface: #ffffff;
+  --cmd-surface-elevated: #f5f5f5;
+  --cmd-foreground: #171717;
+  --cmd-foreground-muted: #737373;
+  --cmd-border: #e5e5e5;
+  --cmd-ring: var(--cmd-accent);
+  --cmd-overlay: rgba(0, 0, 0, 0.5);
+  --cmd-shadow-palette: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+:root.dark {
+  --cmd-accent: #60a5fa;
+  --cmd-surface: #171717;
+  --cmd-surface-elevated: #262626;
+  --cmd-foreground: #fafafa;
+  --cmd-foreground-muted: #a3a3a3;
+  --cmd-border: #404040;
+  --cmd-overlay: rgba(0, 0, 0, 0.7);
+  --cmd-shadow-palette: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmd-palette-enter,
+  .cmd-palette-exit,
+  .cmd-help-enter,
+  .cmd-help-exit {
+    animation: none !important;
+    transition: none !important;
+  }
+}

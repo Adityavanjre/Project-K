@@ -1,0 +1,1 @@
+{"nodes": [{"id": "processor.py", "type": "Core"}, {"id": "channel_manager.py", "type": "Gateway"}, {"id": "KALI_MASTER_PLAN.md", "type": "Project"}], "edges": [{"source": "processor.py", "target": "channel_manager.py", "relation": "routes_through"}], "metadata": {"indexed_at": "2026-04-28T22:38:55.919231", "total_nodes": 1915, "total_edges": 12450}}

@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="600" height="200">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1117;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#161b22;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#7B61FF" />
+      <stop offset="50%" style="stop-color:#FF61DC" />
+      <stop offset="100%" style="stop-color:#7B61FF" />
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00FF88" />
+      <stop offset="100%" style="stop-color:#00CC66" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="200" rx="16" fill="url(#bgGrad)" />
+
+  <!-- Border glow -->
+  <rect x="1" y="1" width="598" height="198" rx="15" fill="none" stroke="url(#accentGrad)" stroke-width="1.5" opacity="0.6" />
+
+  <!-- Terminal dots -->
+  <circle cx="28" cy="22" r="5" fill="#FF5F56" />
+  <circle cx="46" cy="22" r="5" fill="#FFBD2E" />
+  <circle cx="64" cy="22" r="5" fill="#27C93F" />
+
+  <!-- Terminal title bar text -->
+  <text x="300" y="26" text-anchor="middle" font-family="'SF Mono','Fira Code','Cascadia Code',monospace" font-size="11" fill="#8b949e">hackingtool — v2.0.0</text>
+
+  <!-- Shield icon -->
+  <g transform="translate(42, 58)" filter="url(#glow)">
+    <!-- Shield outline -->
+    <path d="M40 0 L75 15 L75 55 Q75 85 40 100 Q5 85 5 55 L5 15 Z" fill="none" stroke="url(#greenGrad)" stroke-width="2.5" />
+    <!-- Inner shield fill -->
+    <path d="M40 6 L70 19 L70 53 Q70 80 40 93 Q10 80 10 53 L10 19 Z" fill="#00FF88" opacity="0.08" />
+    <!-- Skull icon inside shield -->
+    <!-- Skull top -->
+    <ellipse cx="40" cy="40" rx="18" ry="16" fill="none" stroke="#00FF88" stroke-width="2" />
+    <!-- Eyes -->
+    <ellipse cx="33" cy="38" rx="4" ry="5" fill="#00FF88" opacity="0.9" />
+    <ellipse cx="47" cy="38" rx="4" ry="5" fill="#00FF88" opacity="0.9" />
+    <!-- Nose -->
+    <path d="M38 47 L40 50 L42 47" fill="none" stroke="#00FF88" stroke-width="1.5" />
+    <!-- Jaw -->
+    <path d="M28 52 Q40 62 52 52" fill="none" stroke="#00FF88" stroke-width="1.5" />
+    <!-- Teeth -->
+    <line x1="34" y1="52" x2="34" y2="57" stroke="#00FF88" stroke-width="1.2" />
+    <line x1="40" y1="53" x2="40" y2="58" stroke="#00FF88" stroke-width="1.2" />
+    <line x1="46" y1="52" x2="46" y2="57" stroke="#00FF88" stroke-width="1.2" />
+    <!-- Crossbones -->
+    <line x1="15" y1="72" x2="65" y2="88" stroke="#00FF88" stroke-width="2" stroke-linecap="round" />
+    <line x1="65" y1="72" x2="15" y2="88" stroke="#00FF88" stroke-width="2" stroke-linecap="round" />
+    <circle cx="15" cy="72" r="3" fill="#00FF88" opacity="0.7" />
+    <circle cx="65" cy="72" r="3" fill="#00FF88" opacity="0.7" />
+    <circle cx="15" cy="88" r="3" fill="#00FF88" opacity="0.7" />
+    <circle cx="65" cy="88" r="3" fill="#00FF88" opacity="0.7" />
+  </g>
+
+  <!-- Main title: HACKING -->
+  <text x="160" y="105" font-family="'SF Mono','Fira Code','Cascadia Code','Courier New',monospace" font-size="52" font-weight="bold" fill="url(#accentGrad)" filter="url(#softGlow)" letter-spacing="3">
+    HACKING
+  </text>
+
+  <!-- Subtitle: TOOL -->
+  <text x="160" y="148" font-family="'SF Mono','Fira Code','Cascadia Code','Courier New',monospace" font-size="40" font-weight="bold" fill="#00FF88" filter="url(#glow)" letter-spacing="8">
+    TOOL
+  </text>
+
+  <!-- Tagline -->
+  <text x="160" y="178" font-family="'SF Mono','Fira Code','Cascadia Code','Courier New',monospace" font-size="12" fill="#8b949e" letter-spacing="1">
+    All-in-One Security Research Framework
+  </text>
+
+  <!-- Decorative cursor blink -->
+  <rect x="530" y="135" width="12" height="20" fill="#00FF88" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0;0.8" dur="1.2s" repeatCount="indefinite" />
+  </rect>
+
+  <!-- Corner decorations — bracket style -->
+  <path d="M16 40 L16 16 L40 16" fill="none" stroke="#7B61FF" stroke-width="1" opacity="0.3" />
+  <path d="M584 40 L584 16 L560 16" fill="none" stroke="#7B61FF" stroke-width="1" opacity="0.3" />
+  <path d="M16 160 L16 184 L40 184" fill="none" stroke="#7B61FF" stroke-width="1" opacity="0.3" />
+  <path d="M584 160 L584 184 L560 184" fill="none" stroke="#7B61FF" stroke-width="1" opacity="0.3" />
+
+  <!-- Matrix-style falling characters (decorative) -->
+  <text x="540" y="60" font-family="monospace" font-size="10" fill="#00FF88" opacity="0.15">01101</text>
+  <text x="545" y="75" font-family="monospace" font-size="10" fill="#00FF88" opacity="0.12">10010</text>
+  <text x="548" y="90" font-family="monospace" font-size="10" fill="#00FF88" opacity="0.09">11001</text>
+  <text x="542" y="105" font-family="monospace" font-size="10" fill="#00FF88" opacity="0.06">01110</text>
+</svg>

@@ -1,0 +1,35 @@
+<div id="handover-modal" class="modal hidden">
+    <div class="modal-content border-action bg-[#0d0e10]">
+        <div class="modal-header bg-action/10 text-action border-action/20">
+            <h2 class="font-display uppercase tracking-widest text-sm flex items-center gap-2">
+                <i class="fas fa-key"></i> SYSTEM_HANDOVER_PROTOCOL
+            </h2>
+            <button class="text-action/50 hover:text-action" onclick="kaliApp.closeHandoverModal()">&times;</button>
+        </div>
+        <div class="p-6">
+            <div class="mb-6">
+                <div class="hud-label">AUTONOMY_TRANSITION</div>
+                <div class="text-main font-bold mt-1 text-lg">Transferring primary control to Sovereign Neural Node.</div>
+            </div>
+
+            <div class="k-card bg-[#1a1d21]/30 p-4 border-action/10 mb-6">
+                <div class="hud-label text-action mb-2">INTEGRITY_CHECK</div>
+                <div class="flex flex-col gap-2 font-mono text-[10px] text-muted">
+                    <div class="flex justify-between"><span>CORE_LOGIC:</span> <span id="handover-logic" class="text-success">...</span></div>
+                    <div class="flex justify-between"><span>VIRTUAL_SOUL:</span> <span id="handover-soul" class="text-success">...</span></div>
+                    <div class="flex justify-between"><span>SWARM_COHERENCE:</span> <span id="handover-swarm" class="text-success">...</span></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4">
+                <button class="k-btn bg-action text-black border-none hover:bg-action/90" onclick="kaliApp.initiateHandover()">
+                    <i class="fas fa-check-double"></i> EXECUTE_SOVEREIGN_HANDOVER
+                </button>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <div class="font-mono text-[8px] text-muted opacity-50 uppercase">Note: This action completes the transition to autonomous operation.</div>
+            </div>
+        </div>
+    </div>
+</div>

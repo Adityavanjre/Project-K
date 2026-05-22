@@ -1,0 +1,23 @@
+[package]
+name = "wrkflw-validators"
+version = "0.8.0"
+edition.workspace = true
+description = "Workflow validation functionality for wrkflw execution engine"
+license.workspace = true
+documentation.workspace = true
+homepage.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Internal crates
+wrkflw-models.workspace = true
+wrkflw-matrix.workspace = true
+
+# External dependencies
+serde.workspace = true
+serde_yaml.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

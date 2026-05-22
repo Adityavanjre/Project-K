@@ -1,0 +1,698 @@
+// App module for UI state and main TUI entry point
+mod state;
+
+use crate::handlers::workflow::start_next_workflow_execution;
+use crate::models::{ExecutionResultMsg, QueuedExecution, Workflow, WorkflowStatus};
+use crate::utils::load_workflows;
+use crate::views::{
+    render_ui, TAB_COUNT, TAB_DAG, TAB_EXECUTION, TAB_HELP, TAB_LOGS, TAB_SECRETS, TAB_TRIGGER,
+    TAB_WORKFLOWS,
+};
+use chrono::Local;
+use crossterm::{
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+};
+use ratatui::{backend::CrosstermBackend, Terminal};
+use std::io::{self, stdout};
+use std::path::PathBuf;
+use std::sync::mpsc;
+use std::time::{Duration, Instant};
+use wrkflw_executor::RuntimeType;
+
+pub use state::{Accent, App, TriggerPlatform};
+
+// Main entry point for the TUI interface
+#[allow(clippy::ptr_arg)]
+pub async fn run_wrkflw_tui(
+    path: Option<&PathBuf>,
+    runtime_type: RuntimeType,
+    verbose: bool,
+    preserve_containers_on_failure: bool,
+    show_action_messages: bool,
+) -> io::Result<()> {
+    // Terminal setup
+    enable_raw_mode()?;
+    let mut stdout = stdout();
+    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
+    let backend = CrosstermBackend::new(stdout);
+    let mut terminal = Terminal::new(backend)?;
+
+    // Suppress logging to stdout/stderr while TUI owns the terminal
+    wrkflw_logging::set_quiet_mode(true);
+
+    // Set up channel for async communication
+    let (tx, rx): (
+        mpsc::Sender<ExecutionResultMsg>,
+        mpsc::Receiver<ExecutionResultMsg>,
+    ) = mpsc::channel();
+
+    // Initialize app state
+    let mut app = App::new(
+        runtime_type.clone(),
+        tx.clone(),
+        preserve_containers_on_failure,
+        show_action_messages,
+    );
+
+    if app.validation_mode {
+        app.logs.push("Starting in validation mode".to_string());
+        wrkflw_logging::info("Starting in validation mode");
+    }
+
+    // Load workflows
+    let dir_path = match path {
+        Some(path) if path.is_dir() => path.clone(),
+        Some(path) if path.is_file() => {
+            // Single workflow file
+            let name = path
+                .file_name()
+                .unwrap_or_default()
+                .to_string_lossy()
+                .into_owned();
+
+            let (definition, job_names) = {
+                use std::sync::Arc;
+                use wrkflw_parser::workflow::parse_workflow;
+                match parse_workflow(path) {
+                    Ok(def) => {
+                        let mut names: Vec<String> = def.jobs.keys().cloned().collect();
+                        names.sort();
+                        (Some(Arc::new(def)), names)
+                    }
+                    Err(_) => (None, crate::utils::extract_job_names(path)),
+                }
+            };
+
+            app.workflows = vec![Workflow {
+                name: name.clone(),
+                path: path.clone(),
+                selected: true,
+                status: WorkflowStatus::NotStarted,
+                execution_details: None,
+                job_names,
+                trigger_match: None,
+                definition,
+            }];
+
+            // Queue the single workflow for execution
+            app.execution_queue = vec![QueuedExecution {
+                workflow_idx: 0,
+                target_job: None,
+            }];
+            app.start_execution();
+
+            // Return parent dir or current dir if no parent
+            path.parent()
+                .map(|p| p.to_path_buf())
+                .unwrap_or_else(|| PathBuf::from("."))
+        }
+        _ => PathBuf::from(".github/workflows"),
+    };
+
+    // Only load directory if we haven't already loaded a single file
+    if app.workflows.is_empty() {
+        app.workflows = load_workflows(&dir_path);
+    }
+
+    // Run the main event loop
+    let tx_clone = tx.clone();
+
+    // Run the event loop
+    let result = run_tui_event_loop(&mut terminal, &mut app, &tx_clone, &rx, verbose);
+
+    // Clean up terminal
+    wrkflw_logging::set_quiet_mode(false);
+    disable_raw_mode()?;
+    execute!(
+        terminal.backend_mut(),
+        LeaveAlternateScreen,
+        DisableMouseCapture
+    )?;
+    terminal.show_cursor()?;
+
+    match result {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            // If the TUI fails to initialize or crashes, fall back to CLI mode
+            wrkflw_logging::error(&format!("Failed to start UI: {}", e));
+
+            // Only for 'tui' command should we fall back to CLI mode for files
+            // For other commands, return the error
+            if let Some(path) = path {
+                if path.is_file() {
+                    wrkflw_logging::error("Falling back to CLI mode...");
+                    crate::handlers::workflow::execute_workflow_cli(
+                        path,
+                        runtime_type,
+                        verbose,
+                        show_action_messages,
+                    )
+                    .await
+                } else if path.is_dir() {
+                    crate::handlers::workflow::validate_workflow(path, verbose)
+                } else {
+                    Err(e)
+                }
+            } else {
+                Err(e)
+            }
+        }
+    }
+}
+
+// Helper function to run the main event loop
+#[allow(clippy::collapsible_match)]
+fn run_tui_event_loop(
+    terminal: &mut Terminal<CrosstermBackend<io::Stdout>>,
+    app: &mut App,
+    tx_clone: &mpsc::Sender<ExecutionResultMsg>,
+    rx: &mpsc::Receiver<ExecutionResultMsg>,
+    verbose: bool,
+) -> io::Result<()> {
+    // Max time to wait for events - keep this short to ensure UI responsiveness
+    let event_poll_timeout = Duration::from_millis(50);
+
+    // Set up a dedicated tick timer
+    let tick_rate = app.tick_rate;
+    let mut last_tick = Instant::now();
+
+    loop {
+        // Always redraw the UI on each loop iteration to keep it responsive
+        terminal.draw(|f| {
+            render_ui(f, app);
+        })?;
+
+        // Update the UI on every tick
+        if last_tick.elapsed() >= tick_rate {
+            app.tick();
+            app.update_running_workflow_progress();
+
+            // Check for log processing updates (includes system log change detection)
+            app.check_log_processing_updates();
+
+            // Request log processing if needed
+            if app.logs_need_update {
+                app.request_log_processing_update();
+            }
+
+            // Check for completed diff filter results
+            app.check_diff_filter_results();
+
+            last_tick = Instant::now();
+        }
+
+        // Non-blocking check for execution results
+        if let Ok((workflow_idx, result)) = rx.try_recv() {
+            app.process_execution_result(workflow_idx, result);
+            app.current_execution = None;
+
+            // Get next workflow to execute using our helper function
+            start_next_workflow_execution(app, tx_clone, verbose);
+        }
+
+        // Surface any completed Trigger-tab dispatches on the status bar
+        // so the user sees the outcome where they fired it, rather than
+        // having to switch tabs to Logs.
+        app.drain_trigger_outcomes();
+
+        // Start execution if we have a queued workflow and nothing is currently running
+        if app.running && app.current_execution.is_none() && !app.execution_queue.is_empty() {
+            start_next_workflow_execution(app, tx_clone, verbose);
+        }
+
+        // Handle key events with a short timeout
+        if event::poll(event_poll_timeout)? {
+            if let Event::Key(key) = event::read()? {
+                // Handle search input first if we're in search mode and logs tab
+                if app.selected_tab == TAB_LOGS && app.log_search_active {
+                    app.handle_log_search_input(key.code);
+                    continue;
+                }
+
+                // When the Tweaks overlay is open it is modal: only
+                // its own shortcuts are honoured, everything else is
+                // swallowed so keys like `d` or a tab number can't
+                // silently fire the global handler while the user is
+                // in edit-mode. `q` is the one exception — quit is
+                // universally modal-safe in this TUI and swallowing
+                // it silently was a discoverability trap.
+                if app.tweaks_open {
+                    match key.code {
+                        KeyCode::Char('q') => {
+                            break Ok(());
+                        }
+                        KeyCode::Esc | KeyCode::Char(',') => {
+                            app.tweaks_open = false;
+                        }
+                        KeyCode::Char('a') | KeyCode::Char('A') => {
+                            app.tweaks_accent = app.tweaks_accent.next();
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
+                // Trigger tab: if a text field (branch or an input
+                // row) is focused, route printable characters and
+                // edit keys straight to that field before the global
+                // key-map fires. Otherwise editing a value like
+                // "notify=slack" would trip the `s` logs shortcut
+                // below and jump tabs.
+                if app.selected_tab == TAB_TRIGGER
+                    && app.trigger_editing()
+                    && app.trigger_handle_input_key(key.code)
+                {
+                    continue;
+                }
+
+                // Handle help overlay scrolling
+                if app.show_help {
+                    match key.code {
+                        KeyCode::Up | KeyCode::Char('k') => {
+                            app.scroll_help_up();
+                            continue;
+                        }
+                        KeyCode::Down | KeyCode::Char('j') => {
+                            app.scroll_help_down();
+                            continue;
+                        }
+                        KeyCode::Esc | KeyCode::Char('?') => {
+                            app.show_help = false;
+                            continue;
+                        }
+                        _ => {}
+                    }
+                }
+
+                match key.code {
+                    KeyCode::Char('q') => {
+                        // Exit and clean up
+                        break Ok(());
+                    }
+                    KeyCode::Esc => {
+                        if app.job_selection_mode {
+                            app.exit_job_selection_mode();
+                        } else if app.detailed_view {
+                            app.detailed_view = false;
+                        } else if app.show_help {
+                            app.show_help = false;
+                        } else {
+                            // Exit and clean up
+                            break Ok(());
+                        }
+                    }
+                    KeyCode::Tab => {
+                        // Inside the Step Inspector, Tab cycles inspector
+                        // sub-tabs (Output / Env / Files / Matrix / Timeline);
+                        // elsewhere it cycles top-level tabs.
+                        if app.selected_tab == TAB_EXECUTION && app.detailed_view {
+                            app.step_inspector_tab = (app.step_inspector_tab + 1) % 5;
+                        } else if app.selected_tab == TAB_TRIGGER {
+                            // In the Trigger tab Tab cycles inputs/fields.
+                            app.trigger_tab_next_field();
+                        } else {
+                            app.switch_tab((app.selected_tab + 1) % TAB_COUNT);
+                        }
+                    }
+                    KeyCode::BackTab => {
+                        if app.selected_tab == TAB_EXECUTION && app.detailed_view {
+                            app.step_inspector_tab = (app.step_inspector_tab + 4) % 5;
+                        } else if app.selected_tab == TAB_TRIGGER {
+                            app.trigger_tab_prev_field();
+                        } else {
+                            app.switch_tab((app.selected_tab + TAB_COUNT - 1) % TAB_COUNT);
+                        }
+                    }
+                    KeyCode::Char('1') | KeyCode::Char('w') => app.switch_tab(TAB_WORKFLOWS),
+                    KeyCode::Char('2') | KeyCode::Char('x') => app.switch_tab(TAB_EXECUTION),
+                    KeyCode::Char('3') => app.switch_tab(TAB_DAG),
+                    KeyCode::Char('4') | KeyCode::Char('l') => app.switch_tab(TAB_LOGS),
+                    KeyCode::Char('5') => app.switch_tab(TAB_TRIGGER),
+                    KeyCode::Char('6') => app.switch_tab(TAB_SECRETS),
+                    KeyCode::Char('7') | KeyCode::Char('h') => app.switch_tab(TAB_HELP),
+                    KeyCode::Char(',') => {
+                        // `,` toggles the Tweaks overlay anywhere (global).
+                        // Chosen because it never conflicts with our single-
+                        // letter tab shortcuts or with the log-search input
+                        // mode (which only consumes printable chars when
+                        // `log_search_active` is true, which we already
+                        // handled above with a `continue`).
+                        app.tweaks_open = !app.tweaks_open;
+                    }
+                    KeyCode::Up | KeyCode::Char('k') => match app.selected_tab {
+                        TAB_WORKFLOWS => {
+                            if app.job_selection_mode {
+                                app.previous_available_job();
+                            } else {
+                                app.previous_workflow();
+                            }
+                        }
+                        TAB_EXECUTION => {
+                            if app.detailed_view {
+                                app.previous_step();
+                            } else {
+                                app.previous_job();
+                            }
+                        }
+                        TAB_LOGS => {
+                            if !app.log_search_matches.is_empty() {
+                                app.previous_search_match();
+                            } else {
+                                app.scroll_logs_up();
+                            }
+                        }
+                        TAB_TRIGGER => app.trigger_tab_prev_workflow(),
+                        TAB_SECRETS => app.secrets_tab_prev(),
+                        TAB_HELP => app.scroll_help_up(),
+                        _ => {}
+                    },
+                    KeyCode::Down | KeyCode::Char('j') => match app.selected_tab {
+                        TAB_WORKFLOWS => {
+                            if app.job_selection_mode {
+                                app.next_available_job();
+                            } else {
+                                app.next_workflow();
+                            }
+                        }
+                        TAB_EXECUTION => {
+                            if app.detailed_view {
+                                app.next_step();
+                            } else {
+                                app.next_job();
+                            }
+                        }
+                        TAB_LOGS => {
+                            if !app.log_search_matches.is_empty() {
+                                app.next_search_match();
+                            } else {
+                                app.scroll_logs_down();
+                            }
+                        }
+                        TAB_TRIGGER => app.trigger_tab_next_workflow(),
+                        TAB_SECRETS => app.secrets_tab_next(),
+                        TAB_HELP => app.scroll_help_down(),
+                        _ => {}
+                    },
+                    KeyCode::Char(' ') => {
+                        if app.selected_tab == TAB_WORKFLOWS
+                            && !app.running
+                            && !app.job_selection_mode
+                        {
+                            app.toggle_selected();
+                        }
+                    }
+                    KeyCode::Enter => {
+                        match app.selected_tab {
+                            TAB_WORKFLOWS => {
+                                if !app.running {
+                                    if app.job_selection_mode {
+                                        // In job selection mode, run the selected job
+                                        if app.selected_job_index < app.available_jobs.len() {
+                                            let job_name =
+                                                app.available_jobs[app.selected_job_index].clone();
+                                            app.run_from_job_selection(Some(job_name));
+                                        }
+                                    } else {
+                                        // Run the selected workflow directly
+                                        if let Some(idx) = app.workflow_list_state.selected() {
+                                            if idx < app.workflows.len() {
+                                                app.workflows[idx].selected = true;
+                                                app.queue_selected_for_execution();
+                                                app.start_execution();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            TAB_EXECUTION => {
+                                // In execution tab, Enter shows job details
+                                app.toggle_detailed_view();
+                            }
+                            TAB_TRIGGER => {
+                                // Trigger tab: Enter on a non-editing row
+                                // begins editing it (value first, then Tab
+                                // to swap); when already editing, Enter
+                                // commits the edit back to the row.
+                                app.trigger_tab_enter();
+                            }
+                            _ => {}
+                        }
+                    }
+                    KeyCode::Char('r') => {
+                        // Some terminals deliver Shift+r as lowercase
+                        // `r` plus a SHIFT modifier instead of
+                        // uppercase `R` (see the `R` arm below).
+                        // Route both encodings to the reset path so
+                        // users don't have to reason about what their
+                        // terminal emits.
+                        if key.modifiers.contains(KeyModifiers::SHIFT) {
+                            if !app.running {
+                                app.reset_workflow_status();
+                                terminal.draw(|f| {
+                                    render_ui(f, app);
+                                })?;
+                            }
+                        } else if !app.running
+                            && !app.job_selection_mode
+                            && app.selected_tab == TAB_WORKFLOWS
+                        {
+                            // Plain `r` queues the selected workflow
+                            // for execution — a Workflows-tab action.
+                            // Gate on the active tab so `r` typed on
+                            // the DAG/Trigger/Secrets tabs doesn't
+                            // silently mutate queue state behind the
+                            // user's back.
+                            app.queue_selected_for_execution();
+                            app.start_execution();
+                        }
+                    }
+                    KeyCode::Char('a') => {
+                        if !app.running {
+                            if app.job_selection_mode {
+                                // In job selection mode, run all jobs
+                                app.run_from_job_selection(None);
+                            } else if app.selected_tab == TAB_WORKFLOWS {
+                                // Select-all is a Workflows-tab action.
+                                // Without this tab gate, pressing `a`
+                                // on DAG/Trigger/Secrets (outside edit
+                                // mode) would silently flip every
+                                // workflow to `selected` behind the
+                                // user's back.
+                                for workflow in &mut app.workflows {
+                                    workflow.selected = true;
+                                }
+                            }
+                        }
+                    }
+                    KeyCode::Char('J') => {
+                        // Enter job selection mode for selected workflow
+                        if !app.running
+                            && app.selected_tab == TAB_WORKFLOWS
+                            && !app.job_selection_mode
+                        {
+                            app.enter_job_selection_mode();
+                        }
+                    }
+                    KeyCode::Char('e') => {
+                        if !app.running {
+                            app.toggle_emulation_mode();
+                        }
+                    }
+                    KeyCode::Char('v') => {
+                        if !app.running {
+                            app.toggle_validation_mode();
+                        }
+                    }
+                    KeyCode::Char('d') => {
+                        if !app.running && app.selected_tab == TAB_WORKFLOWS {
+                            app.toggle_diff_filter();
+                        }
+                    }
+                    KeyCode::Char('D') => {
+                        // Shift+D cycles through the diff-filter event
+                        // name (push → pull_request → workflow_dispatch →
+                        // schedule → release → push). Previously the
+                        // event name was a hardcoded "push" and the TUI
+                        // silently reported "0 triggered" for any
+                        // workflow gated on a non-push event — exactly
+                        // the "stop lying about which workflows would
+                        // run" failure mode the commit history fought.
+                        if !app.running && app.selected_tab == TAB_WORKFLOWS {
+                            app.cycle_diff_filter_event();
+                        }
+                    }
+                    KeyCode::Char('n') => {
+                        if app.selected_tab == TAB_LOGS && !app.log_search_query.is_empty() {
+                            app.next_search_match();
+                        } else if app.selected_tab == TAB_WORKFLOWS && !app.running {
+                            // Deselect all workflows
+                            for workflow in &mut app.workflows {
+                                workflow.selected = false;
+                            }
+                        }
+                    }
+                    KeyCode::Char('R') => {
+                        if !app.running {
+                            app.reset_workflow_status();
+                            terminal.draw(|f| {
+                                render_ui(f, app);
+                            })?;
+                        } else {
+                            app.add_timestamped_log(
+                                "Cannot reset workflow while another operation is running",
+                            );
+                        }
+                    }
+                    KeyCode::Char('?') => {
+                        // Toggle help overlay
+                        app.show_help = !app.show_help;
+                    }
+                    KeyCode::Char('t') => {
+                        // Only trigger workflow if not already running and we're in the workflows tab
+                        if !app.running && app.selected_tab == TAB_WORKFLOWS {
+                            if let Some(selected_idx) = app.workflow_list_state.selected() {
+                                if selected_idx < app.workflows.len() {
+                                    let workflow = &app.workflows[selected_idx];
+                                    if workflow.status == WorkflowStatus::NotStarted {
+                                        app.trigger_selected_workflow();
+                                    } else if workflow.status == WorkflowStatus::Running {
+                                        app.logs.push(format!(
+                                            "Workflow '{}' is already running",
+                                            workflow.name
+                                        ));
+                                        wrkflw_logging::warning(&format!(
+                                            "Workflow '{}' is already running",
+                                            workflow.name
+                                        ));
+                                    } else {
+                                        // First, get all the data we need from the workflow
+                                        let workflow_name = workflow.name.clone();
+                                        let status_text = match workflow.status {
+                                            WorkflowStatus::Success => "Success",
+                                            WorkflowStatus::Failed => "Failed",
+                                            WorkflowStatus::Skipped => "Skipped",
+                                            _ => "current",
+                                        };
+                                        let needs_reset_hint = workflow.status
+                                            == WorkflowStatus::Success
+                                            || workflow.status == WorkflowStatus::Failed
+                                            || workflow.status == WorkflowStatus::Skipped;
+
+                                        // Now set the status message (mutable borrow)
+                                        app.set_error_message(format!(
+                                            "Cannot trigger workflow '{}' in {} state. Press Shift+R to reset.",
+                                            workflow_name,
+                                            status_text
+                                        ));
+
+                                        // Add log entries
+                                        app.logs.push(format!(
+                                            "Cannot trigger workflow '{}' in {} state",
+                                            workflow_name, status_text
+                                        ));
+
+                                        // Add hint about using reset
+                                        if needs_reset_hint {
+                                            let timestamp =
+                                                Local::now().format("%H:%M:%S").to_string();
+                                            app.logs.push(format!(
+                                                "[{}] Hint: Press 'Shift+R' to reset the workflow status and allow triggering",
+                                                timestamp
+                                            ));
+                                        }
+
+                                        wrkflw_logging::warning(&format!(
+                                            "Cannot trigger workflow in {} state",
+                                            status_text
+                                        ));
+                                    }
+                                }
+                            } else {
+                                app.logs.push("No workflow selected to trigger".to_string());
+                                wrkflw_logging::warning("No workflow selected to trigger");
+                            }
+                        } else if app.running {
+                            app.logs.push(
+                                "Cannot trigger workflow while another operation is in progress"
+                                    .to_string(),
+                            );
+                            wrkflw_logging::warning(
+                                "Cannot trigger workflow while another operation is in progress",
+                            );
+                        } else if app.selected_tab != TAB_WORKFLOWS {
+                            app.logs
+                                .push("Switch to Workflows tab to trigger a workflow".to_string());
+                            wrkflw_logging::warning(
+                                "Switch to Workflows tab to trigger a workflow",
+                            );
+                            // For better UX, we could also automatically switch to the Workflows tab here
+                            app.switch_tab(TAB_WORKFLOWS);
+                        }
+                    }
+                    KeyCode::Char('s') => {
+                        if app.selected_tab == TAB_LOGS {
+                            app.toggle_log_search();
+                        }
+                    }
+                    KeyCode::Char('f') => {
+                        if app.selected_tab == TAB_LOGS {
+                            app.toggle_log_filter();
+                        }
+                    }
+                    KeyCode::Char('c') => {
+                        if app.selected_tab == TAB_LOGS {
+                            app.clear_log_search_and_filter();
+                        } else if app.selected_tab == TAB_TRIGGER {
+                            // Trigger tab: copy curl preview into the
+                            // status bar so the user can scrape it from
+                            // their scrollback without shelling out of
+                            // the TUI. No clipboard integration yet —
+                            // terminals vary too widely; a log line is
+                            // honest.
+                            app.trigger_tab_copy_curl();
+                        }
+                    }
+                    KeyCode::Char('g') => {
+                        if app.selected_tab == TAB_DAG {
+                            // Toggle DAG tab between graph and list view —
+                            // matches the design's `g` shortcut on
+                            // screen 4.
+                            app.dag_list_view = !app.dag_list_view;
+                        }
+                    }
+                    KeyCode::Char('p') => {
+                        if app.selected_tab == TAB_TRIGGER {
+                            // Trigger tab: flip github ↔ gitlab. Also
+                            // rebinds the branch default because each
+                            // platform has its own `get_repo_info`.
+                            app.trigger_tab_toggle_platform();
+                        }
+                    }
+                    KeyCode::Char('+') | KeyCode::Char('=') => {
+                        if app.selected_tab == TAB_TRIGGER {
+                            app.trigger_tab_add_input();
+                        }
+                    }
+                    KeyCode::Char('b') => {
+                        // Trigger tab: focus the Branch / ref row so
+                        // the user can type a non-default branch. The
+                        // previous revision rendered the field as
+                        // editable but provided no keystroke that
+                        // reached it.
+                        if app.selected_tab == TAB_TRIGGER {
+                            app.trigger_tab_edit_branch();
+                        }
+                    }
+                    KeyCode::Char(c) => {
+                        if app.selected_tab == TAB_LOGS && app.log_search_active {
+                            app.handle_log_search_input(KeyCode::Char(c));
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+}

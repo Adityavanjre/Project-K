@@ -1,0 +1,43 @@
+:root {
+    /* Neural Color Palette */
+    --k-bg-deep: #08090a;
+    --k-bg-card: rgba(17, 18, 20, 0.8);
+    --k-accent: #38bdf8; /* Cyan */
+    --k-accent-glow: rgba(56, 189, 248, 0.2);
+    --k-critical: #fb7185; /* Rose */
+    --k-success: #34d399; /* Emerald */
+    --k-warning: #fbbf24; /* Amber */
+    --k-dim: #334155;
+    
+    /* Spacing & Borders */
+    --k-radius: 6px;
+    --k-border: 1px solid rgba(255, 255, 255, 0.08);
+    --k-border-active: 1px solid rgba(56, 189, 248, 0.4);
+    
+    /* Typography */
+    --k-font-display: 'Space Grotesk', sans-serif;
+    --k-font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Base Component Styles for Modules */
+.k-module-card {
+    background: var(--k-bg-card);
+    border: var(--k-border);
+    border-radius: var(--k-radius);
+    padding: 1rem;
+    backdrop-filter: blur(10px);
+}
+
+.k-input {
+    background: var(--k-bg-deep);
+    border: var(--k-border);
+    color: white;
+    font-family: var(--k-font-mono);
+    padding: 8px;
+    border-radius: 4px;
+    outline: none;
+}
+
+.k-input:focus {
+    border-color: var(--k-accent);
+}

@@ -1,0 +1,195 @@
+<div align="center">
+  <img src="docs/_static/logo.png" alt="Sean Parrot" width="300">
+  <h1><b>Parrot</b></h1>
+</div>
+
+<p align="center">
+    <a href="https://github.com/nvlabs/parrot/issues" alt="contributions welcome">
+        <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" /></a>
+    <a href="https://en.cppreference.com/w/cpp/compiler_support/11">
+        <img src="https://img.shields.io/badge/C++%20-20-ff69b4.svg"/></a>
+    <a href="https://developer.nvidia.com/cuda-toolkit" alt="CUDA 13.0+">
+        <img src="https://img.shields.io/badge/CUDA-13.0-ff69b4.svg"/></a>
+    <a href="https://nvlabs.github.io/parrot/" alt="Documentation">
+        <img src="https://img.shields.io/badge/docs-latest-blue.svg" /></a>
+    <a href="https://github.com/NVLabs/parrot/actions/workflows/unit-tests.yml" alt="Unit Tests">
+        <img src="https://github.com/NVLabs/parrot/actions/workflows/unit-tests.yml/badge.svg" /></a>
+</p>
+
+**Parrot** is an array fusion GPU library built on NVIDIA's [CCCL libaries](https://nvidia.github.io/cccl/unstable/cpp.html#cccl-cpp-libraries) (Thrust/CUB). It provides efficient GPU-accelerated operations with lazy evaluation semantics, allowing for chaining of operations without unnecessary intermediate materializations.
+
+## ✨ Features
+
+- **Implicit Fusion** - Implicit fusion of operations
+- **GPU Acceleration** - Built on NVIDIA's [CCCL libaries](https://nvidia.github.io/cccl/unstable/cpp.html#cccl-cpp-libraries) (Thrust/CUB) for high performance
+- **Chainable API** - Clean, expressive syntax for complex operations
+- **Header-Only** - Simple integration with `#include "parrot.hpp"`
+
+## 🚀 Quick Start
+
+```cpp
+#include "parrot.hpp"
+
+int main() {
+    // Create arrays
+    auto A = parrot::array({3, 4, 0, 8, 2});
+    auto B = parrot::array({6, 7, 2, 1, 8});
+    auto C = parrot::array({2, 5, 7, 4, 3});
+    
+    // Chain operations
+    (B * C + A).print();  // Output: 15 39 14 12 26
+}
+```
+
+### Advanced Example: Row-wise Softmax
+
+```cpp
+#include "parrot.hpp"
+
+using namespace parrot::literals;
+
+auto softmax(auto matrix) {
+    auto cols = matrix.ncols();
+    auto z    = matrix - matrix.maxr(2_ic).replicate(cols);
+    auto num  = z.exp();
+    auto den  = num.sum(2_ic);
+    return num / den.replicate(cols);
+}
+
+int main() {
+    auto matrix = parrot::range(6).as<float>().reshape({2, 3});
+    softmax(matrix).print();
+}
+```
+
+## 🏗️ Building
+
+### Prerequisites
+
+- CMake (3.10+)
+- C++ compiler with C++20 support
+- NVIDIA CUDA Toolkit 13.0 or later
+- NVIDIA GPU with compute capability 7.0+
+
+### Build Steps
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd parrot
+
+# Create build directory
+mkdir build && cd build
+
+# Configure and build
+cmake ..
+cmake --build . -j$(nproc)
+
+# Run tests
+ctest
+```
+
+For detailed build instructions, see [`BUILDING.md`](BUILDING.md).
+
+## 📊 Comparisons
+
+Parrot provides significant code reduction compared to other CUDA libraries:
+
+| Library    | Code Reduction     |
+| ---------- | ------------------ |
+| **Thrust** | **~10x less code** |
+
+See detailed comparisons in our [documentation](https://nvlabs.github.io/parrot/).
+
+## 📚 Documentation
+
+- **[Full Documentation](https://nvlabs.github.io/parrot/)** - Complete API reference and examples
+- **[Examples](https://nvlabs.github.io/parrot/examples.html)** - Standalone Parrot examples
+- **[vs Thrust](https://nvlabs.github.io/parrot/parrot_v_thrust.html)** - Side-by-side comparisons with Thrust
+
+
+## 🧪 Examples
+
+The [`examples/`](examples/) directory contains:
+
+- **`getting_started/`** - Simple examples to get started
+- **`thrust/`** - Parrot implementations of Thrust examples  
+
+
+## 🛠️ Development
+
+### Running Tests
+
+```bash
+# All tests
+ctest
+
+# Individual test categories
+./test_basic      # Basic operations
+./test_sorting    # Sorting algorithms
+./test_math       # Mathematical operations
+./test_reductions # Reduction operations
+```
+
+### Code Quality
+
+```bash
+# Run clang-tidy
+./scripts/run-clang-tidy.sh
+
+# Auto-fix issues
+./scripts/run-clang-tidy.sh --fix
+```
+
+### Building Documentation
+
+```bash
+# Install dependencies
+uv venv
+uv pip install -r requirements.txt
+
+# Build docs
+cd scripts && ./build-docs.sh
+```
+
+## 📁 Repository Structure
+
+```
+parrot/
+├── parrot.hpp              # Main header (single-file library)
+├── thrustx.hpp             # Extended Thrust utilities
+├── examples/               # Example code
+│   ├── getting_started/    # Simple getting-started examples
+│   ├── thrust/             # Parrot versions of Thrust examples
+│   ├── real_world/         # Parrot versions of examples from open source projects
+├── tests/                  # Unit tests
+├── docs/                   # Documentation source
+├── scripts/                # Development scripts
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) guide for details on:
+
+- Setting up the development environment  
+- Code standards and review process
+- Running tests and code quality checks
+- Building documentation
+
+All contributions must comply with the Apache License 2.0.
+
+## 📄 License
+
+This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
+
+### Third-Party Licenses
+
+This project includes third-party software components. See [THIRD_PARTY_LICENSES](THIRD_PARTY_LICENSES) for complete license information and attributions.
+
+## 🙏 Acknowledgments
+
+Built on top of [NVIDIA Thrust](https://nvidia.github.io/cccl/thrust/index.html) and [CUDA](https://developer.nvidia.com/cuda-zone).
+
+---
+
+**[📖 Read the Full Documentation →](https://nvlabs.github.io/parrot/)**

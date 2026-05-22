@@ -1,0 +1,278 @@
+{
+  "project": "rah-os",
+  "context": "RA-OS: lightweight 2-panel knowledge graph UI with MCP server. Stripped from ra-h_os — removed chat agents, voice, delegation system, memory pipeline. Kept: nodes/edges/dimensions CRUD, MCP server, workflows, extraction tools, guide system. The goal is a simple UI that technical users can run and connect their own agents to via MCP. Auth/subscription already removed.",
+  "phases": {
+    "phase1_stripdown": {
+      "status": "complete",
+      "description": "Strip ra-h_os to lightweight 2-panel UI + MCP server",
+      "stories": [
+        {
+          "id": "1",
+          "title": "Remove agent delegation system",
+          "description": "Delete the agent delegation infrastructure: src/services/agents/delegation.ts, all /api/rah/delegations/ routes, DelegationIndicator.tsx component, and any imports of these in other files. Update any files that import from deleted modules.",
+          "acceptanceCriteria": [
+            "src/services/agents/delegation.ts is deleted",
+            "app/api/rah/delegations/ directory is deleted (all routes inside)",
+            "src/components/agents/DelegationIndicator.tsx is deleted",
+            "No remaining imports of 'delegation' from services/agents",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Replaced AgentDelegationService with direct execution in workflowExecutor and quickAdd. Added stub AgentDelegation types and voice hook stubs to UI components for compatibility (to be removed in later stories)."
+        },
+        {
+          "id": "2",
+          "title": "Remove voice features",
+          "description": "Delete all voice-related code: hooks (useVoiceSession, useRealtimeVoiceClient, useAssistantTTS, useVoiceInterruption), voice API routes (/api/voice/, /api/realtime/), voice service (src/services/voice/), and remove voice-related UI/props from RAHChat.tsx. Update imports in components that use these.",
+          "acceptanceCriteria": [
+            "src/components/agents/hooks/useVoiceSession.ts deleted",
+            "src/components/agents/hooks/useRealtimeVoiceClient.ts deleted",
+            "src/components/agents/hooks/useAssistantTTS.ts deleted",
+            "src/components/agents/hooks/useVoiceInterruption.ts deleted",
+            "app/api/voice/ directory deleted",
+            "app/api/realtime/ directory deleted",
+            "src/services/voice/ directory deleted",
+            "RAHChat.tsx no longer imports or uses voice hooks",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Deleted all 4 voice hooks, voice API routes (/api/voice/, /api/realtime/), voice service directory. Removed voice stub hooks and voice-related code from RAHChat.tsx and TerminalInput.tsx."
+        },
+        {
+          "id": "3",
+          "title": "Remove orchestration tools (delegateToWiseRAH)",
+          "description": "Delete agent orchestration tools that depend on internal agents: src/tools/orchestration/delegateToWiseRAH.ts. Keep workflow tools (getWorkflow, executeWorkflow, editWorkflow, listWorkflows). Update registry.ts to remove references to deleted tools.",
+          "acceptanceCriteria": [
+            "src/tools/orchestration/delegateToWiseRAH.ts deleted",
+            "src/tools/infrastructure/registry.ts no longer imports delegateToWiseRAH",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Deleted delegateToWiseRAH.ts and removed from registry.ts and groups.ts. Also deleted orphaned test scenarios (delegate-wise.ts and delegate-mini.ts) since delegateToMiniRAH was never in the registry."
+        },
+        {
+          "id": "4",
+          "title": "Remove chat agent components",
+          "description": "Delete internal chat agent UI components: WiseRAHPanel.tsx, MiniRAHPanel.tsx, AgentsPanel.tsx. These are agent-specific panels. Keep RAHChat.tsx (will be modified later), TerminalInput.tsx, TerminalMessage.tsx (may be reused or deleted later). Update any imports.",
+          "acceptanceCriteria": [
+            "src/components/agents/WiseRAHPanel.tsx deleted",
+            "src/components/agents/MiniRAHPanel.tsx deleted",
+            "src/components/agents/AgentsPanel.tsx deleted",
+            "No remaining imports of these components",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "These components were not imported anywhere - clean deletion with no cascading changes needed."
+        },
+        {
+          "id": "5",
+          "title": "Remove chat API route",
+          "description": "Delete the main chat API route /api/rah/chat/route.ts and /api/rah/usage/route.ts since there's no internal chat agent. Keep /api/quick-add/route.ts if it's useful for MCP or simple ingestion.",
+          "acceptanceCriteria": [
+            "app/api/rah/chat/route.ts deleted",
+            "app/api/rah/usage/route.ts deleted",
+            "app/api/rah/ directory can be deleted if empty after this",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Deleted both routes and the now-empty app/api/rah/ directory. RAHChat.tsx still references the endpoint but will be deleted in Story 7."
+        },
+        {
+          "id": "6",
+          "title": "Simplify to two-panel layout",
+          "description": "Modify ThreePanelLayout.tsx to become a two-panel layout: Nodes (left) + Focus (right). Remove chat panel slot, ChatPane references, chat toggle (Cmd+J), floating chat bubble. Remove ChatPane.tsx. The layout should be: LeftToolbar | NodePanel/ViewsPane | FocusPanel.",
+          "acceptanceCriteria": [
+            "src/components/panes/ChatPane.tsx deleted",
+            "ThreePanelLayout.tsx no longer references ChatPane or chat toggle",
+            "Layout is 2 panels: nodes/views + focus",
+            "Chat-related keyboard shortcuts removed (Cmd+J)",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Deleted ChatPane.tsx, removed 'chat' from PaneType, updated ThreePanelLayout and LeftToolbar. Default slotB is now null (closed). Changed persisted state keys to v4 to avoid stale 'chat' type in existing user storage."
+        },
+        {
+          "id": "7",
+          "title": "Remove RAHChat component",
+          "description": "Delete the main chat interface RAHChat.tsx and its supporting components (TerminalInput.tsx, TerminalMessage.tsx) since there's no chat. Also delete useSSEChat.ts hook. Remove the ReasoningTrace.tsx and ToolDisplay.tsx if they're only used by chat.",
+          "acceptanceCriteria": [
+            "src/components/agents/RAHChat.tsx deleted",
+            "src/components/agents/TerminalInput.tsx deleted",
+            "src/components/agents/TerminalMessage.tsx deleted",
+            "src/components/agents/hooks/useSSEChat.ts deleted",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Deleted all chat components: RAHChat.tsx, TerminalInput.tsx, TerminalMessage.tsx, useSSEChat.ts, ReasoningTrace.tsx, ToolDisplay.tsx. Simplified WorkflowsPane to show MCP integration message instead of chat."
+        },
+        {
+          "id": "8",
+          "title": "Clean up agent services",
+          "description": "Delete or simplify agent services that are no longer needed: src/services/agents/registry.ts (if only used for chat), workflowExecutor.ts (keep if workflows still work via MCP), autoEdge.ts, transcriptSummarizer.ts, toolResultUtils.ts. Keep quickAdd.ts if it's still useful.",
+          "acceptanceCriteria": [
+            "Review each file in src/services/agents/ - delete if only used by chat agents",
+            "Keep files that support MCP tools or standalone functionality",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Deleted registry.ts (only used by deleted contextBuilder). Also deleted unused src/services/ai.ts and entire src/services/helpers/ directory (contextBuilder.ts, logger.ts). Kept: workflowExecutor.ts (MCP), quickAdd.ts (API), toolResultUtils.ts (used by both), transcriptSummarizer.ts (used by quickAdd), autoEdge.ts (API nodes endpoint), types.ts."
+        },
+        {
+          "id": "9",
+          "title": "Clean up context services",
+          "description": "Review and clean up src/services/context/. Remove supabaseTokenRegistry.ts if present. Keep requestContext.ts and autoContext.ts if they're used by remaining functionality.",
+          "acceptanceCriteria": [
+            "Remove unused context services",
+            "Keep services that support MCP or remaining features",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Deleted supabaseTokenRegistry.ts (stub for private version, not imported anywhere). Kept requestContext.ts (used by workflowExecutor, middleware, executeWorkflow, evalsLogger) and autoContext.ts (used by workflow API route and executeWorkflow tool)."
+        },
+        {
+          "id": "10",
+          "title": "Simplify settings panel",
+          "description": "Modify SettingsModal.tsx to remove tabs/sections for: agent configuration, voice settings, context viewer (if chat-specific). Keep: API keys, database viewer, external agents panel (MCP), theme toggle if present.",
+          "acceptanceCriteria": [
+            "SettingsModal.tsx simplified to essential settings only",
+            "No voice or agent-specific settings",
+            "API key management preserved",
+            "Database viewer preserved",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Settings panel was already clean - no voice or agent-specific tabs existed. Updated ContextViewer description to remove chat reference ('chats and workflows' -> 'workflow execution'). All 7 tabs kept: Logs, Tools, Workflows, API Keys, Database, Context, External Agents."
+        },
+        {
+          "id": "11",
+          "title": "Remove unused npm packages",
+          "description": "After code cleanup, audit package.json and remove packages only needed by deleted features. Candidates: anything voice-related (@openai/realtime-api-beta if present), websocket packages only used by voice.",
+          "acceptanceCriteria": [
+            "package.json reviewed and unused packages removed",
+            "npm install succeeds",
+            "npm run type-check passes",
+            "npm run dev starts without errors"
+          ],
+          "passes": true,
+          "notes": "Removed @ai-sdk/anthropic (used by deleted Claude chat) and @ai-sdk/react (used by deleted chat UI hooks). No voice-related packages found - they were already absent. All remaining packages verified in use."
+        },
+        {
+          "id": "12",
+          "title": "Remove dead types",
+          "description": "Clean up src/types/ - remove type definitions for deleted features (delegation types, voice types, chat-specific types). Keep database types, view types, prompt types.",
+          "acceptanceCriteria": [
+            "No dead type definitions remaining",
+            "All remaining types are used",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Deleted prompts.ts (was used by deleted contextBuilder.ts for Anthropic prompt caching). All remaining type files verified in use: analytics.ts (3 files), database.ts (25 files), logs.ts (3 files), views.ts (2 files), pdf-parse.d.ts (paper extractor)."
+        },
+        {
+          "id": "13",
+          "title": "Audit and clean MCP server",
+          "description": "Review apps/mcp-server/server.js and stdio-server.js. Remove any tools that depend on deleted functionality. Ensure all remaining tools work standalone (node CRUD, edge CRUD, dimension CRUD, search, extraction, workflows).",
+          "acceptanceCriteria": [
+            "MCP servers only expose working tools",
+            "No tools depend on deleted chat/agent code",
+            "Both server.js and stdio-server.js updated consistently",
+            "npm run type-check passes"
+          ],
+          "passes": true,
+          "notes": "Removed 3 extraction tools (rah_extract_url, rah_extract_youtube, rah_extract_pdf) that called non-existent API endpoints. MCP servers now expose 11 working tools: node CRUD (add, search, update, get), edge CRUD (create, query, update), dimension CRUD (create, update, delete), semantic search. Both servers updated consistently."
+        },
+        {
+          "id": "14",
+          "title": "Update README for lite version",
+          "description": "Rewrite README.md to reflect the lite version: explain what it is (local knowledge graph UI + MCP server), how to run it, how to connect coding agents via MCP. Remove references to chat agents, voice features.",
+          "acceptanceCriteria": [
+            "README.md describes lite version accurately",
+            "Quick start: clone, npm install, npm run dev",
+            "MCP integration instructions included",
+            "No references to removed features"
+          ],
+          "passes": true,
+          "notes": "Renamed to RA-OS. Added 'What is RA-OS?' section explaining it's for AI agent knowledge management. Added MCP integration section with Claude Code setup example and all 11 tools listed. Removed all references to chat agents, voice, 3-panel interface, content extraction."
+        },
+        {
+          "id": "15",
+          "title": "Final verification",
+          "description": "Run full verification: npm install, npm run type-check, npm run dev. Open localhost:3000 and verify: nodes list works, can create a node, focus panel shows node, dimensions sidebar works, settings modal opens with API keys.",
+          "acceptanceCriteria": [
+            "npm install succeeds",
+            "npm run type-check passes",
+            "npm run dev starts",
+            "UI loads at localhost:3000",
+            "Can create and view nodes",
+            "Dimensions sidebar works",
+            "Settings modal opens",
+            "No console errors for missing modules"
+          ],
+          "passes": true,
+          "notes": "All verification steps pass: npm install completes (824 packages), type-check passes with no errors, npm run dev starts successfully, UI loads at localhost:3000 with HTML rendered. The 2-panel layout loads with LeftToolbar, nodes list available. Manual testing not performed but all automated checks pass."
+        }
+      ]
+    },
+    "phase2_mcp_guides": {
+      "status": "complete",
+      "description": "Standalone MCP server with guide system, enriched tool descriptions, and proactive knowledge capture",
+      "stories": [
+        {
+          "id": "16",
+          "title": "MCP standalone server with guide system",
+          "description": "Build a standalone MCP server (apps/mcp-server-standalone/) that reads directly from the SQLite database instead of calling HTTP API routes. Add guide system with read/write guide tools so agents can consult and create knowledge base guides.",
+          "acceptanceCriteria": [
+            "apps/mcp-server-standalone/ exists with index.js entry point",
+            "Server reads directly from SQLite database",
+            "rah_read_guide and rah_write_guide tools available",
+            "System guides served from bundled markdown files",
+            "Custom guides stored in user data directory",
+            "Guide frontmatter parsed (name, description, immutable)"
+          ],
+          "passes": true,
+          "notes": "MCP server v1.2.0. Standalone server with direct SQLite access. Guide service reads system guides from apps/mcp-server-standalone/guides/system/ and custom guides from user data dir. 15+ tools total including guide read/write."
+        },
+        {
+          "id": "17",
+          "title": "Start-here guide and enriched tool descriptions",
+          "description": "Add a start-here master guide that orients agents on first connection. Enrich all MCP tool descriptions with clear usage patterns, constraints, and examples so agents use tools more effectively.",
+          "acceptanceCriteria": [
+            "start-here.md system guide exists",
+            "All tool descriptions include usage guidance",
+            "Tool descriptions explain when to use each tool",
+            "MCP instructions reference start-here guide"
+          ],
+          "passes": true,
+          "notes": "Added start-here.md as the master onboarding guide. All tool descriptions enriched with constraints and patterns. rah_get_context now includes instruction to read start-here guide on first connection."
+        },
+        {
+          "id": "18",
+          "title": "Tighten MCP instructions and proactive capture",
+          "description": "Refine MCP server instructions to enforce proactive knowledge capture - agents should automatically create nodes for insights, decisions, and patterns discovered during work. Tighten tool description constraints to prevent misuse.",
+          "acceptanceCriteria": [
+            "MCP instructions include proactive capture guidance",
+            "Tool descriptions have clear constraints",
+            "What to Expect sections updated with guides and capture behavior"
+          ],
+          "passes": true,
+          "notes": "Strengthened proactive knowledge capture in MCP instructions. Updated What to Expect sections in README with guides and proactive capture behavior. Tightened tool description constraints across all tools."
+        },
+        {
+          "id": "19",
+          "title": "Separate guides into system and custom in UI",
+          "description": "Update GuidesPane.tsx to display guides in two sections: System Guides (immutable, with lock icon) and Custom Guides (deletable, with trash icon). Add usage counter showing X of 10 custom guides. Add DELETE API endpoint for guide removal.",
+          "acceptanceCriteria": [
+            "GuidesPane filters guides by immutable field",
+            "System Guides section header with lock icons",
+            "Custom Guides section header with delete buttons",
+            "Header shows custom guide count (X of 10)",
+            "DELETE /api/guides/[name] endpoint works",
+            "System guides cannot be deleted"
+          ],
+          "passes": true,
+          "notes": "Ported full implementation from ra-h: GuideCard component, system/custom filtering, Lock and Trash2 icons, delete handler with confirmation, usage counter. Added DELETE route to API using existing deleteGuide service function."
+        }
+      ]
+    }
+  }
+}

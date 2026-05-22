@@ -1,0 +1,47 @@
+{
+  "name": "easy-vibe",
+  "version": "1.0.0",
+  "description": "Easy-Vibe 中文实战课 - 零基础学会用 AI 编程",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "npm run sitemap && vitepress build docs",
+    "build:force": "npm run sitemap && vitepress build docs --force",
+    "preview": "vitepress preview docs",
+    "format": "prettier --write .",
+    "verify": "bash scripts/verify.sh",
+    "lint": "eslint docs/.vitepress/theme",
+    "lint:fix": "eslint docs/.vitepress/theme --fix",
+    "prepare": "husky",
+    "sitemap": "node scripts/generate-sitemap.mjs"
+  },
+  "keywords": [
+    "easy-vibe",
+    "ai",
+    "tutorial",
+    "vitepress"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "CC-BY-NC-SA-4.0",
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-vue": "^9.30.0",
+    "husky": "^9.1.7",
+    "markdown-it-katex": "^2.0.3",
+    "prettier": "^3.7.4",
+    "vue-eslint-parser": "^9.4.3"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "claude": "^0.1.1",
+    "element-plus": "^2.13.1",
+    "mermaid": "^11.13.0",
+    "typeit": "^8.8.7",
+    "viewerjs": "^1.11.7",
+    "vitepress": "^2.0.0-alpha.16",
+    "vue": "^3.5.0"
+  }
+}

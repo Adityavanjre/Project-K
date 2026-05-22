@@ -1,0 +1,116 @@
+<div id="panel-security" class="panel">
+    <div class="panel-3col w-full h-full">
+        <!-- LEFT: SOVEREIGN RULES & VAULT -->
+        <aside class="panel-left">
+            <div class="section-header">SOVEREIGN RULES</div>
+            <div class="k-card p-3 flex flex-col gap-3">
+                <div class="hud-widget">
+                    <div class="hud-label">COMMANDER_ONLY</div>
+                    <div class="hud-value text-action">adity</div>
+                </div>
+                <div class="hud-widget">
+                    <div class="hud-label">SOVEREIGN_PC</div>
+                    <div class="hud-value text-action">aditya</div>
+                </div>
+                <div class="hud-divider"></div>
+                <div class="hud-label">IMMUTABLE_ROOT_MAP</div>
+                <div class="flex flex-col gap-1 font-mono text-[10px] text-muted">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-file-shield text-critical"></i> processor.py
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-file-shield text-critical"></i> secure_boot.py
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-file-shield text-critical"></i> omega_protocol.py
+                    </div>
+                </div>
+            </div>
+
+            <div class="hud-divider mt-4"></div>
+            
+            <div class="section-header">TOTP VAULT</div>
+            <div id="vault-list" class="flex flex-col gap-2">
+                <!-- 2FA codes injected by JS -->
+            </div>
+
+            <div class="k-card p-3 mt-4">
+                <div class="hud-label mb-1">HARDWARE DNA</div>
+                <div class="font-mono text-[9px] text-success">VERIFIED_MATCH_77X92</div>
+            </div>
+        </aside>
+
+        <!-- CENTER: AUDIT & RECON -->
+        <main class="panel-center">
+            <div class="flex gap-4 border-bottom border-dim mb-4">
+                <button id="security-tab-audit" class="nav-tab active" onclick="kaliApp.switchSecurityTab('audit')">AUDIT_RECON</button>
+                <button id="security-tab-tactical" class="nav-tab" onclick="kaliApp.switchSecurityTab('tactical')">TACTICAL_DEFENSE</button>
+            </div>
+
+            <!-- Audit Tab Content -->
+            <div id="sec-content-audit" class="flex flex-col gap-4">
+                <div class="k-card p-4">
+                    <div class="hud-label mb-2">TARGET_RECON_URL</div>
+                    <div class="flex gap-2">
+                        <input type="text" id="recon-url" class="omega-confirm-input flex-1" placeholder="e.g. https://target-api.com" style="text-align:left; padding:10px;">
+                        <button class="k-btn" style="width:auto;" onclick="kaliApp.runAudit()">
+                            <i class="fas fa-search-plus"></i> START AUDIT
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-header">RECON_LIVE_STREAM</div>
+                <div id="audit-logs" class="log-feed k-card p-3 h-48">
+                    <!-- Audit logs injected by JS -->
+                </div>
+
+                <div class="section-header">VERIFIED_FINDINGS</div>
+                <div id="findings-list" class="flex flex-col gap-2">
+                    <!-- Findings cards injected by JS -->
+                </div>
+            </div>
+
+            <!-- Tactical Tab Content (Hidden by default) -->
+            <div id="sec-content-tactical" class="hidden flex flex-col gap-4">
+                <div class="section-header">DEFENSE_PRINCIPLES</div>
+                <div id="tactical-principles" class="flex flex-col gap-3">
+                    <!-- Principles injected by JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- RIGHT: HANDOVER STATUS & THREATS -->
+        <aside class="panel-right">
+            <div class="section-header">SYSTEM_HANDOVER_STATUS</div>
+            <div class="k-card p-3 flex flex-col gap-3">
+                <div class="hud-widget text-center">
+                    <div class="hud-label">PROTOCOL_MODE</div>
+                    <div class="text-2xl font-display text-muted">DEFERRED</div>
+                </div>
+                <div class="font-mono text-[9px] text-dim text-center">Awaiting Commander Handover</div>
+            </div>
+
+            <div class="hud-divider mt-4"></div>
+
+            <div class="section-header">THREAT_INTELLIGENCE</div>
+            <div id="threat-list" class="flex flex-col gap-2">
+                <!-- Threat items injected by JS -->
+            </div>
+            
+            <div class="k-card p-3 mt-4" style="border-color:rgba(129,140,248,0.2);">
+                <div class="hud-label mb-1">OODA_LOOP_LATENCY</div>
+                <div class="flex justify-between items-center">
+                    <span class="font-mono text-xs text-main">14ms</span>
+                    <span class="hud-badge sovereign">DOMINANT</span>
+                </div>
+            </div>
+
+            <div class="hud-divider mt-4"></div>
+            
+            <div class="section-header">TACTICAL_MATRIX</div>
+            <div id="tactical-matrix-stream" class="k-card p-2 font-mono text-[8px] text-success overflow-hidden h-32 opacity-70" style="background: black;">
+                <!-- Matrix stream injected by JS -->
+            </div>
+        </aside>
+    </div>
+</div>

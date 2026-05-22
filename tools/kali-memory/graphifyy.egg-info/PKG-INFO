@@ -1,0 +1,88 @@
+Metadata-Version: 2.4
+Name: graphifyy
+Version: 0.5.0
+Summary: AI coding assistant skill (Claude Code, Codex, OpenCode, Cursor, Gemini CLI, Aider, OpenClaw, Factory Droid, Trae, Hermes, Kiro, Google Antigravity) - turn any folder of code, docs, papers, images, or videos into a queryable knowledge graph
+License: MIT License
+        
+        Copyright (c) 2026 Safi Shamsi
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        
+Project-URL: Homepage, https://github.com/safishamsi/graphify
+Project-URL: Repository, https://github.com/safishamsi/graphify
+Project-URL: Issues, https://github.com/safishamsi/graphify/issues
+Keywords: claude,claude-code,codex,opencode,cursor,gemini,aider,kiro,knowledge-graph,rag,graphrag,obsidian,community-detection,tree-sitter,leiden,llm
+Requires-Python: <3.14,>=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: networkx
+Requires-Dist: tree-sitter>=0.23.0
+Requires-Dist: tree-sitter-python
+Requires-Dist: tree-sitter-javascript
+Requires-Dist: tree-sitter-typescript
+Requires-Dist: tree-sitter-go
+Requires-Dist: tree-sitter-rust
+Requires-Dist: tree-sitter-java
+Requires-Dist: tree-sitter-c
+Requires-Dist: tree-sitter-cpp
+Requires-Dist: tree-sitter-ruby
+Requires-Dist: tree-sitter-c-sharp
+Requires-Dist: tree-sitter-kotlin
+Requires-Dist: tree-sitter-scala
+Requires-Dist: tree-sitter-php
+Requires-Dist: tree-sitter-swift
+Requires-Dist: tree-sitter-lua
+Requires-Dist: tree-sitter-zig
+Requires-Dist: tree-sitter-powershell
+Requires-Dist: tree-sitter-elixir
+Requires-Dist: tree-sitter-objc
+Requires-Dist: tree-sitter-julia
+Requires-Dist: tree-sitter-verilog
+Provides-Extra: mcp
+Requires-Dist: mcp; extra == "mcp"
+Provides-Extra: neo4j
+Requires-Dist: neo4j; extra == "neo4j"
+Provides-Extra: pdf
+Requires-Dist: pypdf; extra == "pdf"
+Requires-Dist: html2text; extra == "pdf"
+Provides-Extra: watch
+Requires-Dist: watchdog; extra == "watch"
+Provides-Extra: svg
+Requires-Dist: matplotlib; extra == "svg"
+Provides-Extra: leiden
+Requires-Dist: graspologic; python_version < "3.13" and extra == "leiden"
+Provides-Extra: office
+Requires-Dist: python-docx; extra == "office"
+Requires-Dist: openpyxl; extra == "office"
+Provides-Extra: video
+Requires-Dist: faster-whisper; extra == "video"
+Requires-Dist: yt-dlp; extra == "video"
+Provides-Extra: all
+Requires-Dist: mcp; extra == "all"
+Requires-Dist: neo4j; extra == "all"
+Requires-Dist: pypdf; extra == "all"
+Requires-Dist: html2text; extra == "all"
+Requires-Dist: watchdog; extra == "all"
+Requires-Dist: graspologic; python_version < "3.13" and extra == "all"
+Requires-Dist: python-docx; extra == "all"
+Requires-Dist: openpyxl; extra == "all"
+Requires-Dist: faster-whisper; extra == "all"
+Requires-Dist: yt-dlp; extra == "all"
+Requires-Dist: matplotlib; extra == "all"
+Dynamic: license-file

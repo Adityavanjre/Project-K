@@ -1,0 +1,178 @@
+{
+  "name": "hackingtool",
+  "domain": "cybersecurity",
+  "capabilities": [
+    {
+      "id": "sovereign_recon",
+      "name": "NMAP Sovereign Scan",
+      "description": "Tactical network reconnaissance and vulnerability discovery.",
+      "trigger_keywords": [
+        "scan",
+        "nmap",
+        "network",
+        "recon",
+        "ports",
+        "host discovery"
+      ],
+      "execution_type": "cli",
+      "start_command": "python hackingtool.py --nmap",
+      "stop_command": "kill",
+      "working_directory": "integrations/hackingtool",
+      "input_schema": {
+        "target": "string",
+        "options": "string"
+      },
+      "output_type": "log",
+      "ui_mode": "tui",
+      "dependencies": [
+        "python",
+        "nmap"
+      ],
+      "priority": 0.9,
+      "domain": "cybersecurity"
+    },
+    {
+      "id": "web_recon",
+      "name": "Web Application Recon",
+      "description": "Directory fuzzing, subdomain enumeration, and web surface mapping.",
+      "trigger_keywords": [
+        "dirb",
+        "fuzz",
+        "subdomains",
+        "web recon",
+        "ffuf",
+        "gobuster",
+        "enumerate"
+      ],
+      "execution_type": "cli",
+      "start_command": "python hackingtool.py --web",
+      "stop_command": "kill",
+      "working_directory": "integrations/hackingtool",
+      "input_schema": {
+        "target": "string",
+        "wordlist": "string"
+      },
+      "output_type": "log",
+      "ui_mode": "tui",
+      "dependencies": [
+        "python",
+        "ffuf"
+      ],
+      "priority": 0.9,
+      "domain": "cybersecurity"
+    },
+    {
+      "id": "sql_injection",
+      "name": "SQLMap Injection Engine",
+      "description": "Automated SQL injection vulnerability testing and exploitation.",
+      "trigger_keywords": [
+        "sqli",
+        "sql injection",
+        "sqlmap",
+        "database",
+        "inject",
+        "blind sql"
+      ],
+      "execution_type": "cli",
+      "start_command": "python hackingtool.py --sqlmap",
+      "stop_command": "kill",
+      "working_directory": "integrations/hackingtool",
+      "input_schema": {
+        "target": "string",
+        "level": "string"
+      },
+      "output_type": "structured",
+      "ui_mode": "tui",
+      "dependencies": [
+        "python",
+        "sqlmap"
+      ],
+      "priority": 0.9,
+      "domain": "cybersecurity"
+    },
+    {
+      "id": "xss_hunter",
+      "name": "XSS Payload Hunter",
+      "description": "Cross-site scripting vulnerability discovery and payload generation.",
+      "trigger_keywords": [
+        "xss",
+        "cross site",
+        "script injection",
+        "payload",
+        "reflected",
+        "stored xss"
+      ],
+      "execution_type": "cli",
+      "start_command": "python hackingtool.py --xss",
+      "stop_command": "kill",
+      "working_directory": "integrations/hackingtool",
+      "input_schema": {
+        "target": "string"
+      },
+      "output_type": "structured",
+      "ui_mode": "tui",
+      "dependencies": [
+        "python"
+      ],
+      "priority": 0.9,
+      "domain": "cybersecurity"
+    },
+    {
+      "id": "osint_engine",
+      "name": "OSINT Intelligence Collector",
+      "description": "Open-source intelligence gathering on targets, emails, and domains.",
+      "trigger_keywords": [
+        "osint",
+        "gather info",
+        "intelligence",
+        "theHarvester",
+        "shodan",
+        "email lookup",
+        "whois"
+      ],
+      "execution_type": "cli",
+      "start_command": "python hackingtool.py --osint",
+      "stop_command": "kill",
+      "working_directory": "integrations/hackingtool",
+      "input_schema": {
+        "target": "string",
+        "type": "string"
+      },
+      "output_type": "structured",
+      "ui_mode": "tui",
+      "dependencies": [
+        "python",
+        "theHarvester"
+      ],
+      "priority": 0.9,
+      "domain": "cybersecurity"
+    },
+    {
+      "id": "exploit_generator",
+      "name": "Exploit Synthesis Engine",
+      "description": "Generates proof-of-concept exploit code for discovered vulnerabilities.",
+      "trigger_keywords": [
+        "exploit",
+        "poc",
+        "proof of concept",
+        "generate exploit",
+        "attack code"
+      ],
+      "execution_type": "cli",
+      "start_command": "python hackingtool.py --exploit",
+      "stop_command": "kill",
+      "working_directory": "integrations/hackingtool",
+      "input_schema": {
+        "cve": "string",
+        "target": "string"
+      },
+      "output_type": "structured",
+      "ui_mode": "tui",
+      "dependencies": [
+        "python"
+      ],
+      "priority": 0.9,
+      "domain": "development"
+    }
+  ]
+}

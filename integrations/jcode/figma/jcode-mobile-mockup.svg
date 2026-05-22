@@ -1,0 +1,160 @@
+<svg width="1540" height="1030" viewBox="0 0 1540 1030" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1540" height="1030" fill="#0B0D11"/>
+  <text x="80" y="70" fill="#4DD9A6" font-family="Roboto Mono, monospace" font-size="14" font-weight="500">JCODE · FIGMA MOBILE CONCEPT</text>
+  <text x="80" y="110" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="700">jcode mobile — onboarding, chat, and settings</text>
+  <text x="80" y="140" fill="rgba(255,255,255,0.55)" font-family="Inter, Arial, sans-serif" font-size="16">Based on the current SwiftUI app shell and iOS client architecture.</text>
+
+  <!-- Phone 1 -->
+  <g transform="translate(80 180)">
+    <rect x="0" y="0" width="393" height="852" rx="36" fill="#0F0F14" stroke="rgba(255,255,255,0.04)"/>
+    <text x="28" y="28" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600">9:41</text>
+    <text x="300" y="28" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="10">5G 100%</text>
+    <rect x="157" y="126" width="80" height="80" rx="20" fill="#1A1A1F" stroke="rgba(255,255,255,0.08)"/>
+    <text x="178" y="178" fill="#4DD9A6" font-family="Roboto Mono, monospace" font-size="34" font-weight="500">j&gt;</text>
+    <rect x="223" y="151" width="3" height="26" rx="2" fill="#4DD9A6"/>
+    <text x="197" y="252" fill="rgba(255,255,255,0.92)" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700">jcode</text>
+    <text x="197" y="296" fill="rgba(255,255,255,0.55)" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16">Your AI coding assistant,</text>
+    <text x="197" y="318" fill="rgba(255,255,255,0.55)" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16">right in your pocket.</text>
+    <rect x="32" y="364" width="329" height="58" rx="14" fill="#4DD9A6"/>
+    <text x="197" y="400" fill="#0F0F14" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700">Scan QR Code</text>
+    <text x="197" y="455" fill="rgba(255,255,255,0.55)" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13">Run jcode pair on your computer</text>
+    <text x="197" y="474" fill="rgba(255,255,255,0.55)" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="13">to generate a QR code.</text>
+    <text x="32" y="516" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600">CONNECT MANUALLY</text>
+    <rect x="20" y="536" width="353" height="268" rx="18" fill="#1A1A1F" stroke="rgba(255,255,255,0.08)"/>
+
+    <text x="36" y="576" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="12">Host</text>
+    <rect x="36" y="586" width="321" height="36" rx="10" fill="#242429" stroke="rgba(255,255,255,0.08)"/>
+    <text x="48" y="608" fill="rgba(255,255,255,0.55)" font-family="Inter, Arial, sans-serif" font-size="14">my-macbook</text>
+
+    <text x="36" y="636" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="12">Port</text>
+    <rect x="36" y="646" width="321" height="36" rx="10" fill="#242429" stroke="rgba(255,255,255,0.08)"/>
+    <text x="48" y="668" fill="rgba(255,255,255,0.55)" font-family="Inter, Arial, sans-serif" font-size="14">7643</text>
+
+    <text x="36" y="696" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="12">Pair Code</text>
+    <rect x="36" y="706" width="321" height="36" rx="10" fill="#242429" stroke="rgba(255,255,255,0.08)"/>
+    <text x="48" y="728" fill="rgba(255,255,255,0.55)" font-family="Inter, Arial, sans-serif" font-size="14">6-digit code from jcode pair</text>
+
+    <text x="36" y="756" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="12">Device Name</text>
+    <rect x="36" y="766" width="321" height="36" rx="10" fill="#242429" stroke="rgba(255,255,255,0.08)"/>
+    <text x="48" y="788" fill="rgba(255,255,255,0.55)" font-family="Inter, Arial, sans-serif" font-size="14">My iPhone</text>
+
+    <rect x="36" y="788" width="321" height="48" rx="14" fill="#4DD9A6"/>
+    <text x="197" y="818" text-anchor="middle" fill="#0F0F14" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">Pair &amp; Connect</text>
+  </g>
+
+  <!-- Phone 2 -->
+  <g transform="translate(573 180)">
+    <rect x="0" y="0" width="393" height="852" rx="36" fill="#0F0F14" stroke="rgba(255,255,255,0.04)"/>
+    <text x="28" y="28" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600">9:41</text>
+    <text x="300" y="28" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="10">5G 100%</text>
+    <rect x="0" y="44" width="393" height="76" fill="#1A1A1F"/>
+    <circle cx="28" cy="78" r="4" fill="#4DD9A6"/>
+    <text x="40" y="66" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="600">jcode</text>
+    <text x="40" y="88" fill="rgba(255,255,255,0.35)" font-family="Roboto Mono, monospace" font-size="11">v0.4.1</text>
+    <rect x="306" y="60" width="64" height="24" rx="12" fill="rgba(77,217,166,0.15)"/>
+    <text x="338" y="76" text-anchor="middle" fill="#4DD9A6" font-family="Roboto Mono, monospace" font-size="10" font-weight="500">gpt-5</text>
+
+    <text x="20" y="140" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="11">System</text>
+    <rect x="20" y="146" width="288" height="58" rx="14" fill="rgba(245,158,11,0.10)"/>
+    <text x="34" y="180" fill="rgba(255,255,255,0.55)" font-family="Inter, Arial, sans-serif" font-size="14">Connected to jcode over Tailscale.</text>
+
+    <text x="373" y="222" text-anchor="end" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="11">You</text>
+    <rect x="113" y="228" width="260" height="64" rx="14" fill="rgba(77,217,166,0.12)"/>
+    <text x="127" y="254" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="15">Can you summarize the reload path</text>
+    <text x="127" y="275" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="15">and check the latest build status?</text>
+
+    <text x="20" y="306" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="11">jcode</text>
+    <rect x="20" y="312" width="316" height="116" rx="14" fill="#242429" stroke="rgba(255,255,255,0.08)"/>
+    <text x="34" y="338" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="14">Yep — I checked the current server reload flow</text>
+    <text x="34" y="358" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="14">and verified the selfdev hooks.</text>
+    <text x="34" y="390" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="14">Next I’m tightening the handoff and</text>
+    <text x="34" y="410" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="14">validating the test path.</text>
+
+    <rect x="20" y="448" width="312" height="112" rx="12" fill="#1A1A1F" stroke="rgba(255,255,255,0.08)"/>
+    <circle cx="38" cy="466" r="5" fill="#66B3FF"/>
+    <text x="56" y="470" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="13">selfdev</text>
+    <rect x="252" y="456" width="64" height="22" rx="11" fill="rgba(102,179,255,0.15)"/>
+    <text x="284" y="470" text-anchor="middle" fill="#66B3FF" font-family="Roboto Mono, monospace" font-size="10">running</text>
+    <rect x="20" y="486" width="312" height="74" fill="#141419"/>
+    <text x="34" y="506" fill="rgba(255,255,255,0.35)" font-family="Roboto Mono, monospace" font-size="10">INPUT</text>
+    <text x="34" y="524" fill="rgba(255,255,255,0.55)" font-family="Roboto Mono, monospace" font-size="11">{"action":"status"}</text>
+    <text x="34" y="544" fill="rgba(255,255,255,0.35)" font-family="Roboto Mono, monospace" font-size="10">OUTPUT</text>
+    <text x="34" y="559" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="11">checking current binary and build metadata…</text>
+
+    <text x="20" y="576" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="11">jcode</text>
+    <rect x="20" y="582" width="332" height="82" rx="14" fill="#242429" stroke="rgba(255,255,255,0.08)"/>
+    <text x="34" y="608" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="14">I also prepared a mobile-first concept so</text>
+    <text x="34" y="628" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="14">the iOS client and pairing flow can be</text>
+    <text x="34" y="648" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="14">handed off cleanly.</text>
+
+    <rect x="20" y="700" width="64" height="28" rx="14" fill="rgba(217,77,89,0.12)"/>
+    <text x="52" y="718" text-anchor="middle" fill="#D94D59" font-family="Inter, Arial, sans-serif" font-size="11" font-weight="600">Stop</text>
+    <rect x="92" y="700" width="86" height="28" rx="14" fill="rgba(245,158,11,0.12)"/>
+    <text x="135" y="718" text-anchor="middle" fill="#F59E0B" font-family="Inter, Arial, sans-serif" font-size="11" font-weight="600">Interrupt</text>
+
+    <rect x="0" y="740" width="393" height="112" fill="#1A1A1F"/>
+    <circle cx="36" cy="798" r="16" fill="#242429"/>
+    <text x="36" y="803" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">+</text>
+    <circle cx="76" cy="798" r="16" fill="#242429"/>
+    <text x="76" y="803" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700">◉</text>
+    <rect x="104" y="774" width="225" height="48" rx="24" fill="#242429" stroke="rgba(255,255,255,0.08)"/>
+    <text x="122" y="803" fill="rgba(255,255,255,0.55)" font-family="Inter, Arial, sans-serif" font-size="15">Message jcode…</text>
+    <circle cx="357" cy="798" r="16" fill="#4DD9A6"/>
+    <text x="357" y="803" text-anchor="middle" fill="#0F0F14" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">↑</text>
+  </g>
+
+  <!-- Phone 3 -->
+  <g transform="translate(1066 180)">
+    <rect x="0" y="0" width="393" height="852" rx="36" fill="#0F0F14" stroke="rgba(255,255,255,0.04)"/>
+    <text x="28" y="28" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600">9:41</text>
+    <text x="300" y="28" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="10">5G 100%</text>
+    <text x="197" y="66" text-anchor="middle" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="600">Settings</text>
+    <text x="327" y="66" fill="#4DD9A6" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Done</text>
+
+    <text x="20" y="108" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600">CONNECTION</text>
+    <rect x="20" y="124" width="353" height="92" rx="16" fill="#1A1A1F" stroke="rgba(255,255,255,0.08)"/>
+    <circle cx="40" cy="160" r="4" fill="#4DD9A6"/>
+    <text x="52" y="152" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="600">Connected</text>
+    <text x="52" y="175" fill="rgba(255,255,255,0.35)" font-family="Roboto Mono, monospace" font-size="11">macbook.tail1234.ts.net:7643</text>
+    <rect x="264" y="146" width="89" height="34" rx="10" fill="#242429" stroke="rgba(255,255,255,0.08)"/>
+    <text x="309" y="167" text-anchor="middle" fill="rgba(255,255,255,0.55)" font-family="Inter, Arial, sans-serif" font-size="12">Disconnect</text>
+
+    <text x="20" y="242" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600">SERVERS</text>
+    <rect x="20" y="258" width="353" height="64" rx="14" fill="#1A1A1F" stroke="rgba(77,217,166,0.5)"/>
+    <rect x="34" y="270" width="40" height="40" rx="10" fill="rgba(77,217,166,0.15)"/>
+    <text x="51" y="295" text-anchor="middle" fill="#4DD9A6" font-family="Roboto Mono, monospace" font-size="16">▣</text>
+    <text x="86" y="283" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600">jeremy-mbp</text>
+    <text x="86" y="304" fill="rgba(255,255,255,0.35)" font-family="Roboto Mono, monospace" font-size="10">macbook.tail1234.ts.net:7643</text>
+    <text x="308" y="292" text-anchor="end" fill="rgba(255,255,255,0.35)" font-family="Roboto Mono, monospace" font-size="10">v0.4.1</text>
+    <text x="334" y="292" fill="#4DD9A6" font-family="Inter, Arial, sans-serif" font-size="14">●</text>
+
+    <rect x="20" y="334" width="353" height="64" rx="14" fill="#1A1A1F" stroke="rgba(255,255,255,0.08)"/>
+    <rect x="34" y="346" width="40" height="40" rx="10" fill="#242429"/>
+    <text x="51" y="371" text-anchor="middle" fill="rgba(255,255,255,0.35)" font-family="Roboto Mono, monospace" font-size="16">▣</text>
+    <text x="86" y="359" fill="rgba(255,255,255,0.92)" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="600">office-linux-box</text>
+    <text x="86" y="380" fill="rgba(255,255,255,0.35)" font-family="Roboto Mono, monospace" font-size="10">devbox.tail1234.ts.net:7643</text>
+    <text x="308" y="368" text-anchor="end" fill="rgba(255,255,255,0.35)" font-family="Roboto Mono, monospace" font-size="10">v0.4.1</text>
+
+    <text x="20" y="430" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600">SESSIONS</text>
+    <rect x="20" y="446" width="353" height="38" rx="10" fill="rgba(77,217,166,0.15)" stroke="rgba(77,217,166,0.5)"/>
+    <text x="34" y="470" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="12">session_abc123_fox</text>
+    <text x="332" y="470" fill="#4DD9A6" font-family="Inter, Arial, sans-serif" font-size="14">●</text>
+
+    <rect x="20" y="492" width="353" height="38" rx="10" fill="#1A1A1F" stroke="rgba(255,255,255,0.08)"/>
+    <text x="34" y="516" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="12">session_reload_canary</text>
+
+    <rect x="20" y="538" width="353" height="38" rx="10" fill="#1A1A1F" stroke="rgba(255,255,255,0.08)"/>
+    <text x="34" y="562" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="12">session_ios_pairing</text>
+
+    <text x="20" y="618" fill="rgba(255,255,255,0.35)" font-family="Inter, Arial, sans-serif" font-size="12" font-weight="600">MODEL</text>
+    <rect x="20" y="634" width="353" height="38" rx="10" fill="rgba(77,217,166,0.15)" stroke="rgba(77,217,166,0.5)"/>
+    <text x="34" y="658" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="12">openai/gpt-5</text>
+    <text x="332" y="658" fill="#4DD9A6" font-family="Inter, Arial, sans-serif" font-size="14">●</text>
+
+    <rect x="20" y="680" width="353" height="38" rx="10" fill="#1A1A1F" stroke="rgba(255,255,255,0.08)"/>
+    <text x="34" y="704" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="12">anthropic/claude-sonnet-4</text>
+
+    <rect x="20" y="726" width="353" height="38" rx="10" fill="#1A1A1F" stroke="rgba(255,255,255,0.08)"/>
+    <text x="34" y="750" fill="rgba(255,255,255,0.92)" font-family="Roboto Mono, monospace" font-size="12">openrouter/qwen-3-coder</text>
+  </g>
+</svg>

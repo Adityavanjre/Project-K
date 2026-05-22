@@ -1,0 +1,41 @@
+<div id="mission-auth-modal" class="modal hidden">
+    <div class="modal-content border-[#fb7185] bg-[#0d0e10]">
+        <div class="modal-header bg-[#fb7185]/10 text-[#fb7185] border-[#fb7185]/20">
+            <h2 class="font-display uppercase tracking-widest text-sm flex items-center gap-2">
+                <i class="fas fa-biohazard animate-pulse"></i> SOVEREIGN_AUTHORIZATION_REQUIRED
+            </h2>
+            <button class="text-[#fb7185]/50 hover:text-[#fb7185]" onclick="kaliApp.closeMissionModal()">&times;</button>
+        </div>
+        <div class="p-6">
+            <div id="mission-id-badge" class="font-mono text-[10px] text-muted mb-4">MISSION_ID: —</div>
+            
+            <div class="mb-6">
+                <div class="hud-label text-[#fb7185]/80">GOAL_PARAMETERS</div>
+                <div id="mission-goal" class="text-main font-bold mt-1 text-lg">Initializing real-world exploit synthesis loop...</div>
+            </div>
+
+            <div class="k-card bg-[#1a1d21]/30 p-4 border-[#fb7185]/10 mb-6">
+                <div class="hud-label text-action mb-2">RISK_ASSESSMENT</div>
+                <div id="mission-details" class="text-[11px] text-muted font-mono leading-relaxed">
+                    KALI proposes to execute a recursive research loop involving:
+                    - Automated web harvesting of target domain
+                    - LLM-driven exploit derivation
+                    - Self-evolution of secure_boot.py logic
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button class="k-btn border-dim hover:bg-white/5" onclick="kaliApp.authorizeMission('reject')">
+                    <i class="fas fa-times"></i> DENY_AUTHORITY
+                </button>
+                <button class="k-btn bg-[#fb7185] text-black border-none hover:bg-[#fb7185]/90" onclick="kaliApp.authorizeMission('approve')">
+                    <i class="fas fa-check"></i> GRANT_AUTHORITY
+                </button>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <div class="font-mono text-[8px] text-critical opacity-50 uppercase">CAUTION: This action grants KALI autonomous execution rights on the host system.</div>
+            </div>
+        </div>
+    </div>
+</div>

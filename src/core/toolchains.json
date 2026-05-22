@@ -1,0 +1,152 @@
+{
+  "chains": [
+    {
+      "id": "bug_hunt_loop",
+      "name": "Bug Hunt Loop",
+      "description": "Select target → Recon → Vuln Scan → Validate → Report → Submit.",
+      "trigger_keywords": ["bug hunt", "bounty", "find vulnerability", "hack", "penetration test", "scan"],
+      "estimated_duration": "30-60 min",
+      "steps": [
+        {
+          "tool_id": "sovereign_recon",
+          "label": "Target Reconnaissance",
+          "retry": 2,
+          "timeout_ms": 120000,
+          "fallback": "web_recon",
+          "pass_facts": ["open_ports", "target"]
+        },
+        {
+          "tool_id": "xss_hunter",
+          "label": "Vulnerability Identification (XSS)",
+          "retry": 1,
+          "timeout_ms": 90000,
+          "fallback": null,
+          "pass_facts": ["xss_findings"]
+        },
+        {
+          "tool_id": "sql_injection",
+          "label": "Vulnerability Identification (SQLi)",
+          "retry": 1,
+          "timeout_ms": 90000,
+          "fallback": null,
+          "pass_facts": ["sqli_findings"]
+        },
+        {
+          "tool_id": "report_generator",
+          "label": "Validation & Report Generation",
+          "retry": 1,
+          "timeout_ms": 30000,
+          "fallback": null,
+          "pass_facts": ["report_path"]
+        },
+        {
+          "tool_id": "bounty_hunter",
+          "label": "Log Submission",
+          "retry": 2,
+          "timeout_ms": 30000,
+          "fallback": null,
+          "pass_facts": []
+        }
+      ]
+    },
+    {
+      "id": "development_loop",
+      "name": "Development Loop",
+      "description": "Understand → Generate Code → Validate → Refactor → Deliver.",
+      "trigger_keywords": ["develop", "code", "build feature", "refactor", "programming"],
+      "estimated_duration": "10-30 min",
+      "steps": [
+        {
+          "tool_id": "auto_refactor",
+          "label": "Code Generation & Refactor",
+          "retry": 2,
+          "timeout_ms": 180000,
+          "fallback": null,
+          "pass_facts": ["changed_files"]
+        },
+        {
+          "tool_id": "code_auditor",
+          "label": "Validation & Audit",
+          "retry": 1,
+          "timeout_ms": 60000,
+          "fallback": null,
+          "pass_facts": ["audit_findings"]
+        },
+        {
+          "tool_id": "git_nexus",
+          "label": "Deliver Working Output",
+          "retry": 1,
+          "timeout_ms": 30000,
+          "fallback": null,
+          "pass_facts": []
+        }
+      ]
+    },
+    {
+      "id": "3d_project_loop",
+      "name": "3D / Project Loop",
+      "description": "Identify Goal → Components/Cost → Assembly Steps → Output Build Plan.",
+      "trigger_keywords": ["3d", "print", "cad", "hardware project", "build physical"],
+      "estimated_duration": "5-15 min",
+      "steps": [
+        {
+          "tool_id": "local_ai_inference",
+          "label": "Component & Cost Estimation",
+          "retry": 1,
+          "timeout_ms": 60000,
+          "fallback": null,
+          "pass_facts": ["components_list", "estimated_cost"]
+        },
+        {
+          "tool_id": "local_ai_inference",
+          "label": "Generate Assembly Steps",
+          "retry": 1,
+          "timeout_ms": 60000,
+          "fallback": null,
+          "pass_facts": ["assembly_steps"]
+        },
+        {
+          "tool_id": "report_generator",
+          "label": "Produce Build Plan",
+          "retry": 1,
+          "timeout_ms": 30000,
+          "fallback": null,
+          "pass_facts": []
+        }
+      ]
+    },
+    {
+      "id": "automation_loop",
+      "name": "Automation Loop",
+      "description": "Identify Task → Build Workflow → Execute → Optimize.",
+      "trigger_keywords": ["automate", "workflow", "repetitive task", "script it", "auto"],
+      "estimated_duration": "10-20 min",
+      "steps": [
+        {
+          "tool_id": "auto_refactor",
+          "label": "Build Automation Workflow",
+          "retry": 1,
+          "timeout_ms": 120000,
+          "fallback": null,
+          "pass_facts": ["script_path"]
+        },
+        {
+          "tool_id": "code_auditor",
+          "label": "Validate Workflow",
+          "retry": 1,
+          "timeout_ms": 60000,
+          "fallback": null,
+          "pass_facts": ["validation_status"]
+        },
+        {
+          "tool_id": "local_ai_inference",
+          "label": "Optimize Performance",
+          "retry": 1,
+          "timeout_ms": 60000,
+          "fallback": null,
+          "pass_facts": []
+        }
+      ]
+    }
+  ]
+}

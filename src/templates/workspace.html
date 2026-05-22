@@ -1,0 +1,46 @@
+<div id="panel-workspace" class="panel">
+    <div class="panel-3col w-full h-full">
+        <!-- LEFT: FILE EXPLORER -->
+        <aside class="panel-left flex flex-col h-full" style="width: 240px;">
+            <div class="section-header flex justify-between items-center">
+                <span>WORKSPACE_TREE</span>
+                <button onclick="kaliApp.workspace.refresh()" class="text-[10px] text-action hover:underline">REFRESH</button>
+            </div>
+            <div id="file-tree" class="flex-1 overflow-y-auto font-mono text-[11px] py-2">
+                <!-- File tree injected by JS -->
+                <div class="text-muted italic px-4">Initializing tree...</div>
+            </div>
+        </aside>
+
+        <!-- CENTER: SOVEREIGN EDITOR -->
+        <main class="panel-center flex flex-col h-full">
+            <div class="section-header flex justify-between items-center">
+                <span id="active-filename">EDITOR_BUFFER : IDLE</span>
+                <div class="flex gap-2">
+                    <button id="save-btn" class="k-btn text-[10px] px-2 py-1 hidden" onclick="kaliApp.workspace.saveActiveFile()">SAVE</button>
+                </div>
+            </div>
+            <div id="editor-container" class="flex-1 k-card relative overflow-hidden bg-[#0d0e10]">
+                <!-- Monaco or Ace would go here, using a pre-styled textarea for now for stability -->
+                <textarea id="code-editor" class="w-full h-full bg-transparent text-main font-mono text-sm p-4 outline-none resize-none border-none" spellcheck="false" placeholder="// Select a file from the explorer to begin engineering..."></textarea>
+                
+                <div id="editor-overlay" class="absolute inset-0 flex items-center justify-center bg-black/60 z-10 hidden">
+                    <div class="text-action animate-pulse font-mono text-xs">COMMITTING_EVOLUTION...</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- RIGHT: SOVEREIGN TERMINAL -->
+        <aside class="panel-right flex flex-col h-full">
+            <div class="section-header">SOVEREIGN_TERMINAL</div>
+            <div id="terminal-output" class="flex-1 k-card p-3 font-mono text-[11px] overflow-y-auto mb-2 bg-black">
+                <div class="text-success mb-1">KALI_OS v5.1 TERMINAL ACTIVE</div>
+                <div class="text-muted mb-2">Authenticated as Commander aditya</div>
+            </div>
+            <div class="flex gap-2 p-1 bg-[#161719] rounded border border-dim">
+                <span class="text-action font-mono text-xs pt-1 pl-1">></span>
+                <input id="terminal-input" type="text" class="flex-1 bg-transparent text-main font-mono text-xs py-1 outline-none" placeholder="Enter shell command..." onkeypress="if(event.key==='Enter') kaliApp.terminal.execute()">
+            </div>
+        </aside>
+    </div>
+</div>

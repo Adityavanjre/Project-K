@@ -1,0 +1,363 @@
+{
+  "swarm_neurons": {
+    "agentfm-core": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "LLM Intelligence",
+        "UI/UX"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/agentfm-core"
+    },
+    "ai-for-beginners": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "General Utility"
+      ],
+      "stack": "Python",
+      "path": "integrations/ai-for-beginners"
+    },
+    "aider": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "LLM Intelligence",
+        "UI/UX"
+      ],
+      "stack": "Python",
+      "path": "integrations/aider"
+    },
+    "airllm": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "LLM Intelligence",
+        "UI/UX"
+      ],
+      "stack": "Python",
+      "path": "integrations/airllm"
+    },
+    "automaton": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/automaton"
+    },
+    "BitNet": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "LLM Intelligence",
+        "UI/UX"
+      ],
+      "stack": "Python",
+      "path": "integrations/BitNet"
+    },
+    "claude-code-harness": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/claude-code-harness"
+    },
+    "cua": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/cua"
+    },
+    "DanceUI": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/DanceUI"
+    },
+    "Decepticon": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Cybersecurity",
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/Decepticon"
+    },
+    "easy-vibe": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/easy-vibe"
+    },
+    "get-shit-done": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/get-shit-done"
+    },
+    "GitNexus": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/GitNexus"
+    },
+    "graphify": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "General Utility"
+      ],
+      "stack": "Python",
+      "path": "integrations/graphify"
+    },
+    "gstack": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/gstack"
+    },
+    "hackingtool": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Cybersecurity",
+        "UI/UX"
+      ],
+      "stack": "Python",
+      "path": "integrations/hackingtool"
+    },
+    "jarvis": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "Voice Interaction",
+        "UI/UX"
+      ],
+      "stack": "Python",
+      "path": "integrations/jarvis"
+    },
+    "jcode": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/jcode"
+    },
+    "litellm": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "LLM Intelligence"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/litellm"
+    },
+    "llm-rl-environments-lil-course": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "LLM Intelligence",
+        "UI/UX"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/llm-rl-environments-lil-course"
+    },
+    "locally-uncensored": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "LLM Intelligence",
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/locally-uncensored"
+    },
+    "lucebox-hub": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "LLM Intelligence"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/lucebox-hub"
+    },
+    "mempalace": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Python",
+      "path": "integrations/mempalace"
+    },
+    "ml-intern": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "LLM Intelligence",
+        "UI/UX"
+      ],
+      "stack": "Python",
+      "path": "integrations/ml-intern"
+    },
+    "no-mistakes": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/no-mistakes"
+    },
+    "obscura": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "UI/UX"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/obscura"
+    },
+    "openclaw": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "General Utility"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/openclaw"
+    },
+    "openfang": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "LLM Intelligence",
+        "UI/UX"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/openfang"
+    },
+    "openhuman": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/openhuman"
+    },
+    "OpenMythos": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "LLM Intelligence"
+      ],
+      "stack": "Python",
+      "path": "integrations/OpenMythos"
+    },
+    "parrot": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Python",
+      "path": "integrations/parrot"
+    },
+    "ra-h_os": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "LLM Intelligence",
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/ra-h_os"
+    },
+    "ralph": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/ralph"
+    },
+    "rlm": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "LLM Intelligence"
+      ],
+      "stack": "Python",
+      "path": "integrations/rlm"
+    },
+    "shannon": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Cybersecurity",
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/shannon"
+    },
+    "skills": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Cybersecurity",
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/skills"
+    },
+    "swarm": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "General Utility"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/swarm"
+    },
+    "understand-anything": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Node.js",
+      "path": "integrations/understand-anything"
+    },
+    "Windows-MCP": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Cybersecurity",
+        "LLM Intelligence",
+        "UI/UX"
+      ],
+      "stack": "Python",
+      "path": "integrations/Windows-MCP"
+    },
+    "wrkflw": {
+      "role": "Specialized Neuron",
+      "expertise": [
+        "Software Engineering",
+        "UI/UX"
+      ],
+      "stack": "Unknown",
+      "path": "integrations/wrkflw"
+    }
+  }
+}

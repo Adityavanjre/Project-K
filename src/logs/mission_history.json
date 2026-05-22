@@ -1,0 +1,98 @@
+[
+    {
+        "timestamp": "2026-05-05T14:31:10.111299",
+        "directive": "Wealth & Autonomy Report Creation",
+        "status": "STARTED",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:32:10.924120",
+        "directive": "PULLED: 1 historical records.",
+        "status": "INFO",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:32:12.947676",
+        "directive": "CREATE: results\\KALI_REPORT_20260505_143212.md",
+        "status": "STARTED",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:32:14.991683",
+        "directive": "CREATE: results\\KALI_REPORT_20260505_143212.md",
+        "status": "COMPLETED",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:32:17.031695",
+        "directive": "PUSHED: KALI_REPORT_20260505_143212.md to results/ tier.",
+        "status": "SUCCESS",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:32:19.076375",
+        "directive": "Wealth & Autonomy Report Creation",
+        "status": "COMPLETED",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:34:48.637932",
+        "directive": "HackerOne Submission Mission",
+        "status": "STARTED",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:34:50.936907",
+        "directive": "HackerOne Submission Mission",
+        "status": "FAILED",
+        "result": "Report archive missing."
+    },
+    {
+        "timestamp": "2026-05-05T14:47:06.309996",
+        "directive": "Telemetry Vulnerability Aggregation",
+        "status": "STARTED",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:47:08.591362",
+        "directive": "PULLED: 1 Critical Telemetry Vulnerability identified.",
+        "status": "INFO",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:47:10.618360",
+        "directive": "PUSHED: Telemetry Report Archive created in reports/ tier.",
+        "status": "SUCCESS",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:47:16.633006",
+        "directive": "HackerOne Submission Mission",
+        "status": "STARTED",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:48:10.926575",
+        "directive": "Initializing Sovereign Browser Neurons...",
+        "status": "INFO",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:48:15.039682",
+        "directive": "Launching Stealth Browser Session...",
+        "status": "INFO",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:48:18.269583",
+        "directive": "Accessing HackerOne Authentication Gateway...",
+        "status": "INFO",
+        "result": null
+    },
+    {
+        "timestamp": "2026-05-05T14:48:24.433907",
+        "directive": "HackerOne Submission Mission",
+        "status": "FAILED",
+        "result": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\adity\\\\code\\\\Project-K\\\\src\\\\logs\\\\credential_vault.json'"
+    }
+]

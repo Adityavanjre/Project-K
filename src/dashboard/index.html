@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KALI Sovereign Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    
+    <div class="dashboard-container">
+        <header>
+            <div class="branding">
+                <div class="logo"></div>
+                <h1>KALI Sovereign Node</h1>
+            </div>
+            <div class="status-indicator">
+                <div class="pulse-dot"></div>
+                <span>SYSTEM AUTONOMOUS</span>
+            </div>
+        </header>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>Global Mastery</h3>
+                <div class="value accent">100%</div>
+                <div class="sub-text">Graduation Complete</div>
+            </div>
+            <div class="metric-card">
+                <h3>Active Capabilities</h3>
+                <div class="value">42</div>
+                <div class="sub-text">Swarm Neurons Synced</div>
+            </div>
+            <div class="metric-card">
+                <h3>Sovereign Wealth</h3>
+                <div class="value success">$426.72</div>
+                <div class="sub-text">Pending Payouts</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <section class="panel auth-panel">
+                <div class="panel-header">
+                    <h2><span class="icon">🔐</span> Universal Possession Vault</h2>
+                </div>
+                <div class="vault-list" id="vault-list">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <section class="panel active-ops">
+                <div class="panel-header">
+                    <h2><span class="icon">🌍</span> Live Multi-Platform Operations</h2>
+                </div>
+                <div class="ops-list" id="ops-list">
+                    <!-- Populated by JS -->
+                </div>
+                <button class="action-btn" id="btn-register">Initiate Cross-Platform Registration</button>
+            </section>
+        </div>
+        
+        <div class="terminal-log">
+            <div class="terminal-header">Neural Activity Stream</div>
+            <div class="terminal-body" id="log-body">
+                <div class="log-entry system">[SYSTEM] KALI Universal Payout Hub initialized.</div>
+                <div class="log-entry system">[SYSTEM] Reading anchored credentials from secure vault.</div>
+                <div class="log-entry success">[AUTH] PyOTP Engine ONLINE. Live 2FA generation active.</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

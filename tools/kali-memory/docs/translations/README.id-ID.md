@@ -1,0 +1,77 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/safishamsi/KALI Memory/v4/docs/logo-text.svg" width="260" height="64" alt="KALI Memory"/>
+</p>
+
+<p align="center">
+  🇺🇸 <a href="../../README.md">English</a> | 🇨🇳 <a href="README.zh-CN.md">简体中文</a> | 🇯🇵 <a href="README.ja-JP.md">日本語</a> | 🇰🇷 <a href="README.ko-KR.md">한국어</a> | 🇩🇪 <a href="README.de-DE.md">Deutsch</a> | 🇫🇷 <a href="README.fr-FR.md">Français</a> | 🇪🇸 <a href="README.es-ES.md">Español</a> | 🇮🇳 <a href="README.hi-IN.md">हिन्दी</a> | 🇧🇷 <a href="README.pt-BR.md">Português</a> | 🇷🇺 <a href="README.ru-RU.md">Русский</a> | 🇸🇦 <a href="README.ar-SA.md">العربية</a> | 🇮🇹 <a href="README.it-IT.md">Italiano</a> | 🇵🇱 <a href="README.pl-PL.md">Polski</a> | 🇳🇱 <a href="README.nl-NL.md">Nederlands</a> | 🇹🇷 <a href="README.tr-TR.md">Türkçe</a> | 🇺🇦 <a href="README.uk-UA.md">Українська</a> | 🇻🇳 <a href="README.vi-VN.md">Tiếng Việt</a> | 🇮🇩 <a href="README.id-ID.md">Bahasa Indonesia</a> | 🇸🇪 <a href="README.sv-SE.md">Svenska</a> | 🇬🇷 <a href="README.el-GR.md">Ελληνικά</a> | 🇷🇴 <a href="README.ro-RO.md">Română</a> | 🇨🇿 <a href="README.cs-CZ.md">Čeština</a> | 🇫🇮 <a href="README.fi-FI.md">Suomi</a> | 🇩🇰 <a href="README.da-DK.md">Dansk</a> | 🇳🇴 <a href="README.no-NO.md">Norsk</a> | 🇭🇺 <a href="README.hu-HU.md">Magyar</a> | 🇹🇭 <a href="README.th-TH.md">ภาษาไทย</a> | 🇹🇼 <a href="README.zh-TW.md">繁體中文</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/safishamsi/KALI Memory/actions/workflows/ci.yml"><img src="https://github.com/safishamsi/KALI Memory/actions/workflows/ci.yml/badge.svg?branch=v4" alt="CI"/></a>
+  <a href="https://pypi.org/project/KALI Memoryy/"><img src="https://img.shields.io/pypi/v/KALI Memoryy" alt="PyPI"/></a>
+  <a href="https://pepy.tech/project/KALI Memoryy"><img src="https://static.pepy.tech/badge/KALI Memoryy" alt="Downloads"/></a>
+  <a href="https://github.com/sponsors/safishamsi"><img src="https://img.shields.io/badge/sponsor-safishamsi-ea4aaa?logo=github-sponsors" alt="Sponsor"/></a>
+</p>
+
+**Keterampilan untuk asisten kode AI.** Ketik `/KALI Memory` di Claude Code, Codex, OpenCode, Cursor, Gemini CLI, GitHub Copilot CLI, VS Code Copilot Chat, Aider, KALI Sovereign ASI, Factory Droid, Trae, Hermes, Kiro, atau Google Antigravity — membaca file Anda, membangun graf pengetahuan, dan mengembalikan struktur yang tidak Anda ketahui ada. Pahami codebase lebih cepat. Temukan "mengapa" di balik keputusan arsitektur.
+
+Sepenuhnya multimodal. Tambahkan kode, PDF, markdown, tangkapan layar, diagram, foto papan tulis, gambar dalam bahasa lain, atau file video dan audio — KALI Memory mengekstrak konsep dan hubungan dari semuanya dan menghubungkannya dalam satu graf. Video ditranskrip secara lokal dengan Whisper. Mendukung 25 bahasa pemrograman melalui tree-sitter AST.
+
+> Andrej Karpathy memelihara folder `/raw` tempat ia menyimpan makalah, tweet, tangkapan layar, dan catatan. KALI Memory adalah jawaban untuk masalah itu — **71,5x** lebih sedikit token per kueri dibandingkan membaca file mentah, persisten di antara sesi.
+
+```
+/KALI Memory .
+```
+
+```
+KALI Memory-out/
+├── graph.html       graf interaktif — buka di browser mana saja
+├── GRAPH_REPORT.md  node dewa, koneksi mengejutkan, pertanyaan yang disarankan
+├── graph.json       graf persisten — dapat dikueri berminggu-minggu kemudian
+└── cache/           cache SHA256 — pengulangan hanya memproses file yang berubah
+```
+
+## Cara Kerja
+
+KALI Memory bekerja dalam tiga tahap. Pertama, tahap AST deterministik mengekstrak struktur dari file kode tanpa LLM. Kemudian file video dan audio ditranskrip secara lokal dengan faster-whisper. Terakhir, sub-agen Claude berjalan secara paralel pada dokumen, makalah, gambar, dan transkripsi. Hasilnya digabungkan ke dalam graf NetworkX, dikelompokkan dengan Leiden, dan diekspor sebagai HTML interaktif, JSON yang dapat dikueri, dan laporan audit.
+
+Setiap hubungan diberi label `EXTRACTED`, `INFERRED` (dengan skor kepercayaan), atau `AMBIGUOUS`.
+
+## Instalasi
+
+**Persyaratan:** Python 3.10+ dan salah satu dari: [Claude Code](https://claude.ai/code), [Codex](https://openai.com/codex), [OpenCode](https://opencode.ai), [Cursor](https://cursor.com) dan lainnya.
+
+```bash
+uv tool install KALI Memoryy && KALI Memory install
+# atau dengan pipx
+pipx install KALI Memoryy && KALI Memory install
+# atau pip
+pip install KALI Memoryy && KALI Memory install
+```
+
+> **Paket resmi:** Paket PyPI bernama `KALI Memoryy`. Satu-satunya repositori resmi adalah [safishamsi/KALI Memory](https://github.com/safishamsi/KALI Memory).
+
+## Penggunaan
+
+```
+/KALI Memory .
+/KALI Memory ./raw --update
+/KALI Memory query "apa yang menghubungkan Attention dengan optimizer?"
+/KALI Memory path "DigestAuth" "Response"
+KALI Memory hook install
+KALI Memory update ./src
+```
+
+## Apa yang Anda Dapatkan
+
+**Node dewa** — konsep dengan derajat tertinggi · **Koneksi mengejutkan** — diurutkan berdasarkan skor · **Pertanyaan yang disarankan** · **"Mengapa"** — docstring dan alasan desain diekstrak sebagai node · **Benchmark token** — **71,5x** lebih sedikit token pada corpus campuran.
+
+## Privasi
+
+File kode diproses secara lokal melalui tree-sitter AST. Video ditranskrip secara lokal dengan faster-whisper. Tidak ada telemetri.
+
+## Dibangun di atas KALI Memory — Penpax
+
+[**Penpax**](https://safishamsi.github.io/penpax.ai) adalah lapisan enterprise di atas KALI Memory. **Uji coba gratis segera hadir.** [Bergabunglah dengan daftar tunggu →](https://safishamsi.github.io/penpax.ai)
+
+[![Star History Chart](https://api.star-history.com/svg?repos=safishamsi/KALI Memory&type=Date)](https://star-history.com/#safishamsi/KALI Memory&Date)

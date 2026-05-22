@@ -1,0 +1,101 @@
+<div id="panel-evolution" class="panel">
+    <div class="panel-3col w-full h-full">
+        <!-- LEFT: SOUL TIMELINE & PROPOSALS -->
+        <aside class="panel-left">
+            <div class="section-header">SOUL TIMELINE</div>
+            <div id="soul-timeline" class="flex flex-col gap-3 overflow-y-auto pr-2">
+                <!-- Soul entries injected by JS -->
+            </div>
+
+            <div class="hud-divider mt-4"></div>
+            
+            <div class="section-header">EVOLUTION PROPOSALS</div>
+            <div id="proposal-list" class="flex flex-col gap-3">
+                <!-- Proposal cards injected by JS -->
+            </div>
+        </aside>
+
+        <!-- CENTER: EVOLUTION BRIDGE LOGS -->
+        <main class="panel-center">
+            <div class="section-header">EVOLUTION_BRIDGE_STREAM</div>
+            <div id="evolution-logs" class="log-feed k-card p-3">
+                <!-- Logs injected by JS -->
+            </div>
+            
+            <div class="k-card p-3 flex flex-col gap-2">
+                <div class="hud-label">IMMUTABLE_CORE_FILES</div>
+                <div class="flex flex-wrap gap-2">
+                    <div class="k-btn" style="width:auto; cursor:default; border-color:var(--critical); color:var(--critical);">
+                        <i class="fas fa-lock"></i> processor.py
+                    </div>
+                    <div class="k-btn" style="width:auto; cursor:default; border-color:var(--critical); color:var(--critical);">
+                        <i class="fas fa-lock"></i> secure_boot.py
+                    </div>
+                    <div class="k-btn" style="width:auto; cursor:default; border-color:var(--critical); color:var(--critical);">
+                        <i class="fas fa-lock"></i> omega_protocol.py
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- RIGHT: TRAINING & SKILLS -->
+        <aside class="panel-right">
+            <div class="section-header">TRAINING MONITOR</div>
+            <div class="k-card p-3 flex flex-col gap-3">
+                <div class="hud-widget">
+                    <div class="hud-label">DPO DATA PAIRS</div>
+                    <div id="val-dpo" class="hud-value">0</div>
+                </div>
+                <div class="hud-widget">
+                    <div class="hud-label">DISTILLATION PROGRESS</div>
+                    <div class="hud-bar-track"><div id="bar-distillation" class="hud-bar-fill" style="width: 0%;"></div></div>
+                </div>
+                <div class="hud-widget">
+                    <div class="hud-label">SOVEREIGN_OATH</div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-check-circle text-success"></i>
+                        <span class="font-mono text-xs text-main">SIGNED & VERIFIED</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="k-card p-3">
+                <div class="hud-label mb-2">MANIFESTED SKILLS</div>
+                <div id="skills-list" class="flex flex-col gap-1">
+                    <!-- Skills injected by JS -->
+                </div>
+            </div>
+
+            <div class="k-card bg-[#1a1d21]/30 p-4 border-action/10 mb-6">
+                <div class="hud-label text-action mb-2">INTEGRITY_CHECK</div>
+                <div class="flex flex-col gap-2 font-mono text-[10px] text-muted">
+                    <div class="flex justify-between"><span>CORE_LOGIC:</span> <span id="handover-logic" class="text-success">...</span></div>
+                    <div class="flex justify-between"><span>VIRTUAL_SOUL:</span> <span id="handover-soul" class="text-success">...</span></div>
+                    <div class="flex justify-between"><span>SWARM_COHERENCE:</span> <span id="handover-swarm" class="text-success">...</span></div>
+                </div>
+            </div>
+
+            <div class="k-card p-3">
+                <div class="hud-label mb-2">DREAM ENGINE</div>
+                <div class="flex flex-col gap-1 font-mono text-[10px]">
+                    <div class="flex justify-between">
+                        <span class="text-muted">LAST_DREAM:</span>
+                        <span id="val-last-dream" class="text-main">...</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-muted">WISDOM_SEEDS:</span>
+                        <span id="val-wisdom-seeds" class="text-action">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="k-card p-3">
+                <div class="hud-label mb-2">NO-MISTAKES CI</div>
+                <div class="flex items-center gap-2">
+                    <div class="status-dot active"></div>
+                    <span class="font-mono text-xs text-success">BUILD_PASSING</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+name: Security Comparison Demo
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  safe_operations:
+    name: Safe Operations (Works in Both Modes)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: List files
+        run: ls -la
+      
+      - name: Create and test file
+        run: |
+          echo "Hello World" > test.txt
+          cat test.txt
+          rm test.txt
+          echo "File operations completed safely"
+      
+      - name: Environment check
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "User: $(whoami)"
+          echo "Available commands: ls, echo, cat work fine"

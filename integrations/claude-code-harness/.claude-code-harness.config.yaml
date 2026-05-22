@@ -1,0 +1,61 @@
+# Claude Code Harness Configuration
+# https://github.com/Chachamaru127/claude-code-harness
+
+# Safety settings
+safety:
+  # main/master direct push policy: ask | deny | allow
+  protected_branch_push: ask
+
+# Review settings
+review:
+  # Codex second opinion (requires Codex MCP server)
+  codex:
+    enabled: true
+    timeout_ms: 60000 # Codex MCP timeout (ms)
+
+  # Default mode: "default" (4 perspectives) or "codex" (parallel MCP execution)
+  mode: codex
+
+# Breezing settings (Agent Teams)
+breezing:
+  # Default parallel implementer count
+  default_parallel: 2
+  # Maximum retake attempts before user escalation
+  max_retakes: 3
+  # State file path
+  state_file: .claude/state/breezing-active.json
+
+advisor:
+  # Enable advisor consultation for loop / work / breezing flows
+  enabled: true
+  # Consultation mode: on-demand keeps the executor in the lead
+  mode: on-demand
+  # Hard cap to avoid infinite consultation loops on one task
+  max_consults_per_task: 3
+  # Consult after the same failure pattern repeats this many times
+  retry_threshold: 2
+  # Ask advisor once before escalating plateau/user-stop decisions
+  consult_before_user_escalation: true
+  # Default model mapping by runtime
+  claude_model: opus
+  codex_model: gpt-5.4
+
+# Cleanup thresholds
+cleanup:
+  plans:
+    archive_after_days: 7
+    max_lines: 200
+  session_log:
+    archive_after_days: 30
+    max_lines: 500
+  claude_md:
+    max_lines: 100
+
+# Session monitor thresholds (SOVEREIGN)
+monitor:
+  plans_drift:
+    wip_threshold: 5
+    stale_hours: 24
+
+orchestration:
+  advisor_ttl_seconds: 600

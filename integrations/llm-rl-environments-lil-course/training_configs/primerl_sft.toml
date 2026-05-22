@@ -1,0 +1,14 @@
+max_steps = 30
+
+[ckpt] # Checkpoint at the end of training
+
+[model]
+name = "LiquidAI/LFM2-2.6B"
+
+[data]
+name = "anakin87/tictactoe-filtered"
+seq_len = 700
+batch_size = 32
+
+[optim]
+lr = 1e-5

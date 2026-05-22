@@ -1,0 +1,91 @@
+<div id="panel-research" class="panel">
+    <div class="panel-3col w-full h-full">
+        <!-- LEFT: SEED VAULT & ORACLE -->
+        <aside class="panel-left">
+            <div class="section-header">VEDIC ORACLE</div>
+            <div id="vedic-oracle" class="k-card p-3 flex flex-col gap-2">
+                <div id="oracle-text" class="text-xs italic text-main">"Truth is one, but the wise call it by many names."</div>
+                <div id="oracle-source" class="font-mono text-[9px] text-action">Rig Veda 1.164.46</div>
+                <div id="oracle-concept" class="hud-badge sovereign w-max">Universal Unity</div>
+            </div>
+
+            <div class="hud-divider mt-4"></div>
+            
+            <div class="section-header">SEED VAULT</div>
+            <div id="seed-list" class="flex flex-col gap-2">
+                <!-- Seeds injected by JS -->
+            </div>
+
+            <div class="hud-divider mt-4"></div>
+
+            <div class="section-header">CURIOSITY SWARM</div>
+            <div class="k-card p-3 flex flex-col gap-2">
+                <div class="flex justify-between font-mono text-[10px]">
+                    <span class="text-muted">VECTORS:</span>
+                    <span class="text-action">200 / 200</span>
+                </div>
+                <div class="hud-bar-track"><div class="hud-bar-fill" style="width: 100%;"></div></div>
+                <div class="text-[9px] text-muted">Phase 41: Active vector discovery enabled.</div>
+            </div>
+
+            <div class="hud-divider mt-4"></div>
+            
+            <div class="section-header">COGNITIVE_SYNAPSES</div>
+            <div class="k-card p-0 overflow-hidden relative" style="height: 180px; background: #08090a;">
+                <canvas id="memory-graph-canvas" class="w-full h-full" style="width:100%; height:180px;"></canvas>
+                <div class="absolute top-2 left-2 pointer-events-none">
+                    <div class="font-mono text-[8px] text-action opacity-50">SYNC: ACTIVE</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CENTER: RESEARCH LOGS & SYNTHESIS -->
+        <main class="panel-center">
+            <div class="section-header">AUTONOMOUS_RESEARCH_STREAM</div>
+            <div id="research-logs" class="log-feed k-card p-3">
+                <!-- Logs injected by JS -->
+            </div>
+
+            <div class="section-header mt-4">KNOWLEDGE_SYNTHESIS_FEED</div>
+            <div id="synthesis-feed" class="flex flex-col gap-3 overflow-y-auto">
+                <!-- Synthesis entries injected by JS -->
+            </div>
+        </main>
+
+        <!-- RIGHT: MISSION LAUNCHER & IDENTITY -->
+        <aside class="panel-right">
+            <div class="section-header">RESEARCHER_IDENTITY (OpenClaw)</div>
+            <div class="k-card p-3 mb-4">
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-[10px]">
+                        <span class="text-muted">HACKERONE:</span>
+                        <span class="text-success font-bold">CONNECTED</span>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px]">
+                        <span class="text-muted">BUGCROWD:</span>
+                        <span class="text-action">PENDING</span>
+                    </div>
+                    <button class="k-btn-xs w-full mt-1" onclick="kaliDashboard.initiateRegistration()">
+                        <i class="fas fa-plus mr-1"></i> LINK NEW PROFILE
+                    </button>
+                </div>
+            </div>
+
+            <div class="section-header">SOVEREIGN_TOOLKIT (HackingTool)</div>
+            <div id="sovereign-toolkit-body" class="mb-4">
+                <kali-research-module></kali-research-module>
+            </div>
+
+            <div class="section-header">MISSION LAUNCHER</div>
+            <div class="k-card p-3 flex flex-col gap-3">
+                <div class="hud-widget">
+                    <div class="hud-label">RESEARCH TOPIC</div>
+                    <input type="text" id="research-topic" class="omega-confirm-input" placeholder="Enter topic..." style="text-align:left; padding:8px;">
+                </div>
+                <button class="k-btn" onclick="kaliApp.launchResearch()">
+                    <i class="fas fa-rocket"></i> MANIFEST MISSION
+                </button>
+            </div>
+        </aside>
+    </div>
+</div>

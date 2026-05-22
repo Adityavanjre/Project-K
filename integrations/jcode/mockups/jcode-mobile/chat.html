@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jcode mobile – Chat</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="page">
+  <div class="phone">
+    <div class="canvas">
+      <div class="statusbar">
+        <div>9:41</div>
+        <div class="mono">5G&nbsp;&nbsp;100%</div>
+      </div>
+
+      <div class="topbar topbar-chat">
+        <div class="chrome-btn" aria-label="Open sessions">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 7h14M5 12h14M5 17h14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="topbar-center">
+          <div class="session-title mono">fox</div>
+          <div class="session-subtitle">Connected over Tailscale</div>
+        </div>
+        <div class="chrome-btn" aria-label="Settings">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M19 12a7 7 0 0 0-.08-1l2.05-1.6-2-3.46-2.48 1a7.5 7.5 0 0 0-1.73-1l-.37-2.65h-4l-.37 2.65a7.5 7.5 0 0 0-1.73 1l-2.48-1-2 3.46L5.08 11A7 7 0 0 0 5 12c0 .34.03.67.08 1l-2.05 1.6 2 3.46 2.48-1a7.5 7.5 0 0 0 1.73 1l.37 2.65h4l.37-2.65a7.5 7.5 0 0 0 1.73-1l2.48 1 2-3.46L18.92 13c.05-.33.08-.66.08-1Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="chat-stream">
+        <div class="line line-system">Session active · build channel canary</div>
+        <div class="line line-user">Summarize the reload path and check build status.</div>
+        <div class="line line-ai">Checked the server reload flow and verified selfdev hooks.</div>
+
+        <details class="tool-chain">
+          <summary class="tool-chain-summary mono"><span class="tool-indicator">●</span> selfdev, file_read, grep <span class="tool-count">3 tools</span></summary>
+          <div class="tool-chain-detail mono">
+            <div class="tool-detail-line"><span class="tool-indicator">●</span> selfdev <span class="tool-meta">{"action":"status"}</span></div>
+            <div class="tool-detail-out">v0.4.2-dev (a3a5f32) canary=active</div>
+            <div class="tool-detail-line"><span class="tool-indicator">●</span> file_read <span class="tool-meta">src/server/reload.rs</span></div>
+            <div class="tool-detail-out">245 lines</div>
+            <div class="tool-detail-line"><span class="tool-indicator">●</span> grep <span class="tool-meta">"reload" src/server/</span></div>
+            <div class="tool-detail-out">12 matches</div>
+          </div>
+        </details>
+
+        <div class="line line-ai">Build is current. Prepared a mobile concept for the iOS handoff.</div>
+        <div class="line line-user">Make the chat view more compact.</div>
+        <div class="line line-ai">Done. Tool chains now collapse to one line after finishing.</div>
+
+        <details class="tool-chain">
+          <summary class="tool-chain-summary mono"><span class="tool-indicator">●</span> file_write <span class="tool-count">1 tool</span></summary>
+          <div class="tool-chain-detail mono">
+            <div class="tool-detail-line"><span class="tool-indicator">●</span> file_write <span class="tool-meta">chat.html</span></div>
+            <div class="tool-detail-out">created 35 lines</div>
+          </div>
+        </details>
+
+        <div class="line line-ai">Updated the chat view.</div>
+
+        <div class="tool-live mono">
+          <div class="tool-detail-line"><span class="tool-indicator-live">◉</span> bash <span class="tool-meta">cargo build --release</span></div>
+          <div class="tool-detail-out">Compiling jcode v0.4.2…</div>
+        </div>
+      </div>
+
+      <div class="floating-actions">
+        <div class="floating-btn floating-btn-camera" aria-label="Camera">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4.5 8.5h3l1.6-2h5.8l1.6 2h3a1.5 1.5 0 0 1 1.5 1.5v7a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-7A1.5 1.5 0 0 1 4.5 8.5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            <circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+          </svg>
+        </div>
+        <div class="floating-btn floating-btn-mic" aria-label="Microphone">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="9" y="4" width="6" height="10" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M7.5 11.5a4.5 4.5 0 0 0 9 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M12 16v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M9.5 20h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="composer-bar">
+        <div class="composer-icon-btn" aria-label="Photo Picker">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3.5" y="5" width="17" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <circle cx="9" cy="10" r="1.5" fill="currentColor"/>
+            <path d="M6.5 16l4.1-4.1a1 1 0 0 1 1.4 0L14 13.8l1.2-1.2a1 1 0 0 1 1.4 0l2.9 2.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="compose-field">Message jcode...</div>
+        <div class="send-btn">↑</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

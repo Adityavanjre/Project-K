@@ -1,0 +1,110 @@
+{
+  "nodes": [
+    {
+      "id": "processor_doubtprocessor",
+      "label": "DoubtProcessor",
+      "file_type": "code",
+      "source_file": "src/core/processor.py"
+    },
+    {
+      "id": "graph_memory_graphmemoryservice",
+      "label": "GraphMemoryService",
+      "file_type": "code",
+      "source_file": "src/core/graph_memory.py"
+    },
+    {
+      "id": "distillation_engine_distillationengine",
+      "label": "DistillationEngine",
+      "file_type": "code",
+      "source_file": "training/distillation_engine.py"
+    },
+    {
+      "id": "system_controller_systemcontroller",
+      "label": "SystemController",
+      "file_type": "code",
+      "source_file": "src/core/system_controller.py"
+    },
+    {
+      "id": "kali_master_plan_kalimasterplan",
+      "label": "KALI Master Plan",
+      "file_type": "document",
+      "source_file": "KALI_MASTER_PLAN.md"
+    },
+    {
+      "id": "readme_sovereign_distillation",
+      "label": "SOVEREIGN: Sovereign Distillation",
+      "file_type": "document",
+      "source_file": "README.md"
+    },
+    {
+      "id": "vector_memory_vectormemory",
+      "label": "VectorMemory (ChromaDB)",
+      "file_type": "code",
+      "source_file": "src/core/vector_memory.py"
+    }
+  ],
+  "edges": [
+    {
+      "source": "processor_doubtprocessor",
+      "target": "graph_memory_graphmemoryservice",
+      "relation": "queries_for_topological_context",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/core/processor.py"
+    },
+    {
+      "source": "processor_doubtprocessor",
+      "target": "vector_memory_vectormemory",
+      "relation": "queries_for_semantic_recall",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/core/processor.py"
+    },
+    {
+      "source": "graph_memory_graphmemoryservice",
+      "target": "processor_doubtprocessor",
+      "relation": "provides_session_recall",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/core/graph_memory.py"
+    },
+    {
+      "source": "distillation_engine_distillationengine",
+      "target": "readme_sovereign_distillation",
+      "relation": "implements_architectural_vision",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "training/distillation_engine.py"
+    },
+    {
+      "source": "processor_doubtprocessor",
+      "target": "readme_sovereign_distillation",
+      "relation": "implements_cognitive_layer",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "src/core/processor.py"
+    },
+    {
+      "source": "graph_memory_graphmemoryservice",
+      "target": "kali_master_plan_kalimasterplan",
+      "relation": "fulfills_phase_53",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/core/graph_memory.py"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "sovereign_memory_stack",
+      "label": "Sovereign Memory Stack",
+      "nodes": [
+        "vector_memory_vectormemory",
+        "graph_memory_graphmemoryservice",
+        "processor_doubtprocessor"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95
+    }
+  ]
+}

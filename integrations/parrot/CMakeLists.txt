@@ -1,0 +1,418 @@
+cmake_minimum_required(VERSION 3.10)
+
+# Set CUDA compiler path before project declaration
+# Only do dynamic detection if CMAKE_CUDA_COMPILER is not already set
+if(NOT DEFINED CMAKE_CUDA_COMPILER OR CMAKE_CUDA_COMPILER STREQUAL "")
+    # Try to find NVCC dynamically, with fallback to common locations
+    find_program(NVCC_EXECUTABLE nvcc
+        HINTS
+            $ENV{CUDA_HOME}/bin
+            $ENV{CUDA_PATH}/bin
+            /usr/local/cuda/bin
+            /opt/cuda/bin
+            # Add HPC SDK paths
+            /opt/nvidia/hpc_sdk/Linux_x86_64/26.3/compilers/bin
+            /opt/nvidia/hpc_sdk/Linux_x86_64/*/compilers/bin
+        DOC "NVIDIA CUDA Compiler"
+    )
+
+    if(NVCC_EXECUTABLE)
+        set(CMAKE_CUDA_COMPILER ${NVCC_EXECUTABLE})
+        message(STATUS "Auto-detected NVCC: ${NVCC_EXECUTABLE}")
+        
+        # Set CUDA_HOME based on detected NVCC for HPC SDK
+        get_filename_component(NVCC_DIR ${NVCC_EXECUTABLE} DIRECTORY)
+        get_filename_component(HPC_SDK_BASE ${NVCC_DIR} DIRECTORY)
+        if(EXISTS "${HPC_SDK_BASE}/cuda/13.1")
+            set(ENV{CUDA_HOME} "${HPC_SDK_BASE}/cuda/13.1")
+            set(CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES "${HPC_SDK_BASE}/cuda/13.1/targets/x86_64-linux/include")
+            message(STATUS "Set CUDA_HOME to: ${HPC_SDK_BASE}/cuda/13.1")
+        elseif(EXISTS "${HPC_SDK_BASE}/cuda/13.0")
+            set(ENV{CUDA_HOME} "${HPC_SDK_BASE}/cuda/13.0")
+            set(CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES "${HPC_SDK_BASE}/cuda/13.0/targets/x86_64-linux/include")
+            message(STATUS "Set CUDA_HOME to: ${HPC_SDK_BASE}/cuda/13.0")
+        elseif(EXISTS "${HPC_SDK_BASE}/cuda")
+            set(ENV{CUDA_HOME} "${HPC_SDK_BASE}/cuda")
+            message(STATUS "Set CUDA_HOME to: ${HPC_SDK_BASE}/cuda")
+        endif()
+    else()
+        # Fallback to your specific installation if dynamic detection fails
+        set(FALLBACK_NVCC "/opt/nvidia/hpc_sdk/Linux_x86_64/25.5/compilers/bin/nvcc")
+        if(EXISTS ${FALLBACK_NVCC})
+            set(CMAKE_CUDA_COMPILER ${FALLBACK_NVCC})
+            message(STATUS "Using fallback NVCC: ${FALLBACK_NVCC}")
+        else()
+            message(FATAL_ERROR "Could not find NVCC compiler. Please set CMAKE_CUDA_COMPILER manually or ensure NVCC is in your PATH.")
+        endif()
+    endif()
+else()
+    message(STATUS "Using manually specified NVCC: ${CMAKE_CUDA_COMPILER}")
+endif()
+
+# Initialize project with just CXX language first
+project(parrot LANGUAGES CXX)
+
+# Configure ccache if available
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    message(STATUS "Found ccache: ${CCACHE_PROGRAM}")
+    # Set ccache as the launcher for both C++ and CUDA
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+    set(CMAKE_CUDA_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+else()
+    message(STATUS "ccache not found - compile performance may be reduced")
+endif()
+
+# CUDA Architecture Configuration
+# Option 1: User can specify via -DCUDA_ARCH=75,89
+# Option 2: Auto-detect from current GPU
+# Option 3: Build for common architectures
+set(CUDA_ARCH "AUTO" CACHE STRING "CUDA architectures to build for (e.g., '75', '75,89', 'AUTO', 'ALL')")
+
+# Now enable CUDA language
+enable_language(CUDA)
+
+# Check CUDA version - parrot requires CUDA 13.0 or later for thrust::default_init support
+if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS "13.0")
+    message(FATAL_ERROR 
+        "CUDA ${CMAKE_CUDA_COMPILER_VERSION} detected, but parrot requires CUDA 13.0 or later.\n"
+        "The project uses thrust::default_init which was introduced in CUDA 13.0.\n"
+        "Please upgrade to CUDA 13.0 or later.\n"
+        "Current CUDA compiler: ${CMAKE_CUDA_COMPILER}\n"
+        "Required: CUDA >= 13.0\n"
+        "Found: CUDA ${CMAKE_CUDA_COMPILER_VERSION}"
+        "Use cmake -DCMAKE_CUDA_COMPILER=/path/to/nvcc .. to specify the CUDA compiler."
+        "i.e. cmake -DCMAKE_CUDA_COMPILER=/opt/nvidia/hpc_sdk/Linux_x86_64/26.3/compilers/bin/nvcc ..")
+endif()
+
+message(STATUS "CUDA ${CMAKE_CUDA_COMPILER_VERSION} detected - meets minimum requirement (13.0+)")
+
+# Function to detect GPU architecture using nvidia-smi
+function(detect_gpu_architecture output_var)
+    # Try using nvidia-smi first (faster and more reliable)
+    find_program(NVIDIA_SMI nvidia-smi)
+    if(NVIDIA_SMI)
+        execute_process(
+            COMMAND ${NVIDIA_SMI} --query-gpu=compute_cap --format=csv,noheader,nounits
+            OUTPUT_VARIABLE nvidia_smi_output
+            ERROR_QUIET
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        
+        if(nvidia_smi_output)
+            # Take the first GPU's compute capability
+            string(REGEX MATCH "^[0-9]+\\.[0-9]+" first_gpu_cap "${nvidia_smi_output}")
+            if(first_gpu_cap)
+                string(REPLACE "." "" arch_output "${first_gpu_cap}")
+                set(${output_var} "${arch_output}" PARENT_SCOPE)
+                message(STATUS "Detected GPU architecture via nvidia-smi: ${arch_output}")
+                return()
+            endif()
+        endif()
+    endif()
+    
+    # Fallback: try using deviceQuery if available
+    find_program(DEVICE_QUERY deviceQuery PATHS
+        /usr/local/cuda/extras/demo_suite
+        /opt/cuda/extras/demo_suite
+        ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}/../extras/demo_suite
+    )
+    
+    if(DEVICE_QUERY)
+        execute_process(
+            COMMAND ${DEVICE_QUERY}
+            OUTPUT_VARIABLE device_query_output
+            ERROR_QUIET
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        
+        if(device_query_output)
+            string(REGEX MATCH "CUDA Capability Major/Minor version number:[^0-9]*([0-9]+)\\.([0-9]+)" 
+                   match_result "${device_query_output}")
+            if(CMAKE_MATCH_1 AND CMAKE_MATCH_2)
+                set(arch_output "${CMAKE_MATCH_1}${CMAKE_MATCH_2}")
+                set(${output_var} "${arch_output}" PARENT_SCOPE)
+                message(STATUS "Detected GPU architecture via deviceQuery: ${arch_output}")
+                return()
+            endif()
+        endif()
+    endif()
+    
+    # If all detection methods fail
+    message(WARNING "Failed to detect GPU architecture - no nvidia-smi or deviceQuery found")
+    set(${output_var} "" PARENT_SCOPE)
+endfunction()
+
+# Set CUDA architectures based on user choice
+if(CUDA_ARCH STREQUAL "AUTO")
+    detect_gpu_architecture(detected_arch)
+    if(detected_arch)
+        set(CMAKE_CUDA_ARCHITECTURES ${detected_arch})
+        message(STATUS "Using auto-detected CUDA architecture: ${detected_arch}")
+    else()
+        # Fallback to common architectures if detection fails
+        set(CMAKE_CUDA_ARCHITECTURES "75;89")
+        message(STATUS "Auto-detection failed. Building for architectures: 75 (Turing/RTX), 89 (Ampere)")
+    endif()
+elseif(CUDA_ARCH STREQUAL "ALL")
+    # Build for common modern architectures
+    set(CMAKE_CUDA_ARCHITECTURES "70;75;80;86;89;90")
+    message(STATUS "Building for all common CUDA architectures: ${CMAKE_CUDA_ARCHITECTURES}")
+else()
+    # Use user-specified architectures
+    string(REPLACE "," ";" CUDA_ARCH_LIST ${CUDA_ARCH})
+    set(CMAKE_CUDA_ARCHITECTURES ${CUDA_ARCH_LIST})
+    message(STATUS "Using user-specified CUDA architectures: ${CMAKE_CUDA_ARCHITECTURES}")
+endif()
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Add compiler flags for warnings and errors
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler=-Wall,-Werror")
+
+# Add compiler timing flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftime-report")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --time")
+
+# CUDA settings
+set(CMAKE_CUDA_STANDARD 20)
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --extended-lambda")
+
+# Include directories - prioritize CCCL over system CUB
+include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
+
+# Download NVIDIA CCCL for latest CUB/Thrust
+include(FetchContent)
+
+# Set timeout and retry options for FetchContent
+set(FETCHCONTENT_QUIET OFF)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+
+FetchContent_Declare(
+  cccl
+  GIT_REPOSITORY https://github.com/NVIDIA/cccl.git
+  GIT_TAG v3.3.3
+  GIT_SHALLOW TRUE
+  TIMEOUT 60
+)
+
+message(STATUS "Downloading NVIDIA CCCL... (this may take a moment)")
+FetchContent_MakeAvailable(cccl)
+
+# Create parrot INTERFACE library target so downstream users can just:
+#   target_link_libraries(my_target parrot)
+# and get both parrot + CCCL include paths propagated automatically.
+#
+# Uses -I (not -isystem) per CCCL docs to correctly override nvcc's implicit CCCL headers.
+# CCCL headers use #pragma system_header to suppress warnings regardless.
+# See: https://github.com/NVIDIA/cccl?tab=readme-ov-file#github
+add_library(parrot INTERFACE)
+target_include_directories(parrot INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${cccl_SOURCE_DIR}/cub
+    ${cccl_SOURCE_DIR}/thrust
+    ${cccl_SOURCE_DIR}/libcudacxx/include
+)
+
+# Also add to directory-level includes for parrot's own tests/examples
+include_directories(BEFORE ${cccl_SOURCE_DIR}/cub ${cccl_SOURCE_DIR}/thrust ${cccl_SOURCE_DIR}/libcudacxx/include)
+
+# Only build tests and examples when Parrot is the top-level project
+# This prevents tests from being built when Parrot is included as a dependency
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    set(PARROT_IS_TOP_LEVEL TRUE)
+else()
+    set(PARROT_IS_TOP_LEVEL FALSE)
+endif()
+
+# Allow users to override the default behavior
+option(PARROT_BUILD_TESTS "Build Parrot tests" ${PARROT_IS_TOP_LEVEL})
+option(PARROT_BUILD_EXAMPLES "Build Parrot examples" ${PARROT_IS_TOP_LEVEL})
+
+if(PARROT_BUILD_TESTS)
+    message(STATUS "Building Parrot tests")
+    
+    # Enable testing
+    enable_testing()
+    
+    # Download and configure doctest
+    FetchContent_Declare(
+      doctest
+      GIT_REPOSITORY https://github.com/doctest/doctest.git
+      GIT_TAG v2.4.11
+      GIT_SHALLOW TRUE
+      TIMEOUT 30
+      UPDATE_COMMAND ""
+    )
+    
+    message(STATUS "Downloading doctest... (this may take a moment)")
+    FetchContent_GetProperties(doctest)
+    if(NOT doctest_POPULATED)
+      FetchContent_Populate(doctest)
+      # Patch doctest CMakeLists.txt to use a modern CMake minimum version
+      file(READ "${doctest_SOURCE_DIR}/CMakeLists.txt" DOCTEST_CMAKE_CONTENT)
+      string(REGEX REPLACE "cmake_minimum_required\\(VERSION [0-9.]+\\)" 
+                           "cmake_minimum_required(VERSION 3.10)" 
+                           DOCTEST_CMAKE_CONTENT "${DOCTEST_CMAKE_CONTENT}")
+      file(WRITE "${doctest_SOURCE_DIR}/CMakeLists.txt" "${DOCTEST_CMAKE_CONTENT}")
+      add_subdirectory(${doctest_SOURCE_DIR} ${doctest_BINARY_DIR})
+    endif()
+    
+    # Create test directory if it doesn't exist
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+
+    # Add test executable with the new modular structure
+    add_executable(parrot_tests tests/test_main.cu)
+
+# Set CUDA options for the test executable
+set_target_properties(parrot_tests PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(parrot_tests PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+
+# Link DocTest
+target_link_libraries(parrot_tests PRIVATE doctest::doctest)
+
+# Register test
+add_test(NAME ParrotTests COMMAND parrot_tests)
+
+# Optional: Add individual test executables for focused testing
+# These can be useful for debugging specific functionality
+
+add_executable(test_basic tests/test_basic_operations.cu tests/test_common.hpp)
+set_target_properties(test_basic PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_basic PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_basic PRIVATE doctest::doctest)
+
+add_executable(test_sorting tests/test_sorting.cu tests/test_common.hpp)
+set_target_properties(test_sorting PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_sorting PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_sorting PRIVATE doctest::doctest)
+
+add_executable(test_math tests/test_math_operations.cu tests/test_common.hpp)
+set_target_properties(test_math PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_math PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_math PRIVATE doctest::doctest)
+
+add_executable(test_reductions tests/test_reductions.cu tests/test_common.hpp)
+set_target_properties(test_reductions PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_reductions PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_reductions PRIVATE doctest::doctest)
+
+add_executable(test_scans tests/test_scans.cu tests/test_common.hpp)
+set_target_properties(test_scans PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_scans PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_scans PRIVATE doctest::doctest)
+
+# Add new test executables for the missing categories
+add_executable(test_array_ops tests/test_array_operations.cu tests/test_common.hpp)
+set_target_properties(test_array_ops PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_array_ops PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_array_ops PRIVATE doctest::doctest)
+
+add_executable(test_advanced tests/test_advanced_operations.cu tests/test_common.hpp)
+set_target_properties(test_advanced PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_advanced PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_advanced PRIVATE doctest::doctest)
+
+add_executable(test_multidim tests/test_multidimensional.cu tests/test_common.hpp)
+set_target_properties(test_multidim PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_multidim PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_multidim PRIVATE doctest::doctest)
+
+add_executable(test_integration tests/test_integration.cu tests/test_common.hpp)
+set_target_properties(test_integration PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_integration PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_integration PRIVATE doctest::doctest)
+
+add_executable(test_top10 tests/test_top10.cu tests/test_common.hpp)
+set_target_properties(test_top10 PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_top10 PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_top10 PRIVATE doctest::doctest)
+
+add_executable(test_fun tests/test_fun.cu tests/test_common.hpp)
+set_target_properties(test_fun PROPERTIES 
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+    CUDA_SEPARABLE_COMPILATION ON)
+target_compile_options(test_fun PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+target_link_libraries(test_fun PRIVATE doctest::doctest)
+
+# Register individual tests with CTest
+add_test(NAME BasicOperationsTests COMMAND test_basic)
+add_test(NAME SortingTests COMMAND test_sorting)
+add_test(NAME MathOperationsTests COMMAND test_math)
+add_test(NAME ReductionsTests COMMAND test_reductions)
+add_test(NAME ScansTests COMMAND test_scans)
+add_test(NAME ArrayOperationsTests COMMAND test_array_ops)
+add_test(NAME AdvancedOperationsTests COMMAND test_advanced)
+add_test(NAME MultidimensionalTests COMMAND test_multidim)
+add_test(NAME IntegrationTests COMMAND test_integration)
+add_test(NAME Top10Tests COMMAND test_top10)
+add_test(NAME FunTests COMMAND test_fun)
+endif() # PARROT_BUILD_TESTS
+
+if(PARROT_BUILD_EXAMPLES)
+    message(STATUS "Building Parrot examples")
+    
+    # Add examples as executables
+file(GLOB STARTER_EXAMPLES "${CMAKE_CURRENT_SOURCE_DIR}/examples/*/*.cu")
+foreach(example_path ${STARTER_EXAMPLES})
+    get_filename_component(example_name ${example_path} NAME_WE)
+    set(target_name "${example_name}_example")
+    
+    add_executable(${target_name} ${example_path})
+    set_target_properties(${target_name} PROPERTIES 
+        CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}"
+        CUDA_SEPARABLE_COMPILATION ON)
+    target_compile_options(${target_name} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--extended-lambda>)
+endforeach()
+endif() # PARROT_BUILD_EXAMPLES
+
+# Documentation
+find_package(Doxygen QUIET)
+if(DOXYGEN_FOUND)
+    # Doxygen
+    add_custom_target(doxygen
+        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Generating API documentation with Doxygen"
+        VERBATIM)
+    
+    # Sphinx (optional)
+    find_program(SPHINX_EXECUTABLE NAMES sphinx-build)
+    if(SPHINX_EXECUTABLE)
+        add_custom_target(docs
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_SOURCE_DIR}/docs/build
+            COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+            COMMAND ${SPHINX_EXECUTABLE} -b html
+            ${CMAKE_CURRENT_SOURCE_DIR}/docs
+            ${CMAKE_CURRENT_SOURCE_DIR}/docs/build/html
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMENT "Building HTML documentation with Sphinx"
+            VERBATIM)
+    endif()
+endif()

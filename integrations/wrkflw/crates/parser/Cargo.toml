@@ -1,0 +1,26 @@
+[package]
+name = "wrkflw-parser"
+version = "0.8.0"
+edition.workspace = true
+description = "Workflow parsing functionality for wrkflw execution engine"
+license.workspace = true
+documentation.workspace = true
+homepage.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Internal crates
+wrkflw-models.workspace = true
+wrkflw-matrix.workspace = true
+
+# External dependencies
+jsonschema.workspace = true
+serde.workspace = true
+serde_yaml.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+tempfile = "3.7"
