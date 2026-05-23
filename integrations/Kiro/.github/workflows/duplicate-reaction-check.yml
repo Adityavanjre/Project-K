@@ -1,0 +1,132 @@
+name: Duplicate Reaction Check
+
+# Checks for 👎 reactions on duplicate detection comments
+# Runs on schedule to catch reactions that can't be triggered directly
+
+on:
+  schedule:
+    # Run every hour
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    # Allow manual trigger for testing
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check-reactions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for thumbs down reactions on duplicate comments
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            
+            console.log('=== Checking for 👎 reactions on duplicate detection comments ===\n');
+            
+            // Fetch open issues with duplicate label
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner,
+              repo,
+              state: 'open',
+              labels: 'duplicate',
+              per_page: 100
+            });
+            
+            console.log(`Found ${issues.length} open issue(s) with duplicate label\n`);
+            
+            let relabeledCount = 0;
+            
+            for (const issue of issues) {
+              console.log(`\nProcessing issue #${issue.number}: ${issue.title}`);
+              
+              // Fetch comments
+              const { data: comments } = await github.rest.issues.listComments({
+                owner,
+                repo,
+                issue_number: issue.number,
+                per_page: 100
+              });
+              
+              // Find duplicate detection comment
+              const duplicateComment = comments.find(c => 
+                c.body && c.body.includes('Potential Duplicate Detected')
+              );
+              
+              if (!duplicateComment) {
+                console.log('  No duplicate detection comment found');
+                continue;
+              }
+              
+              console.log(`  Found duplicate detection comment: ${duplicateComment.id}`);
+              
+              // Check for 👎 reactions
+              try {
+                const { data: reactions } = await github.rest.reactions.listForIssueComment({
+                  owner,
+                  repo,
+                  comment_id: duplicateComment.id,
+                  per_page: 100
+                });
+                
+                const hasThumbsDown = reactions.some(r => r.content === '-1');
+                
+                if (hasThumbsDown) {
+                  console.log('  ✓ Found 👎 reaction - relabeling issue');
+                  
+                  // Remove duplicate label
+                  try {
+                    await github.rest.issues.removeLabel({
+                      owner,
+                      repo,
+                      issue_number: issue.number,
+                      name: 'duplicate'
+                    });
+                    console.log('  ✓ Removed duplicate label');
+                  } catch (error) {
+                    console.log(`  Could not remove duplicate label: ${error.message}`);
+                  }
+                  
+                  // Add pending-triage label
+                  try {
+                    await github.rest.issues.addLabels({
+                      owner,
+                      repo,
+                      issue_number: issue.number,
+                      labels: ['pending-triage']
+                    });
+                    console.log('  ✓ Added pending-triage label');
+                  } catch (error) {
+                    console.log(`  Could not add pending-triage label: ${error.message}`);
+                  }
+                  
+                  // Post acknowledgment comment
+                  await github.rest.issues.createComment({
+                    owner,
+                    repo,
+                    issue_number: issue.number,
+                    body: `Thank you for your feedback! 🙏\n\nThe 👎 reaction has been noted. The duplicate label has been removed and this issue has been sent back for maintainer review.\n\nA maintainer will review this issue shortly.`
+                  });
+                  
+                  console.log('  ✓ Posted acknowledgment comment');
+                  relabeledCount++;
+                } else {
+                  console.log('  No 👎 reaction found');
+                }
+              } catch (error) {
+                console.log(`  Error checking reactions: ${error.message}`);
+              }
+            }
+            
+            console.log(`\n=== Summary ===`);
+            console.log(`Total issues checked: ${issues.length}`);
+            console.log(`Issues relabeled: ${relabeledCount}`);
+
+      - name: Create workflow summary
+        if: always()
+        run: |
+          echo "## Duplicate Reaction Check" >> "$GITHUB_STEP_SUMMARY"
+          echo "Checked for 👎 reactions on duplicate detection comments" >> "$GITHUB_STEP_SUMMARY"
+          echo "Status: ${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"
