@@ -101,10 +101,11 @@ graph TD
    - Place all downloaded `.gguf` files directly into the `models/` directory at the root of Project-K.
 
 5. **Start KALI**:
-   You can ignite KALI using her Python core scripts:
-   - **Neural Web Gateway**: `python start_web.py` (Runs locally on port 5000)
-   - **Terminal UI**: `python start_cli.py` (Headless operations)
-   - **Ollama CLI**: If Ollama is installed, you can use `kali.bat`
+   Simply execute the core ignition script from your terminal or by double-clicking it. This one-click master script boots the backend, frontend, and Neural Gateway automatically:
+   ```bash
+   kali.bat
+   ```
+   *(Alternatively, run `python start_web.py` manually)*
 
 ---
 
