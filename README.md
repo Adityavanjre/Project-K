@@ -94,7 +94,12 @@ graph TD
 3. **Identity Setup**:
    Copy `.env.example` to `.env` and populate the **REQUIRED** keys (e.g., `SECRET_OWNER_KEY`).
 
-4. **Start KALI**:
+4. **Download Sovereign Models**:
+   KALI's brain requires local Heavy GGUF models to function securely without cloud reliance.
+   - Download the trained models from the Hugging Face Repository: [adityavanjre/KALI-Sovereign-Models](https://huggingface.co/adityavanjre/KALI-Sovereign-Models)
+   - Place all downloaded `.gguf` files directly into the `models/` directory at the root of Project-K.
+
+5. **Start KALI**:
    Simply execute the core ignition script from your terminal or by double-clicking it:
    ```bash
    kali.bat
