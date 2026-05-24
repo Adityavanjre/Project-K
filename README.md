@@ -91,8 +91,9 @@ graph TD
    source venv/bin/activate  # Windows: venv\Scripts\activate
    pip install -r requirements.txt
    ```
-3. **Identity Setup**:
-   Copy `.env.example` to `.env` and populate the **REQUIRED** keys (e.g., `SECRET_OWNER_KEY`).
+3. **Identity & Security Setup**:
+   - Copy `.env.example` to `.env` and populate the **REQUIRED** keys. **CRITICAL**: You must set a strong `SECRET_KEY` (min 32 chars) for the Neural Gateway to boot.
+   - Copy `config/config.json.example` to `config/config.json` so the Swarm modules have their required endpoints.
 
 4. **Download Sovereign Models**:
    KALI's brain requires local Heavy GGUF models to function securely without cloud reliance.
@@ -100,11 +101,10 @@ graph TD
    - Place all downloaded `.gguf` files directly into the `models/` directory at the root of Project-K.
 
 5. **Start KALI**:
-   Simply execute the core ignition script from your terminal or by double-clicking it:
-   ```bash
-   kali.bat
-   ```
-   *(Alternatively, run `python src/start_web.py`)*
+   You can ignite KALI using her Python core scripts:
+   - **Neural Web Gateway**: `python start_web.py` (Runs locally on port 5000)
+   - **Terminal UI**: `python start_cli.py` (Headless operations)
+   - **Ollama CLI**: If Ollama is installed, you can use `kali.bat`
 
 ---
 
