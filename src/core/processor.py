@@ -115,8 +115,8 @@ class DoubtProcessor:
         # Execute Startup Salvage Hooks
         self._load_last_session()
         self._ensure_sovereign_hooks()
-        # SOVEREIGN: Move heavy initialization to background to avoid boot-time lockups
-        threading.Thread(target=self._background_initialization, name="KALI-Background-Init", daemon=True).start()
+        # SOVEREIGN: Perform heavy initialization safely in the main thread to prevent Windows Torch multi-threading crashes
+        self._background_initialization()
 
     def _get_service(self, name: str, factory: Callable) -> Any:
         """Lazy loader for sub-services."""
@@ -351,8 +351,7 @@ class DoubtProcessor:
             self.logger.warning(f"SHADOW EVAL: Local response significantly shorter than external ({length_ratio:.0%})")
 
     def _background_initialization(self):
-        """Perform heavy initialization tasks in the background."""
-        time.sleep(2) # Let TUI settle
+        """Perform heavy initialization tasks in the main thread to prevent crashes."""
         
         # 1. Preload Embedder (Lazy property trigger)
         if self.vector_memory:
@@ -360,19 +359,13 @@ class DoubtProcessor:
                 _ = self.vector_memory.embedder
             except: pass
             
-        # 2. Seed Knowledge
-        self._delayed_seeding()
-
-    def _delayed_seeding(self):
-        """Wait for system to stabilize, then seed universal knowledge."""
-        self.logger.info("🔱 KALI: Knowledge Seeding scheduled for T+10s.")
-        time.sleep(10)
+        # 2. Seed Knowledge (Run synchronously to prevent PyTorch OpenMP background thread crashes on Windows)
         try:
             self._seed_universal_knowledge()
             self.logger.info("🔱 KALI: Universal Knowledge Seeding Complete.")
         except Exception as e:
-            self.logger.error(f"🔱 KALI: Background Seeding Error: {e}")
-
+            self.logger.error(f"🔱 KALI: Seeding Error: {e}")
+            
     def _seed_universal_knowledge(self):
         """SOVEREIGN/21/22: Index cognitive and tactical seeds."""
         try:

@@ -8,6 +8,20 @@ import socket
 import sys
 import os
 
+# Prevent Windows PyTorch/OpenMP multiprocessing crashes in background threads
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+# Prevent HuggingFace tokenizers from crashing Windows background threads
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+try:
+    import torch
+    # Pre-initialize SentenceTransformer to prevent deep-call OpenMP crashes on Windows
+    print("Pre-initializing PyTorch and SentenceTransformer...")
+    from sentence_transformers import SentenceTransformer
+    _ = SentenceTransformer('all-MiniLM-L6-v2', trust_remote_code=True, local_files_only=True)
+    print("Pre-initialization complete.")
+except Exception as e:
+    print(f"Failed to pre-initialize: {e}")
+
 # Add src directory to Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 
@@ -46,7 +60,7 @@ def main():
                 server_logger = logging.getLogger("waitress")
                 server_logger.setLevel(logging.INFO)
                 
-                serve(app, host='0.0.0.0', port=port, threads=12, _quiet=False)
+                serve(app, host='127.0.0.1', port=port, threads=12, _quiet=False)
                 # If serve returns, it means the server stopped.
                 print(f"Waitress server on port {port} stopped.")
                 break

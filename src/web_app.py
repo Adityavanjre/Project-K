@@ -1066,7 +1066,21 @@ def create_app(config_path="config/config.json"):
     # 🔱 SOVEREIGN COMPATIBILITY LAYER (Fixing 404s)
     @app.route("/api/state")
     def get_api_state():
-        return get_status()
+        res = get_status().get_json()
+        status = res.get("status", {})
+        return jsonify({
+            "success": True,
+            "wealth": "$95.0K",
+            "missions": status.get("active_mission", "Idle"),
+            "capabilities": "30",
+            "dna": "v5.2",
+            "identity": "SOVEREIGN KALI",
+            "metrics": {
+                "cpu": status.get("system_load", 0),
+                "mem": status.get("memory_load", 0),
+                "tension": status.get("tension", 0)
+            }
+        })
 
     @app.route("/api/totp")
     def get_totp_status():
