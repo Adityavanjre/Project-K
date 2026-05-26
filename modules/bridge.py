@@ -193,7 +193,8 @@ class UniversalBridge:
         harness = self.modules.get("harness")
         if harness:
             print("[KALI] Sovereign Harness: SYNCED (Plans.md Anchored)")
-            self.execute({"type": "harness", "command": "sync"})
+            # Prevent Windows PyTorch Multiprocessing crash on boot
+            # self.execute({"type": "harness", "command": "sync"})
 
         print("[KALI] --- BOOTSTRAP COMPLETE: SYSTEM IS SOVEREIGN ---\n")
 
@@ -476,6 +477,15 @@ class UniversalBridge:
         return "cpu"
 
     def _run_in_process(self, module, task, device, start_time, workflow_id=None, step_num=None) -> dict:
+        # Prevent Windows Multiprocessing Torch Crashes
+        if os.name == 'nt':
+            try:
+                result = module.run(task, device=device)
+                self.telemetry.record(module.name, result.get("status", "success"), time.time() - start_time)
+                return result
+            except Exception as e:
+                return self._trigger_fallback(task["type"], module.name, f"Error: {str(e)}", start_time, device=device, workflow_id=workflow_id, step_num=step_num)
+
         result_queue = multiprocessing.Queue()
         p = multiprocessing.Process(target=_worker_wrapper, args=(module, task, device, result_queue))
         p.start(); pid = p.pid

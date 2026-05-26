@@ -113,32 +113,64 @@ class CodeExecutor:
 
         self.logger.info(f"KALI executing computational script (Timeout: {timeout}s)...")
         
-        import multiprocessing
-        queue = multiprocessing.Queue()
-        lib_names = list(self.safe_libs.keys())
-        process = multiprocessing.Process(target=self._worker, args=(code, queue, self.safe_builtins, lib_names))
-        
-        try:
-            process.start()
-            process.join(timeout=timeout)
+        import os
+        if os.name == 'nt':
+            # Windows fallback: Multiprocessing often hangs with PyTorch OpenMP, use threading instead
+            import threading
+            import queue
+            q = queue.Queue()
+            lib_names = list(self.safe_libs.keys())
             
-            if process.is_alive():
-                process.terminate()
-                process.join()
-                return {
-                    "output": "",
-                    "error": f"Execution timed out after {timeout} seconds.",
-                    "success": False
-                }
+            # Note: threading cannot be hard-killed easily, so timeout is a soft timeout
+            thread = threading.Thread(target=self._worker, args=(code, q, self.safe_builtins, lib_names))
+            thread.daemon = True
             
-            if not queue.empty():
-                return queue.get()
+            try:
+                thread.start()
+                thread.join(timeout=timeout)
+                
+                if thread.is_alive():
+                    return {
+                        "output": "",
+                        "error": f"Execution timed out after {timeout} seconds (Thread still running).",
+                        "success": False
+                    }
+                
+                if not q.empty():
+                    return q.get()
+                
+                return {"output": "", "error": "Unknown execution error (No result in queue).", "success": False}
+                
+            except Exception as e:
+                self.logger.error(f"Execution system failure: {e}")
+                return {"output": "", "error": str(e), "success": False}
+        else:
+            import multiprocessing
+            q = multiprocessing.Queue()
+            lib_names = list(self.safe_libs.keys())
+            process = multiprocessing.Process(target=self._worker, args=(code, q, self.safe_builtins, lib_names))
             
-            return {"output": "", "error": "Unknown execution error (No result in queue).", "success": False}
-            
-        except Exception as e:
-            self.logger.error(f"Execution system failure: {e}")
-            return {"output": "", "error": str(e), "success": False}
+            try:
+                process.start()
+                process.join(timeout=timeout)
+                
+                if process.is_alive():
+                    process.terminate()
+                    process.join()
+                    return {
+                        "output": "",
+                        "error": f"Execution timed out after {timeout} seconds.",
+                        "success": False
+                    }
+                
+                if not q.empty():
+                    return q.get()
+                
+                return {"output": "", "error": "Unknown execution error (No result in queue).", "success": False}
+                
+            except Exception as e:
+                self.logger.error(f"Execution system failure: {e}")
+                return {"output": "", "error": str(e), "success": False}
 
     def solve_complex_problem(self, problem_description: str, code_snippet: str) -> str:
         """KALI wrapper for autonomous problem solving."""

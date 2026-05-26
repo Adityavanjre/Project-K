@@ -1,4 +1,13 @@
+---
+title: KALI Sovereign Core
+emoji: 🌌
+colorFrom: purple
+colorTo: indigo
+sdk: docker
+pinned: false
+---
 # 🕉️ K.A.L.I. (Knowledge Augmented Learning Intelligence)
+
 
 [![GitHub Stars](https://img.shields.io/github/stars/Adityavanjre/Project-K?style=for-the-badge&color=00f3ff&logo=github)](https://github.com/Adityavanjre/Project-K/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Adityavanjre/Project-K?style=for-the-badge&color=ff0055&logo=git)](https://github.com/Adityavanjre/Project-K/network/members)

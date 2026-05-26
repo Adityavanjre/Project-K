@@ -60,7 +60,9 @@ def main():
                 server_logger = logging.getLogger("waitress")
                 server_logger.setLevel(logging.INFO)
                 
-                serve(app, host='127.0.0.1', port=port, threads=12, _quiet=False)
+                # Use 0.0.0.0 on Linux for Docker/HF Spaces, 127.0.0.1 on Windows to prevent WinError 10055
+                listen_host = '127.0.0.1' if os.name == 'nt' else '0.0.0.0'
+                serve(app, host=listen_host, port=port, threads=12, _quiet=False)
                 # If serve returns, it means the server stopped.
                 print(f"Waitress server on port {port} stopped.")
                 break
