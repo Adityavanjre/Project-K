@@ -4,7 +4,6 @@ import logging
 import json
 import time
 import uuid
-import msvcrt # For Windows file locking
 from typing import Dict, Any, Optional, List
 
 
@@ -61,6 +60,12 @@ class LocalAIService:
         self.is_connected = self._check()
         self.available_models = self.get_available_models() if self.is_connected else []
 
+        # 🔱 AUTODETECT SOVEREIGN UPLOADED MODEL
+        if "KALI:latest" in self.available_models or "KALI" in self.available_models:
+            self.default_model = "KALI"
+            self.model = "KALI"
+            self.expert_models["general"] = "KALI"
+
         if self.is_connected:
             self.logger.info(f"KALI Local Node Online. Default: {self.default_model}")
         else:
@@ -74,8 +79,10 @@ class LocalAIService:
             inbox_path = os.path.join(self.root, "data", "neural", "inbox", f"{thought_id}.json")
             outbox_path = os.path.join(self.root, "data", "neural", "outbox", f"{thought_id}.json")
             
-            with open(inbox_path, 'w') as f:
+            tmp_path = inbox_path + ".tmp"
+            with open(tmp_path, 'w') as f:
                 json.dump({"id": thought_id, "command": "ping"}, f)
+            os.rename(tmp_path, inbox_path)
                 
             # Short timeout for ping
             start_time = time.time()
@@ -96,8 +103,10 @@ class LocalAIService:
             inbox_path = os.path.join(self.root, "data", "neural", "inbox", f"{thought_id}.json")
             outbox_path = os.path.join(self.root, "data", "neural", "outbox", f"{thought_id}.json")
             
-            with open(inbox_path, 'w') as f:
+            tmp_path = inbox_path + ".tmp"
+            with open(tmp_path, 'w') as f:
                 json.dump({"id": thought_id, "command": "models"}, f)
+            os.rename(tmp_path, inbox_path)
                 
             start_time = time.time()
             while time.time() - start_time < 10:
@@ -209,8 +218,10 @@ class LocalAIService:
             self.logger.info(f"🔱 Thought Queued: {thought_id}")
             start_time = time.time()
             try:
-                with open(inbox_path, 'w') as f:
+                tmp_path = inbox_path + ".tmp"
+                with open(tmp_path, 'w') as f:
                     json.dump(payload, f)
+                os.rename(tmp_path, inbox_path)
                 
                 # Monitor outbox
                 while time.time() - start_time < 300: # 🔱 5m timeout
@@ -235,7 +246,8 @@ class LocalAIService:
 
     def _fallback_response(self, question: str) -> str:
         return (
-            "Local model unavailable. Please ensure Ollama is running (`ollama serve`)."
+            "AI OFFLINE: Local model unavailable. "
+            "If you deployed to Hugging Face Spaces, please disable `KALI_SOVEREIGN_ONLY` or provide a Cloud API Key (e.g., GROQ_API_KEY) in your Space Secrets, as Hugging Face Spaces do not run local Ollama by default."
         )
 
     def _extract_json(self, text: str) -> Dict[str, Any]:

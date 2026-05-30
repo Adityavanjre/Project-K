@@ -17,7 +17,7 @@ try:
     # Pre-initialize SentenceTransformer to prevent deep-call OpenMP crashes on Windows
     print("Pre-initializing PyTorch and SentenceTransformer...")
     from sentence_transformers import SentenceTransformer
-    _ = SentenceTransformer('all-MiniLM-L6-v2', trust_remote_code=True, local_files_only=True)
+    _ = SentenceTransformer('all-MiniLM-L6-v2', trust_remote_code=True)
     print("Pre-initialization complete.")
 except Exception as e:
     print(f"Failed to pre-initialize: {e}")

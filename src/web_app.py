@@ -883,7 +883,7 @@ def create_app(config_path="config/config.json"):
             status["node_status"] = "SYNCED" if status.get("local_node_ready") else "EXTERNAL"
             status["uptime"] = f"{round((time.time() - processor.start_time) / 3600, 2)}h"
             status["last_discovery"] = "Quantum Vedic Resonance"
-            status["heartbeat"] = {"status": "OFFLINE"}
+            status["heartbeat"] = {"status": "online" if processor.local_ai.is_connected else "OFFLINE"}
 
             # Map processor fields to what HUD expects
             metrics = processor.sensors.get_system_metrics()

@@ -9,7 +9,10 @@ import sys
 from src.core.gstack_manager import GStackManager
 from src.core.understand_manager import UnderstandManager
 
-import msvcrt
+try:
+    import msvcrt
+except ImportError:
+    msvcrt = None
 import sys
 
 class NeuralGateway:
@@ -25,6 +28,8 @@ class NeuralGateway:
         """Check if another instance is already running by trying to lock the file."""
         if not os.path.exists(cls._lock_file):
             return False
+        if msvcrt is None:
+            return False
         try:
             f = open(cls._lock_file, "r+")
             msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
@@ -37,11 +42,12 @@ class NeuralGateway:
     def __init__(self, root_dir):
         # SOVEREIGN: Singleton Enforcement
         self._lock_handle = open(self._lock_file, "w")
-        try:
-            msvcrt.locking(self._lock_handle.fileno(), msvcrt.LK_NBLCK, 1)
-        except (IOError, PermissionError):
-            print("[!] NeuralGateway is already running. Protocol Aborted.")
-            sys.exit(0)
+        if msvcrt is not None:
+            try:
+                msvcrt.locking(self._lock_handle.fileno(), msvcrt.LK_NBLCK, 1)
+            except (IOError, PermissionError):
+                print("[!] NeuralGateway is already running. Protocol Aborted.")
+                sys.exit(0)
 
         self.root = root_dir
         self.gstack = GStackManager(self.root)
@@ -155,13 +161,15 @@ class NeuralGateway:
                                 if retry_attempt == max_retries - 1:
                                     resp_payload = {"status": 500, "content": f"Neural Tunnel Collapse: {str(e)}"}
 
-                        # Write Response
+                        # Write Response atomically
                         out_path = os.path.join(self.outbox, f"{request_id}.json")
-                        with open(out_path, 'w') as f:
+                        tmp_out = out_path + ".tmp"
+                        with open(tmp_out, 'w') as f:
                             json.dump({
                                 "id": request_id,
                                 **resp_payload
                             }, f)
+                        os.rename(tmp_out, out_path)
                             
                         # Cleanup inbox
                         os.remove(file_path)

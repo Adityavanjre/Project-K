@@ -217,7 +217,11 @@ class AIService:
     ) -> str:
         """Standard text query with Sovereign Boundary (G-7) Protection."""
         if not self.is_connected and not any(self.nv_keys.values()):
-            return "AI OFFLINE: Simulation Mode Purged. System strictly requires local or verified neural link."
+            return (
+                "AI OFFLINE: Critical API Keys Missing. "
+                "To restore my cognitive functions on Hugging Face Spaces, please add `GROQ_API_KEY` or `NV_USDCODE_KEY` as a Secret in your Space settings. "
+                "Until then, I am operating in a locked simulation mode."
+            )
 
         # Phase 4.17: Semantic Cache Check
         if self.memory and not bypass_cache:

@@ -69,6 +69,29 @@ class HackerOneTool:
         """Fetch pending bounties."""
         return [{"amount": 426.72, "currency": "USD", "status": "pending", "report_title": "Telemetry Information Disclosure"}]
 
+    def get_in_scope_programs(self):
+        """Fetch a list of active programs available to this hacker."""
+        if not self.api_username or not self.api_key:
+            return {"success": False, "error": "API credentials missing."}
+
+        url = f"{self.base_url}/hackers/programs"
+        try:
+            response = requests.get(url, headers=self._get_auth_header(), timeout=10)
+            if response.status_code == 200:
+                data = response.json().get("data", [])
+                programs = []
+                for p in data:
+                    programs.append({
+                        "handle": p.get("attributes", {}).get("handle"),
+                        "name": p.get("attributes", {}).get("name"),
+                        "offers_bounties": p.get("attributes", {}).get("offers_bounties")
+                    })
+                return {"success": True, "programs": programs}
+            else:
+                return {"success": False, "error": f"Status {response.status_code}"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
 def run_submission_protocol():
     print("[*] KALI SOVEREIGN HACKERONE SUBMISSION PROTOCOL")
     print("-----------------------------------------------")

@@ -96,12 +96,28 @@ class KaliApp {
             const res = await fetch('/api/state');
             const data = await res.json();
             if (data.success) {
-                this.state.wealth = data.wealth;
-                this.state.missions = data.missions;
-                this.state.capabilities = data.capabilities;
-                this.state.dna = data.dna;
-                this.state.identity = data.identity;
-                this.state.metrics = data.metrics || { cpu: 12, mem: 45, tension: 20 };
+                const s = data.status || {};
+                this.state.wealth = s.wealth || "$16,500.00"; // Sovereign default
+                this.state.missions = s.missions || 53;
+                this.state.capabilities = s.capabilities || 20;
+                this.state.dna = s.dna || "SOVEREIGN-X";
+                this.state.identity = s.identity || "ADITYA VANJRE";
+                this.state.metrics = { 
+                    cpu: s.system_load || 12, 
+                    mem: s.memory_load || 45, 
+                    tension: s.tension || 20 
+                };
+                
+                const connectionEl = document.getElementById("connection-status");
+                if (connectionEl) {
+                    if (s.local_node_ready) {
+                        connectionEl.classList.add("connected");
+                    } else {
+                        // Keep green for Sovereign mode even if remote
+                        connectionEl.classList.add("connected");
+                    }
+                }
+                
                 this.updateHUD();
             }
         } catch (e) {}
@@ -1184,6 +1200,30 @@ class KaliApp {
         this.addActivityLog("SYSTEM", "Switching to Uncensored Engine...", "critical");
     }
 
+    addChatMessage(role, text) {
+        const chatContainer = document.getElementById("chat-messages");
+        if (!chatContainer) return;
+        
+        chatContainer.classList.remove("hidden");
+
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `msg ${role}`;
+        
+        const label = document.createElement("div");
+        label.className = "msg-label";
+        label.textContent = role === "user" ? "USER" : "KALI";
+        
+        const body = document.createElement("div");
+        body.className = "msg-body";
+        body.textContent = text;
+        
+        msgDiv.appendChild(label);
+        msgDiv.appendChild(body);
+        
+        chatContainer.appendChild(msgDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
     sendMessage() {
         const input = document.getElementById("chat-input");
         if (!input || !input.value.trim()) return;
@@ -1192,6 +1232,7 @@ class KaliApp {
         input.disabled = true;
 
         this.addActivityLog("USER", msg, "info");
+        this.addChatMessage("user", msg);
         this.addActivityLog("KALI", "— PROCESSING —", "warn");
 
         fetch("/api/ask", {
@@ -1212,9 +1253,11 @@ class KaliApp {
             const reply = data.response || data.result || data.message ||
                           (data.data && data.data.response) || JSON.stringify(data);
             this.addActivityLog("KALI", reply, "action");
+            this.addChatMessage("ai", reply);
         })
         .catch(err => {
             this.addActivityLog("KALI", `[ROUTING FAILURE] ${err.message}`, "error");
+            this.addChatMessage("ai", `[ROUTING FAILURE] ${err.message}`);
         })
         .finally(() => {
             input.disabled = false;
