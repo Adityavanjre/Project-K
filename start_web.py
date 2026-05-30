@@ -39,6 +39,15 @@ def is_port_available(port):
 
 def main():
     """Start the web server on an available port."""
+    
+    # Initialize sovereign data structure for empty buckets
+    try:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        os.makedirs(os.path.join(base_dir, "data", "neural", "inbox"), exist_ok=True)
+        os.makedirs(os.path.join(base_dir, "data", "neural", "outbox"), exist_ok=True)
+    except Exception as e:
+        print(f"Failed to initialize neural data structure: {e}")
+        
     # Try different ports
     web_port = int(os.getenv("KALI_WEB_PORT", "5000"))
     ports_to_try = [web_port, 5001, 8000, 8080]
