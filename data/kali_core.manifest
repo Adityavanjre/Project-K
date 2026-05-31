@@ -1,12 +1,12 @@
 {
     "version": "1.1.0",
-    "generated_at": "2026-05-31T12:15:02.149881",
+    "generated_at": "2026-05-31T16:28:50.815726",
     "signatures": {
         "src/core/ai_service.py": "52d68bd794dc25aba567e5b8e7025d3ea53ff15ce53fe8aad2fee387a0811d6e",
         "src/core/audit_logger.js": "f55305ceb511e0761583b3704503413787fd6d8e64df6e51a0b3ce39d5051118",
         "src/core/auth.py": "4421f80a7b2baa3c389346bf45769950fb5d5d24a28e1402acb77c061c17850b",
         "src/core/autonomous_coder.py": "cbb5e688b6aec8da0378f658913be2ce9682adafe876d5c3d4b979126740069b",
-        "src/core/autonomous_hunter.py": "f0bf7014ac07de5f1bdebca0a9db94e58109d1aebe1946f13bbf3fc7dbad9c70",
+        "src/core/autonomous_hunter.py": "2e2992343fad50c395ab37fedd1234cdd6101dd6991755e2c9ec0da804bfa4d9",
         "src/core/biometric_service.py": "d6d4c1ac1ab7fa667d64a3dec8aa1be518b67d2f1c65d9356a3628dbbcaa866a",
         "src/core/boot_governor.js": "f64b5e6c95a5229c582d7d653a14cf20f52b7cd82bb4bd15b9ce3c5993511415",
         "src/core/cache_manager.js": "39046224f2805c734108437029e4f94b1326e73213b2905f5a2f9b3fb16d0f78",
@@ -21,7 +21,7 @@
         "src/core/context_engine.js": "8d6dac1bf9be476d536ef2ffc4afe0e28037575fa40d70aa659064f8010c306c",
         "src/core/continuity_validator.js": "4c7a335689ec14538e8be964266678ca03a84d01b2d16351884134f642048089",
         "src/core/council_service.py": "970f450f2f27a646fd1d78fe0abe21352b8e3fcf4704c65699d0608b938c7793",
-        "src/core/crypto_bridge.py": "57abaf26dd25847de3a1601ffbfba93fd2c45b0b978d4e5752d8d9828213c82b",
+        "src/core/crypto_bridge.py": "0fe6be3762d7f01afa7b415b6ffac88f57346986aaf72025609b29d24772b397",
         "src/core/daily_runner.js": "35005c070cadfee6793dacfa5ec16bc4e2996a181f53ccbca438f749624a3287",
         "src/core/data_sanity.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "src/core/data_structures.py": "800e4ab7956e80718779306ff7eb6befd348b7efe10eb8cc9a9d187a77f2912f",
@@ -59,7 +59,7 @@
         "src/core/knowledge_check.py": "8d2d0e2a52a822e2f18d60bdd70579164cd5ae8107582a05e9bf35beac6c843a",
         "src/core/knowledge_service.py": "b351b9bdfaf890fd5b8bd3ed99a0e4a802addd00d163c35322fc97c9f1d1f61a",
         "src/core/ledger.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "src/core/local_ai_service.py": "680050c238bc3302bfe162145a91de257057af6ff501e8d4a5a8534151e1f1df",
+        "src/core/local_ai_service.py": "34fc67d6b475ae7016c8e40a1f79e7d1888865c466ff1adf4a1a070410fa6dca",
         "src/core/manifestor.py": "faa35ddaf77b74198799526f57e84ef093021bc6e507fce923b8bace4b3d026c",
         "src/core/market_research.py": "a8e6f54b8d89fa204f35aa688cf306d4b5c3a06af9747b209f6c473bd48c4db1",
         "src/core/mastery_governor.js": "8cf7022d4cb66c2843b8f35087bf0d5d3a366fe13992884bb4036a63e06244ed",
@@ -91,7 +91,7 @@
         "src/core/power_scanner.py": "854578aba7f217993e409ee9b1f1b3dbbdd0c0b0b13bd494dc7b180d8306bc44",
         "src/core/predictive_engine.py": "7c38c43cac669ed9fade638074cd2d445cff30c533144d4d82ff289932f0ab72",
         "src/core/proactive_research.py": "13940b14e2bf5ca61f8a9e3222392808b961b83ef1972d5e9f96de85309ad361",
-        "src/core/processor.py": "3690107cabcd1c5291199907b396e88e74637a4c92b2e63f88d3abb0cf947910",
+        "src/core/processor.py": "05e157707f448aae19a42d7672421c481b25bc9cb561833277acf0313ca84cd0",
         "src/core/production_governor.js": "61312f8f674bcb96e867aeac52bb234b3e38b1e5d63cd488982e68680cf1123b",
         "src/core/project_engine.js": "71adaa97236d6d9a11b7ab9bbb9fa195f4e975ce61b48afcd3f1e926a6c9d65f",
         "src/core/purifier.js": "ca943131663b4a343c31cb8aa265dc5c8a3ac656444657b5f899ecee5c9dfc7b",
@@ -114,7 +114,7 @@
         "src/core/sovereign_check.py": "bad6bfd28e1885bcc39144b1838f5ca0762f64b1ff3dcff023e560fb1f1c660b",
         "src/core/sovereign_cloud.py": "0af8bcd5a9eb3225352cedf2235572659e7af19528ae094a170cde56e15722a9",
         "src/core/sovereign_intelligence.py": "d643a7a32a4a201ddfab78710dacf6faaecdfcc9b22f08eddeb81356e95320fd",
-        "src/core/sovereign_wealth.py": "18bf108371b41c13b69df951593f4b95f6cff6642b7c61b752168bd35fd8749f",
+        "src/core/sovereign_wealth.py": "7dd22ef7c33b8cc7a13f5fd697e34f7386c3e6bba5679d399ed14882c7390d76",
         "src/core/strategic_governor.js": "162a559a57b01b871f177a39bdcd0ce9cc493644288a21d56163642a6fdeab09",
         "src/core/strategy_planner.js": "53feceef0cfb5d77d89f087871210a39cca5181e5368cde25a00d170fe856ef2",
         "src/core/swarm_arbitrator.js": "c38eb39bedbd2071bcc8dfe452224c7204b3502fb5bbefb204ff7896798169ef",
@@ -157,7 +157,7 @@
         "src/core/specialists/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "src/core/tools/advanced_tools.py": "74b9eddf82f5d9d046043792bb91bd9922ff1639deb0fe858da5a6697c4638cc",
         "src/core/tools/bugcrowd_tool.py": "3f80a8dfd0246164dfa85f39f604ef8bfba819ffc7faa6c5513024ace5b00e62",
-        "src/core/tools/hackerone_tool.py": "3ef9db069856a0a9ad3f6fdaa638101459242983cab0dee6713444324aa4f92e",
+        "src/core/tools/hackerone_tool.py": "67141735ac73b1c3ff2ce85ee82cf0f63186a72fa0c5d45dc7c8eb84ed2c6efb",
         "src/core/tools/visual_tools.py": "f9659874d13e1e9235af171f502aef5b4e65e0eee4e310a183ddbbf9bbf94855",
         "src/core/tools/web_tools.py": "ab22e69c6972fad256dd04aa7254b073b5a72cfedf6450d122e161954b9d22b7",
         "src/core/tools/__init__.py": "2c7501321033ce4bd25f3021426ec61b0e32d93366b82465d8e71586878e5fb5",
@@ -166,6 +166,6 @@
         "src/utils/pii_scrubber.py": "4511d8b6c5b477b414b4103356b4d8ccd8e7a7cb7781a5bfe427b603385fd815",
         "src/utils/sovereign_audit.py": "3aaf833f42c59c4e109518b9e5f74a275e2b203c0817afc05495b863a3cc4b8d",
         "src/utils/__init__.py": "3806cb78871b3c228cc5547bf1c5ecb28f22c4b63fb076462539f3ff52ee8c53",
-        "src/web_app.py": "b5d70bc9957739adff16828de9c941987dab6d8e6fb4565455aa64c8d72a79a8"
+        "src/web_app.py": "ffd11aea0d2ec05fd4a92ce828d4db881e2c0ea4b2df8205e32474677cdaf92d"
     }
 }

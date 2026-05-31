@@ -23,6 +23,8 @@ class KaliApp {
         this.panels = new Map();
         this.chainPanels = new Map();
         this.lastLogs = new Set();
+        this.modules = new Map();
+        window.KALI_STATE = window.KALI_STATE || {};
         
         // Voice Module
         this.recognition = null;
@@ -981,12 +983,12 @@ class KaliApp {
     renderVault(data) {
         const container = document.getElementById("vault-list");
         if (!container) return;
-        if (Object.keys(data).length === 0) {
+        if (!data || !data.success || !data.active || !data.tokens) {
             container.innerHTML = '<div class="text-[9px] text-muted italic p-2 text-center">Vault Locked.</div>';
             return;
         }
         container.innerHTML = "";
-        for (const [platform, info] of Object.entries(data)) {
+        for (const [platform, info] of Object.entries(data.tokens)) {
             const card = document.createElement("div");
             card.className = "vault-card flex flex-col p-2 rounded border border-white/5 mb-1";
             card.innerHTML = `
@@ -1006,15 +1008,15 @@ class KaliApp {
     renderOps(data) {
         const container = document.getElementById("ops-list");
         if (!container) return;
-        if (Object.keys(data).length === 0) {
+        if (!data || !data.success || data.status === "IDLE" || !data.ops) {
             container.innerHTML = '<div class="text-[9px] text-muted italic p-2 text-center">No Active Ops.</div>';
             return;
         }
         container.innerHTML = "";
-        for (const [platform] of Object.entries(data)) {
+        for (const [platform, op] of Object.entries(data.ops)) {
             const item = document.createElement("div");
             item.className = "ops-item flex justify-between items-center text-[8px] font-mono p-1 mb-1";
-            item.innerHTML = `<span>${platform.toUpperCase()} AUDIT</span><span class="hud-badge success">ACTIVE</span>`;
+            item.innerHTML = `<span>${platform.toUpperCase()} AUDIT</span><span class="hud-badge success">${op.status}</span>`;
             container.appendChild(item);
         }
     }
