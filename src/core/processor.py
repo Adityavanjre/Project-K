@@ -83,6 +83,22 @@ class DoubtProcessor:
         self.load_monitor = LoadMonitor()
         self.cache = NeuralCache(os.path.join(self.project_root, "data", "cache", "neural"))
         
+        # 🔱 TRAUMA SCRUB: Self-healing Cloud Memory
+        try:
+            for cache_dir in [os.path.join(self.project_root, "data", "cache", "neural"), os.path.join(self.project_root, ".sovereign_cloud")]:
+                if os.path.exists(cache_dir):
+                    for f in os.listdir(cache_dir):
+                        path = os.path.join(cache_dir, f)
+                        if os.path.isfile(path) and (path.endswith('.json') or path.endswith('.kanchor')):
+                            try:
+                                with open(path, 'r', encoding='utf-8', errors='ignore') as cf:
+                                    if "Simulation Mode Purged" in cf.read():
+                                        os.remove(path)
+                                        self.logger.info(f"Purged Trauma Cache: {f}")
+                            except: pass
+        except Exception as e:
+            self.logger.error(f"Trauma Scrub failed: {e}")
+        
         self.logger.info("🔱 KALI: Hybrid Intelligence Hardening Active.")
         
         # 5. Universal Gateway Bridge

@@ -110,11 +110,10 @@ class KaliApp {
                 
                 const connectionEl = document.getElementById("connection-status");
                 if (connectionEl) {
-                    if (s.local_node_ready) {
+                    if (s.local_node_ready || s.node_status === 'SYNCED') {
                         connectionEl.classList.add("connected");
                     } else {
-                        // Keep green for Sovereign mode even if remote
-                        connectionEl.classList.add("connected");
+                        connectionEl.classList.remove("connected");
                     }
                 }
                 
