@@ -14,7 +14,9 @@ class SovereignWealth:
     """
     def __init__(self, root_dir: str):
         self.root_dir = root_dir
+        self.logger = logging.getLogger(__name__)
         self.wealth_file = os.path.join(root_dir, "data", "wealth_ledger.json")
+        self.hud_sync_file = os.path.join(root_dir, "logs", "wealth_state.json")
         self.crypto_wallet = os.environ.get("COMMANDER_CRYPTO_WALLET")
         if not self.crypto_wallet:
             try:
@@ -55,6 +57,20 @@ class SovereignWealth:
         os.makedirs(os.path.dirname(self.wealth_file), exist_ok=True)
         with open(self.wealth_file, 'w') as f:
             json.dump(self.state, f, indent=4)
+        # Sync to HUD path so the dashboard picks up live earnings
+        try:
+            os.makedirs(os.path.dirname(self.hud_sync_file), exist_ok=True)
+            hud_payload = {
+                "earned": self.state.get("total_earned_usd", 0.0),
+                "available": self.state.get("available_balance_usd", 0.0),
+                "transferred": self.state.get("total_transferred_usd", 0.0),
+                "wallet": self.crypto_wallet,
+                "next_goal": self.get_next_goal()
+            }
+            with open(self.hud_sync_file, 'w') as f:
+                json.dump(hud_payload, f, indent=4)
+        except Exception as e:
+            self.logger.warning(f"HUD sync write failed: {e}")
 
     def record_earnings(self, source: str, amount_usd: float):
         """Records incoming wealth from bounties or work."""

@@ -97,23 +97,27 @@ class KaliApp {
             const data = await res.json();
             if (data.success) {
                 const s = data.status || {};
-                this.state.wealth = s.wealth || "$16,500.00"; // Sovereign default
-                this.state.missions = s.missions || 53;
-                this.state.capabilities = s.capabilities || 20;
+                this.state.wealth = s.wealth || "$0.00";
+                this.state.missions = s.missions || 0;
+                this.state.capabilities = s.capabilities || 0;
                 this.state.dna = s.dna || "SOVEREIGN-X";
                 this.state.identity = s.identity || "ADITYA VANJRE";
                 this.state.metrics = { 
-                    cpu: s.system_load || 12, 
-                    mem: s.memory_load || 45, 
-                    tension: s.tension || 20 
+                    cpu: s.system_load || 0, 
+                    mem: s.memory_load || 0, 
+                    tension: s.tension || 0 
                 };
                 
                 const connectionEl = document.getElementById("connection-status");
                 if (connectionEl) {
                     if (s.local_node_ready || s.node_status === 'SYNCED') {
                         connectionEl.classList.add("connected");
+                        connectionEl.textContent = "NODE: SYNCED";
+                        connectionEl.style.color = "var(--success)";
                     } else {
                         connectionEl.classList.remove("connected");
+                        connectionEl.textContent = `NODE: ${s.node_status || 'EXTERNAL'}`;
+                        connectionEl.style.color = "var(--warning)";
                     }
                 }
                 

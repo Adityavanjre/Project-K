@@ -240,6 +240,11 @@ class DoubtProcessor:
         return self._get_service("reflection", lambda: ReflectionEngine())
 
     @property
+    def wealth(self):
+        from .sovereign_wealth import SovereignWealth
+        return self._get_service("wealth", lambda: SovereignWealth(self.project_root))
+
+    @property
     def gap_detector(self):
         from .gap_detector import GapDetector
         return self._get_service("gap", lambda: GapDetector(self.user_dna))
@@ -809,7 +814,9 @@ class DoubtProcessor:
             "gsd_status": self.gsd_service.get_gsd_status(),
             "reviewer_status": getattr(self, "review_service", None) and self.review_service.get_reviewer_status() if hasattr(self, "review_service") else None,
             "sovereignty_score": self.shadow_eval.get_sovereignty_score(),
-            "local_node_ready": self.local_ai.is_available()
+            "local_node_ready": self.local_ai.is_available(),
+            "wealth": f"${self.wealth.state.get('total_earned_usd', 0.0):.2f}",
+            "missions": self.wealth.state.get("total_earned_usd", 0) > 0 and len(self.wealth.state.get("payout_history", [])) or 0
         }
 
     def process_project_mentor(self, idea: str) -> Dict[str, Any]:
