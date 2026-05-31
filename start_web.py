@@ -1,90 +1,96 @@
 #!/usr/bin/env python3
 """
-Alternative launcher for the web interface.
-Tries different ports if the default one is blocked.
+KALI Cloud Web Launcher.
+Starts the Flask web app on the correct port for HuggingFace Spaces.
+All heavy model loading is done lazily — this file must boot fast.
 """
 
 import socket
 import sys
 import os
 
-# Prevent Windows PyTorch/OpenMP multiprocessing crashes in background threads
+# Critical: set these BEFORE any imports to prevent thread crashes
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
-# Prevent HuggingFace tokenizers from crashing Windows background threads
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-try:
-    import torch
-    # Pre-initialize SentenceTransformer to prevent deep-call OpenMP crashes on Windows
-    print("Pre-initializing PyTorch and SentenceTransformer...")
-    from sentence_transformers import SentenceTransformer
-    _ = SentenceTransformer('all-MiniLM-L6-v2', trust_remote_code=True)
-    print("Pre-initialization complete.")
-except Exception as e:
-    print(f"Failed to pre-initialize: {e}")
+# On HF Spaces, force cloud mode so no local models are loaded on boot
+if os.getenv("SPACE_ID"):  # HF sets this automatically
+    os.environ["KALI_CLOUD_MODE"] = "true"
+    os.environ["KALI_WEB_PORT"] = "7860"
+    print("[KALI CLOUD] HuggingFace Space detected — CLOUD MODE active.")
+
+# NOTE: SentenceTransformer pre-init removed — lazy loading only.
+# Pre-loading on HF Spaces caused OOM and restart loops.
 
 # Add src directory to Python path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from web_app import create_app
-from utils.helpers import load_config
+try:
+    from web_app import create_app
+except Exception as e:
+    print(f"[CRITICAL] Failed to import web_app: {e}")
+    import traceback
+    traceback.print_exc()
+    sys.exit(1)
+
+try:
+    from utils.helpers import load_config
+    config = load_config("config/config.json")
+except Exception as e:
+    print(f"[WARNING] Could not load config: {e}")
+    config = {}
 
 def is_port_available(port):
-    """Check if a port is available."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         try:
-            s.bind(('localhost', port))
+            s.bind(("0.0.0.0", port))
             return True
         except OSError:
             return False
 
 def main():
-    """Start the web server on an available port."""
-    
-    # Initialize sovereign data structure for empty buckets
+    # Initialize required directories
     try:
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        os.makedirs(os.path.join(base_dir, "data", "neural", "inbox"), exist_ok=True)
-        os.makedirs(os.path.join(base_dir, "data", "neural", "outbox"), exist_ok=True)
+        for d in ["data/neural/inbox", "data/neural/outbox", "logs", "reports"]:
+            os.makedirs(os.path.join(base_dir, d), exist_ok=True)
     except Exception as e:
-        print(f"Failed to initialize neural data structure: {e}")
-        
-    # Try different ports
-    web_port = int(os.getenv("KALI_WEB_PORT", "5000"))
-    ports_to_try = [web_port, 5001, 8000, 8080]
-    
-    app = create_app()
-    config = load_config("config/config.json")
-    
+        print(f"[WARNING] Failed to init directories: {e}")
+
+    # Port selection: HF Spaces requires 7860
+    web_port = int(os.getenv("KALI_WEB_PORT", "7860"))
+    ports_to_try = [web_port, 5000, 5001, 8000, 8080]
+
+    try:
+        app = create_app()
+    except Exception as e:
+        print(f"[CRITICAL] create_app() failed: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
+
     for port in ports_to_try:
         if is_port_available(port):
-            print(f"Starting KALI Web Interface...")
-            print(f"Access the application at: http://localhost:{port}")
-            print(f"KALI is ready to help!")
-            print(f"Press CTRL+C to stop the server")
-            print("-" * 50)
-            
+            print(f"[KALI CLOUD] Starting web server on port {port}...")
             try:
                 from waitress import serve
                 import logging
-                server_logger = logging.getLogger("waitress")
-                server_logger.setLevel(logging.INFO)
-                
-                # Use 0.0.0.0 on Linux for Docker/HF Spaces, 127.0.0.1 on Windows to prevent WinError 10055
-                listen_host = '127.0.0.1' if os.name == 'nt' else '0.0.0.0'
-                serve(app, host=listen_host, port=port, threads=12, _quiet=False)
-                # If serve returns, it means the server stopped.
-                print(f"Waitress server on port {port} stopped.")
+                logging.getLogger("waitress").setLevel(logging.INFO)
+
+                # Always bind to 0.0.0.0 on HF (container needs external access)
+                listen_host = "0.0.0.0"
+                print(f"[KALI CLOUD] Listening on {listen_host}:{port}")
+                serve(app, host=listen_host, port=port, threads=4, _quiet=False)
                 break
             except Exception as e:
-                print(f"CRITICAL: Server on port {port} failed: {e}")
+                print(f"[KALI CLOUD] Server on port {port} failed: {e}")
                 import traceback
                 traceback.print_exc()
                 continue
         else:
-            print(f"Port {port} is not available, trying next...")
-    
+            print(f"[KALI CLOUD] Port {port} busy, trying next...")
     else:
-        print("Could not find an available port. Please check your system.")
+        print("[CRITICAL] No port available. Exiting.")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

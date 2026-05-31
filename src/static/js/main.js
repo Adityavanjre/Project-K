@@ -108,22 +108,50 @@ class KaliApp {
                     tension: s.tension || 0 
                 };
                 
+                const navIndicatorEl = document.getElementById("nav-connection-indicator");
                 const connectionEl = document.getElementById("connection-status");
-                if (connectionEl) {
-                    if (s.local_node_ready || s.node_status === 'SYNCED') {
-                        connectionEl.classList.add("connected");
+                
+                if (s.local_node_ready || s.node_status === 'SYNCED') {
+                    if (navIndicatorEl) {
+                        navIndicatorEl.className = "status-indicator connected";
+                    }
+                    if (connectionEl) {
                         connectionEl.textContent = "NODE: SYNCED";
                         connectionEl.style.color = "var(--success)";
-                    } else {
-                        connectionEl.classList.remove("connected");
+                    }
+                } else {
+                    if (navIndicatorEl) {
+                        navIndicatorEl.className = "status-indicator warning";
+                    }
+                    if (connectionEl) {
                         connectionEl.textContent = `NODE: ${s.node_status || 'EXTERNAL'}`;
                         connectionEl.style.color = "var(--warning)";
                     }
                 }
                 
                 this.updateHUD();
+            } else {
+                const navIndicatorEl = document.getElementById("nav-connection-indicator");
+                const connectionEl = document.getElementById("connection-status");
+                if (navIndicatorEl) {
+                    navIndicatorEl.className = "status-indicator error";
+                }
+                if (connectionEl) {
+                    connectionEl.textContent = "NODE: OFFLINE";
+                    connectionEl.style.color = "var(--critical)";
+                }
             }
-        } catch (e) {}
+        } catch (e) {
+            const navIndicatorEl = document.getElementById("nav-connection-indicator");
+            const connectionEl = document.getElementById("connection-status");
+            if (navIndicatorEl) {
+                navIndicatorEl.className = "status-indicator error";
+            }
+            if (connectionEl) {
+                connectionEl.textContent = "NODE: OFFLINE";
+                connectionEl.style.color = "var(--critical)";
+            }
+        }
     }
 
     async pollNeurons() {

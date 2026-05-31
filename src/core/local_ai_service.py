@@ -124,6 +124,8 @@ class LocalAIService:
 
     def is_available(self, role: Optional[str] = None) -> bool:
         """Check if local inference is ready, optionally for a specific expert model."""
+        if os.getenv("KALI_CLOUD_MODE") == "true":
+            return False
         if not self.is_connected: return False
         if not role: return True
         

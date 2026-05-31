@@ -788,8 +788,18 @@ input:checked + .slider:before {
 }
 
 .status-indicator.connected {
-    background: #34d399;
+    background: var(--success);
     box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+}
+
+.status-indicator.warning {
+    background: var(--warning);
+    box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+}
+
+.status-indicator.error {
+    background: var(--critical);
+    box-shadow: 0 0 8px rgba(251, 113, 133, 0.6);
 }
 
 #activity-log {
