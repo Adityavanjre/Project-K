@@ -95,6 +95,11 @@ class DoubtProcessor:
         from .channel_manager import ChannelManager
         self.channel_manager = ChannelManager(self)
         
+        # 6. Persistent Task Queue
+        from .task_manager import TaskManager
+        self.task_manager = TaskManager(self)
+        self.task_manager.start()
+        
         # State indicators
         self.power_mode = "TURBO"
         self.message_count = 0

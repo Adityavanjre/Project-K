@@ -77,10 +77,22 @@ class TelegramChannel:
                                 requests.post(f"https://api.telegram.org/bot{self.bot_token}/sendChatAction", json={"chat_id": self.chat_id, "action": "typing"})
                                 
                                 if self.processor:
-                                    # Route to KALI's central brain
-                                    response = self.processor.process_doubt(text, context={"channel": "telegram", "c2_override": True})
-                                    reply_text = response.get("text", "I processed your command, but no text output was generated.")
-                                    self.send(reply_text)
+                                    # Route to KALI's Persistent Task Queue
+                                    if hasattr(self.processor, "task_manager"):
+                                        task_id = self.processor.task_manager.queue_task(
+                                            source="telegram",
+                                            task_text=text,
+                                            context={"channel": "telegram", "c2_override": True}
+                                        )
+                                        if task_id:
+                                            self.send(f"Mission Accepted. Task {task_id} queued for execution.")
+                                        else:
+                                            self.send("⚠️ Failed to queue task.")
+                                    else:
+                                        # Fallback to synchronous if TaskManager not loaded
+                                        response = self.processor.process_doubt(text, context={"channel": "telegram", "c2_override": True})
+                                        reply_text = response.get("text", "I processed your command, but no text output was generated.")
+                                        self.send(reply_text)
                                 else:
                                     self.send("⚠️ KALI Processor is offline. I am running in detached module mode.")
                         else:
