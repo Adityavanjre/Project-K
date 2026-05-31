@@ -1,1 +1,0 @@
-{"payload": "{\"query\": \"AUTONOMOUS_SYSTEM_AUDIT\", \"response\": \"Local connection failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))\", \"alignment\": 92.5, \"tension\": 0.0}", "sig": "e821268334941596eb02782ba842f936862ca026c4aa22a030a7b156edff6456", "ts": 1777735398.4698822}

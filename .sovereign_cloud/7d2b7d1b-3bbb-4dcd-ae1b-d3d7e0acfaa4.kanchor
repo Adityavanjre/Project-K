@@ -1,1 +1,0 @@
-{"payload": "{\"query\": \"AUTONOMOUS_SYSTEM_AUDIT\", \"response\": \"Neural Error: ('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))\", \"alignment\": 92.5, \"tension\": 0.0}", "sig": "04f28ec3c997618a80697bbe9be2c50e5b97280da507d5a62449df2b1cd36cd6", "ts": 1777740959.1489627}

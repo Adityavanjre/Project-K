@@ -1,1 +1,0 @@
-{"payload": "{\"query\": \"AUTONOMOUS_SYSTEM_AUDIT\", \"response\": \"Local connection failed: ('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))\", \"alignment\": 92.5, \"tension\": 0.0}", "sig": "9993d30294e142d3c66c46e14121e212af7ee1a894edd784094e383464ada7ae", "ts": 1777738177.6556056}
