@@ -79,7 +79,11 @@ class TaskManager:
         self.is_active = True
         self.worker_thread = threading.Thread(target=self._worker_loop, daemon=True)
         self.worker_thread.start()
-        self.logger.info("TaskManager background worker activated.")
+        
+        self.cron_thread = threading.Thread(target=self._cron_loop, daemon=True)
+        self.cron_thread.start()
+        
+        self.logger.info("TaskManager background worker and autonomous cron activated.")
 
     def stop(self):
         """Stops the worker thread."""
@@ -115,9 +119,10 @@ class TaskManager:
                 )
                 
                 # 3. Report back if it's from Telegram
-                if task_data.get("source") == "telegram" and self.processor.channel_manager.telegram_channel:
+                telegram_channel = self.processor.channel_manager.channels.get("telegram")
+                if task_data.get("source") == "telegram" and telegram_channel:
                     reply_text = response.get("text", "Task completed, but no text output was generated.")
-                    self.processor.channel_manager.telegram_channel.send(reply_text)
+                    telegram_channel.send(reply_text)
                 
                 # 4. Mark as completed
                 task_data["status"] = "COMPLETED"
@@ -135,3 +140,16 @@ class TaskManager:
                 # Keep it in 'in_progress' so it can be resurrected or debugged later,
                 # or optionally move to a 'failed' directory.
                 time.sleep(5)
+
+    def _cron_loop(self):
+        """Autonomous Earning & Maintenance Scheduler."""
+        self.logger.info("Autonomous Cron Scheduler online. Starting immediate bug hunt.")
+        # Trigger an initial hunt on boot
+        os.system("python src/bug_hunter.py")
+        
+        while self.is_active:
+            # Sleep for 12 hours (43200 seconds)
+            time.sleep(43200)
+            self.logger.info("Triggering scheduled autonomous bug hunt.")
+            os.system("python src/bug_hunter.py")
+

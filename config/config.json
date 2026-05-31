@@ -1,0 +1,23 @@
+{
+    "swarm_nodes_enabled": true,
+    "debug_mode": false,
+    "ui_theme": "dark",
+    "sovereign": {
+        "endpoints": {
+            "openfang_base": "http://localhost:8080",
+            "hackerone_login": "https://hackerone.com/login",
+            "hackerone": "https://api.hackerone.com"
+        },
+        "targets": {
+            "bounty_pool": [
+                "cloudflare",
+                "hackerone",
+                "django",
+                "rails"
+            ]
+        },
+        "agent": {
+            "user_agent": "KALI_SOVEREIGN_NODE/1.0"
+        }
+    }
+}

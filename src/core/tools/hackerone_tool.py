@@ -30,7 +30,7 @@ class HackerOneTool:
         if not self.api_username or not self.api_key:
             return {"success": False, "error": "API credentials missing."}
 
-        url = f"{self.base_url}/reports"
+        url = f"{self.base_url}/v1/reports"
         payload = {
             "data": {
                 "type": "report",
@@ -74,7 +74,7 @@ class HackerOneTool:
         if not self.api_username or not self.api_key:
             return {"success": False, "error": "API credentials missing."}
 
-        url = f"{self.base_url}/hackers/programs"
+        url = f"{self.base_url}/v1/hackers/programs"
         try:
             response = requests.get(url, headers=self._get_auth_header(), timeout=10)
             if response.status_code == 200:

@@ -58,12 +58,6 @@ class DoubtProcessor:
             self.logger.error(f"KALI Intelligence: VectorMemory failed to load: {ve}. Proceeding with amnesia.")
             self.vector_memory = None
         self.local_ai = LocalAIService(self.config.get("local_ai", {}))
-        
-        # 🔱 SOVEREIGN AUTODETECT: Force Local AI if KALI is present
-        if self.local_ai.is_available():
-            self.logger.info("KALI: Sovereign Node detected. Globally bypassing external APIs.")
-            self.use_local_ai = True
-
         self.memory = MemoryService()
         self.user_dna = UserDNA()
         
@@ -77,7 +71,7 @@ class DoubtProcessor:
         # 2. Hardening: Secure Boot & Evolution
         self.boot_guardian = BootGuardian(self.project_root)
         self.is_bios_secure = self.boot_guardian.perform_secure_boot()
-        self.sovereign_force_local = self.use_local_ai or os.getenv("SOVEREIGN_FORCE_LOCAL", "false").lower() == "true"
+        self.sovereign_force_local = os.getenv("SOVEREIGN_FORCE_LOCAL", "false").lower() == "true"
         self.sovereign_intel = SovereignIntelligence(self)
 
         # 3. Tool Stabilization (B-3 Fix)
@@ -95,10 +89,11 @@ class DoubtProcessor:
         from .channel_manager import ChannelManager
         self.channel_manager = ChannelManager(self)
         
-        # 6. Persistent Task Queue
-        from .task_manager import TaskManager
-        self.task_manager = TaskManager(self)
-        self.task_manager.start()
+        # 6. Telegram Listener Bridge
+        from .channels.telegram_channel import TelegramChannel
+        self.telegram = TelegramChannel(self)
+        self.channel_manager.register_channel("telegram", self.telegram)
+        self.telegram.start_listening()
         
         # State indicators
         self.power_mode = "TURBO"
@@ -562,10 +557,7 @@ class DoubtProcessor:
             is_heavy = task_complexity in ["coding", "reasoning", "multi-step"]
             
             response = None
-            if self.local_ai.is_available():
-                self.logger.info("KALI: Sovereign Override — Routing exclusively to Local Neural Node.")
-                response = self.local_ai.ask_question(query, context=full_context)
-            elif is_heavy or not hw_safe or not self.sovereign_force_local:
+            if is_heavy or not hw_safe or not self.sovereign_force_local:
                 route_msg = "Heavy/Complex Task" if is_heavy else "Hardware Load Protection"
                 self.logger.info(f"KALI: Routing to Remote Sovereign Node ({route_msg}).")
                 
