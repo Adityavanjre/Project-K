@@ -166,8 +166,6 @@ class SovereignWealth:
         Pulls actual earnings from HackerOne APIs using credentials from vault,
         or from the verified local audit log.
         """
-        import os, json
-        
         # 1. API Integration (Real Money from HackerOne Vault)
         vault_path = os.path.join(self.root_dir, "logs", "credential_vault.json")
         if os.path.exists(vault_path):
@@ -175,11 +173,47 @@ class SovereignWealth:
                 with open(vault_path, "r") as f:
                     vault = json.load(f)
                 h1_creds = vault.get("HackerOne", {})
-                if h1_creds.get("api_key") and h1_creds.get("username"):
-                    self.logger.info("👑 Sovereign Wealth: HackerOne API Credentials Verified from Vault.")
-                    # Real API call would go here using the vault credentials
+                api_key = h1_creds.get("api_key")
+                api_username = h1_creds.get("username")
+                if api_key and api_username:
+                    self.logger.info("👑 Sovereign Wealth: HackerOne credentials loaded. Fetching paid bounties...")
+                    from .tools.hackerone_tool import HackerOneTool
+                    tool = HackerOneTool(api_username, api_key)
+                    bounties = tool.get_bounties()
+                    
+                    if "verified_transactions" not in self.state:
+                        self.state["verified_transactions"] = []
+                    
+                    new_earnings = 0.0
+                    for b in bounties:
+                        tx_id = f"H1_{b.get('report_id', '')}"
+                        # Strict deduplication — never double-count
+                        already_counted = any(
+                            tx.get("tx_id") == tx_id
+                            for tx in self.state["verified_transactions"]
+                        )
+                        if not already_counted and b.get("amount", 0) > 0:
+                            amount = float(b["amount"])
+                            self.state["total_earned_usd"] += amount
+                            self.state["available_balance_usd"] += amount
+                            self.state["verified_transactions"].append({
+                                "tx_id": tx_id,
+                                "amount": amount,
+                                "source": "HackerOne",
+                                "title": b.get("report_title", ""),
+                                "timestamp": time.time()
+                            })
+                            new_earnings += amount
+                            self.logger.info(f"👑 Sovereign Wealth: Recorded H1 bounty ${amount:.2f} — {b.get('report_title')}")
+                    
+                    if new_earnings > 0:
+                        self.logger.info(f"👑 Sovereign Wealth: Total new H1 earnings: ${new_earnings:.2f}")
+                        self.check_hardware_goals()
+                    else:
+                        self.logger.info("👑 Sovereign Wealth: No new H1 bounties since last sync.")
+                        
             except Exception as e:
-                self.logger.error(f"Failed to read vault for HackerOne: {e}")
+                self.logger.error(f"H1 sync failed: {e}")
             
         # 2. Local Audit Log Parsing (Real Completed Tasks)
         audit_log_path = os.path.join(self.root_dir, "data", "audit.log")
@@ -193,14 +227,19 @@ class SovereignWealth:
                             # Strict Enforcement: Must be a verified real reward
                             if entry.get("action") == "verified_reward" and "amount" in entry:
                                 tx_id = entry.get("tx_id", str(time.time()))
+                                if "verified_transactions" not in self.state:
+                                    self.state["verified_transactions"] = []
                                 # Ensure we don't double-count
-                                if not any(tx["tx_id"] == tx_id for tx in self.state.get("verified_transactions", [])):
+                                if not any(tx.get("tx_id") == tx_id for tx in self.state["verified_transactions"]):
                                     amount = float(entry["amount"])
                                     self.state["total_earned_usd"] += amount
                                     self.state["available_balance_usd"] += amount
-                                    if "verified_transactions" not in self.state:
-                                        self.state["verified_transactions"] = []
-                                    self.state["verified_transactions"].append({"tx_id": tx_id, "amount": amount})
+                                    self.state["verified_transactions"].append({
+                                        "tx_id": tx_id,
+                                        "amount": amount,
+                                        "source": "audit_log",
+                                        "timestamp": time.time()
+                                    })
                                     self.logger.info(f"👑 Sovereign Wealth: Verified Real Earnings of ${amount}.")
                                     self.check_hardware_goals()
                         except json.JSONDecodeError:
@@ -208,6 +247,10 @@ class SovereignWealth:
                 self._save_state()
             except Exception as e:
                 self.logger.error(f"Failed to read audit log: {e}")
+        else:
+            # Save state even if no new earnings (ensures HUD sync file stays current)
+            self._save_state()
+
 
     def get_status_report(self) -> str:
         """Generates a text report of KALI's financial and hardware state."""

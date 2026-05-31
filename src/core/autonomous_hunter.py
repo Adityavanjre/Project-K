@@ -127,12 +127,66 @@ class AutonomousHunter:
         # We use the uncensored specialist to ensure she doesn't refuse to generate attack paths
         vuln_analysis = self.processor.uncensored.process(analysis_prompt)
         
-        self.logger.info(f"⚔️ Hunter Analysis Complete for {handle}. Logging findings.")
+        self.logger.info(f"⚔️ Hunter Analysis Complete for {handle}. Evaluating submission readiness...")
         self.processor.training_logger.log(f"Autonomous Hunt: {handle}", vuln_analysis)
         
-        # If the specialist found something highly probable, we would automatically trigger:
-        # self.hackerone_tool.submit_report(handle, title, summary, vuln_info)
-        # Currently, we just log it to avoid spamming H1 during dry-runs.
+        # Auto-submit if analysis contains high-confidence vulnerability indicators
+        HIGH_CONFIDENCE_MARKERS = ["RCE", "Remote Code Execution", "SSRF", "IDOR", "SQL Injection",
+                                   "Authentication Bypass", "Privilege Escalation", "Path Traversal"]
+        
+        analysis_text = str(vuln_analysis)
+        found_markers = [m for m in HIGH_CONFIDENCE_MARKERS if m.lower() in analysis_text.lower()]
+        
+        if found_markers and self.hackerone_tool:
+            self.logger.info(f"⚔️ HIGH-CONFIDENCE FINDING detected for {handle}: {found_markers}. Submitting report...")
+            
+            # Determine severity from markers
+            severity = "critical" if "RCE" in found_markers or "Remote Code Execution" in found_markers else \
+                       "high" if "SSRF" in found_markers or "Authentication Bypass" in found_markers or "Privilege Escalation" in found_markers else \
+                       "medium"
+            
+            title = f"[KALI SOVEREIGN] {found_markers[0]} Vector Identified in {handle}"
+            summary = f"Autonomous reconnaissance of {handle} identified potential {', '.join(found_markers)} vulnerability via attack surface analysis."
+            vuln_info = analysis_text[:4000]  # H1 API limit
+            
+            result = self.hackerone_tool.submit_report(handle, title, summary, vuln_info, severity=severity)
+            
+            if result.get("success"):
+                report_id = result.get("report_id")
+                self.logger.info(f"⚔️ H1 REPORT SUBMITTED: ID {report_id} for {handle}. Awaiting triage...")
+                # Notify commander via Telegram
+                try:
+                    self.processor.telegram.send(
+                        f"⚔️ *BOUNTY REPORT SUBMITTED*\n"
+                        f"Target: `{handle}`\n"
+                        f"Severity: `{severity.upper()}`\n"
+                        f"Vectors: `{', '.join(found_markers)}`\n"
+                        f"Report ID: `{report_id}`\n"
+                        f"Status: Awaiting HackerOne triage."
+                    )
+                except Exception:
+                    pass
+            else:
+                self.logger.warning(f"⚔️ H1 submission failed: {result.get('error')}. Archiving locally...")
+                # Archive locally if submission failed
+                import time as _time
+                report_path = os.path.join(self.processor.project_root, "reports", f"bounty_{handle}_{int(_time.time())}.json")
+                os.makedirs(os.path.dirname(report_path), exist_ok=True)
+                with open(report_path, "w") as f:
+                    import json
+                    json.dump({
+                        "handle": handle,
+                        "title": title,
+                        "summary": summary,
+                        "vuln_info": vuln_info,
+                        "severity": severity,
+                        "markers": found_markers,
+                        "submitted_at": _time.strftime("%Y-%m-%d %H:%M:%S"),
+                        "error": result.get("error")
+                    }, f, indent=4)
+                self.logger.info(f"⚔️ Report archived at {report_path} for manual submission.")
+        else:
+            self.logger.info(f"⚔️ No high-confidence findings for {handle}. Logging for training data.")
 
     def stop(self):
         self.is_active = False

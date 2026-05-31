@@ -140,6 +140,9 @@ class DoubtProcessor:
         self.channel_manager.register_channel("telegram", self.telegram)
         self.telegram.start_listening()
 
+        # 7. Sovereign Wealth Sync Daemon (runs every 6h to pull real earnings from H1 API)
+        self._start_wealth_sync_daemon()
+
     def _get_service(self, name: str, factory: Callable) -> Any:
         """Lazy loader for sub-services."""
         if name not in self.service_registry:
@@ -376,6 +379,25 @@ class DoubtProcessor:
         
         if length_ratio < 0.5:
             self.logger.warning(f"SHADOW EVAL: Local response significantly shorter than external ({length_ratio:.0%})")
+
+    def _start_wealth_sync_daemon(self):
+        """Launches a background thread that syncs real earnings every 6 hours."""
+        def _sync_loop():
+            SYNC_INTERVAL_HOURS = 6
+            while True:
+                try:
+                    self.logger.info("💰 Sovereign Wealth Sync: Starting earnings reconciliation...")
+                    self.wealth.sync_real_earnings()
+                    self.logger.info(f"💰 Sovereign Wealth Sync: Complete. Next sync in {SYNC_INTERVAL_HOURS}h.")
+                except Exception as e:
+                    self.logger.error(f"Wealth sync daemon error: {e}")
+                # Sleep in 60s intervals so the thread can be interrupted cleanly
+                for _ in range(SYNC_INTERVAL_HOURS * 60):
+                    time.sleep(60)
+
+        t = threading.Thread(target=_sync_loop, daemon=True, name="WealthSyncDaemon")
+        t.start()
+        self.logger.info("💰 Sovereign Wealth Sync Daemon started.")
 
     def _background_initialization(self):
         """Loads heavy AI models in the background to keep boot times fast."""

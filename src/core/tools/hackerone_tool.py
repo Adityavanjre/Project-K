@@ -66,8 +66,38 @@ class HackerOneTool:
             return {"success": False, "error": str(e)}
 
     def get_bounties(self):
-        """Fetch pending bounties."""
-        return [{"amount": 426.72, "currency": "USD", "status": "pending", "report_title": "Telemetry Information Disclosure"}]
+        """Fetch real paid bounty records from HackerOne API."""
+        if not self.api_username or not self.api_key:
+            self.logger.warning("H1 get_bounties: No credentials. Returning empty.")
+            return []
+
+        url = f"{self.base_url}/v1/reports"
+        params = {"filter[state][]": "bounty_awarded", "page[size]": 25}
+        try:
+            response = requests.get(url, headers=self._get_auth_header(), params=params, timeout=15)
+            if response.status_code == 200:
+                data = response.json().get("data", [])
+                bounties = []
+                for report in data:
+                    attrs = report.get("attributes", {})
+                    bounty_amount = attrs.get("bounty_amount", 0)
+                    if bounty_amount:
+                        bounties.append({
+                            "report_id": report.get("id"),
+                            "amount": float(bounty_amount),
+                            "currency": attrs.get("currency", "USD"),
+                            "status": "paid",
+                            "report_title": attrs.get("title", "Unknown"),
+                            "paid_at": attrs.get("bounty_awarded_at", "")
+                        })
+                self.logger.info(f"H1 API: Fetched {len(bounties)} paid bounties.")
+                return bounties
+            else:
+                self.logger.error(f"H1 get_bounties failed: HTTP {response.status_code} — {response.text[:200]}")
+                return []
+        except Exception as e:
+            self.logger.error(f"H1 get_bounties network error: {e}")
+            return []
 
     def get_in_scope_programs(self):
         """Fetch a list of active programs available to this hacker."""
