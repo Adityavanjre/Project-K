@@ -1,0 +1,345 @@
+{
+  "code": {
+    "state": "active",
+    "tier": "safe",
+    "registered_at": "2026-05-25T00:37:52.306247",
+    "activated_at": "2026-06-01T08:53:51.620764",
+    "last_test_result": null
+  },
+  "gitnexus": {
+    "state": "active",
+    "tier": "controlled",
+    "registered_at": "2026-05-25T00:37:52.307387",
+    "activated_at": "2026-06-01T08:53:51.622075",
+    "last_test_result": null
+  },
+  "llm": {
+    "state": "active",
+    "tier": "safe",
+    "registered_at": "2026-05-25T00:37:52.309044",
+    "activated_at": "2026-06-01T08:53:51.623340",
+    "last_test_result": null
+  },
+  "memory": {
+    "state": "active",
+    "tier": "safe",
+    "registered_at": "2026-05-25T00:37:52.310107",
+    "activated_at": "2026-06-01T08:53:51.624745",
+    "last_test_result": null
+  },
+  "gsd": {
+    "state": "active",
+    "tier": "controlled",
+    "registered_at": "2026-05-25T00:37:52.311236",
+    "activated_at": "2026-06-01T08:53:51.626030",
+    "last_test_result": null
+  },
+  "wrkflw": {
+    "state": "active",
+    "tier": "controlled",
+    "registered_at": "2026-05-25T00:37:52.315306",
+    "activated_at": "2026-06-01T08:53:51.627529",
+    "last_test_result": null
+  },
+  "graphify": {
+    "state": "active",
+    "tier": "safe",
+    "registered_at": "2026-05-25T00:37:52.316909",
+    "activated_at": "2026-06-01T08:53:51.628965",
+    "last_test_result": null
+  },
+  "airllm": {
+    "state": "active",
+    "tier": "safe",
+    "registered_at": "2026-05-25T00:37:52.318481",
+    "activated_at": "2026-06-01T08:53:51.630539",
+    "last_test_result": null
+  },
+  "agentfm": {
+    "state": "active",
+    "tier": "controlled",
+    "registered_at": "2026-05-25T00:37:52.319955",
+    "activated_at": "2026-06-01T08:53:51.633732",
+    "last_test_result": null
+  },
+  "trainer": {
+    "state": "active",
+    "tier": "safe",
+    "registered_at": "2026-05-25T00:37:52.321926",
+    "activated_at": "2026-06-01T08:53:51.635307",
+    "last_test_result": null
+  },
+  "openfang": {
+    "state": "active",
+    "tier": "controlled",
+    "registered_at": "2026-05-25T00:38:36.065319",
+    "activated_at": "2026-06-01T08:53:51.636727",
+    "last_test_result": null
+  },
+  "vault": {
+    "state": "active",
+    "tier": "controlled",
+    "registered_at": "2026-05-25T00:38:36.066448",
+    "activated_at": "2026-06-01T08:53:51.638059",
+    "last_test_result": null
+  },
+  "openclaw": {
+    "state": "active",
+    "tier": "controlled",
+    "registered_at": "2026-05-25T00:38:36.090192",
+    "activated_at": "2026-06-01T08:53:51.641441",
+    "last_test_result": null
+  },
+  "harness": {
+    "state": "active",
+    "tier": "safe",
+    "registered_at": "2026-05-25T00:38:36.091836",
+    "activated_at": "2026-06-01T08:53:51.642920",
+    "last_test_result": null
+  },
+  "agentfm_core": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.094088",
+    "activated_at": "2026-06-01T08:53:51.644555",
+    "last_test_result": null
+  },
+  "ai_for_beginners": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.096451",
+    "activated_at": "2026-06-01T08:53:51.646005",
+    "last_test_result": null
+  },
+  "aider": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.098177",
+    "activated_at": "2026-06-01T08:53:51.647680",
+    "last_test_result": null
+  },
+  "automaton": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.100107",
+    "activated_at": "2026-06-01T08:53:51.649534",
+    "last_test_result": null
+  },
+  "bitnet": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.101277",
+    "activated_at": "2026-06-01T08:53:51.651766",
+    "last_test_result": null
+  },
+  "claude_code_harness": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.102408",
+    "activated_at": "2026-06-01T08:53:51.653077",
+    "last_test_result": null
+  },
+  "cua": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.103689",
+    "activated_at": "2026-06-01T08:53:51.654379",
+    "last_test_result": null
+  },
+  "danceui": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.104977",
+    "activated_at": "2026-06-01T08:53:51.655669",
+    "last_test_result": null
+  },
+  "decepticon": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.106177",
+    "activated_at": "2026-06-01T08:53:51.656958",
+    "last_test_result": null
+  },
+  "easy_vibe": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.107429",
+    "activated_at": "2026-06-01T08:53:51.658614",
+    "last_test_result": null
+  },
+  "get_shit_done": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.109490",
+    "activated_at": "2026-06-01T08:53:51.660078",
+    "last_test_result": null
+  },
+  "gstack": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.111257",
+    "activated_at": "2026-06-01T08:53:51.661479",
+    "last_test_result": null
+  },
+  "hackingtool": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.114042",
+    "activated_at": "2026-06-01T08:53:51.662914",
+    "last_test_result": null
+  },
+  "jarvis": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.115672",
+    "activated_at": "2026-06-01T08:53:51.664994",
+    "last_test_result": null
+  },
+  "jcode": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.117296",
+    "activated_at": "2026-06-01T08:53:51.667330",
+    "last_test_result": null
+  },
+  "kiro": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.118876",
+    "activated_at": "2026-06-01T08:53:51.668621",
+    "last_test_result": null
+  },
+  "litellm": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.120465",
+    "activated_at": "2026-06-01T08:53:51.669950",
+    "last_test_result": null
+  },
+  "llm_rl_environments_lil_course": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.122038",
+    "activated_at": "2026-06-01T08:53:51.671322",
+    "last_test_result": null
+  },
+  "locally_uncensored": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.123680",
+    "activated_at": "2026-06-01T08:53:51.672651",
+    "last_test_result": null
+  },
+  "lucebox_hub": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.125877",
+    "activated_at": "2026-06-01T08:53:51.674060",
+    "last_test_result": null
+  },
+  "mempalace": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.127876",
+    "activated_at": "2026-06-01T08:53:51.675742",
+    "last_test_result": null
+  },
+  "ml_intern": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.131398",
+    "activated_at": "2026-06-01T08:53:51.677179",
+    "last_test_result": null
+  },
+  "neocortex": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.133661",
+    "activated_at": "2026-06-01T08:53:51.678526",
+    "last_test_result": null
+  },
+  "no_mistakes": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.135486",
+    "activated_at": "2026-06-01T08:53:51.679898",
+    "last_test_result": null
+  },
+  "obscura": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.137259",
+    "activated_at": "2026-06-01T08:53:51.682439",
+    "last_test_result": null
+  },
+  "openhuman": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.139227",
+    "activated_at": "2026-06-01T08:53:51.684689",
+    "last_test_result": null
+  },
+  "openmythos": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.141384",
+    "activated_at": "2026-06-01T08:53:51.686059",
+    "last_test_result": null
+  },
+  "parrot": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.143452",
+    "activated_at": "2026-06-01T08:53:51.687470",
+    "last_test_result": null
+  },
+  "ra_h_os": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.146232",
+    "activated_at": "2026-06-01T08:53:51.688895",
+    "last_test_result": null
+  },
+  "ralph": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.150157",
+    "activated_at": "2026-06-01T08:53:51.690298",
+    "last_test_result": null
+  },
+  "rlm": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.152344",
+    "activated_at": "2026-06-01T08:53:51.691733",
+    "last_test_result": null
+  },
+  "shannon": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.154457",
+    "activated_at": "2026-06-01T08:53:51.693121",
+    "last_test_result": null
+  },
+  "skills": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.156456",
+    "activated_at": "2026-06-01T08:53:51.694543",
+    "last_test_result": null
+  },
+  "understand_anything": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.158631",
+    "activated_at": "2026-06-01T08:53:51.695894",
+    "last_test_result": null
+  },
+  "windows_mcp": {
+    "state": "active",
+    "tier": "experimental",
+    "registered_at": "2026-05-25T00:38:36.160785",
+    "activated_at": "2026-06-01T08:53:51.697743",
+    "last_test_result": null
+  }
+}

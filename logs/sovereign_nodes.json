@@ -1,0 +1,217 @@
+{
+    "agentfm-core": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\agentfm-core",
+        "category": "internal",
+        "status": "B"
+    },
+    "ai-for-beginners": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\ai-for-beginners",
+        "category": "internal",
+        "status": "B"
+    },
+    "aider": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\aider",
+        "category": "internal",
+        "status": "B"
+    },
+    "airllm": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\airllm",
+        "category": "internal",
+        "status": "B"
+    },
+    "automaton": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\automaton",
+        "category": "internal",
+        "status": "B"
+    },
+    "BitNet": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\BitNet",
+        "category": "internal",
+        "status": "B"
+    },
+    "claude-code-harness": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\claude-code-harness",
+        "category": "internal",
+        "status": "B"
+    },
+    "cua": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\cua",
+        "category": "internal",
+        "status": "B"
+    },
+    "DanceUI": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\DanceUI",
+        "category": "internal",
+        "status": "B"
+    },
+    "Decepticon": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\Decepticon",
+        "category": "internal",
+        "status": "B"
+    },
+    "easy-vibe": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\easy-vibe",
+        "category": "internal",
+        "status": "B"
+    },
+    "get-shit-done": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\tools\\get-shit-done",
+        "category": "tools",
+        "status": "B"
+    },
+    "GitNexus": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\GitNexus",
+        "category": "internal",
+        "status": "B"
+    },
+    "graphify": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\graphify",
+        "category": "internal",
+        "status": "B"
+    },
+    "gstack": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\gstack",
+        "category": "internal",
+        "status": "B"
+    },
+    "hackingtool": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\hackingtool",
+        "category": "internal",
+        "status": "B"
+    },
+    "jarvis": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\jarvis",
+        "category": "internal",
+        "status": "B"
+    },
+    "jcode": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\jcode",
+        "category": "internal",
+        "status": "B"
+    },
+    "Kiro": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\Kiro",
+        "category": "internal",
+        "status": "B"
+    },
+    "litellm": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\litellm",
+        "category": "internal",
+        "status": "B"
+    },
+    "llm-rl-environments-lil-course": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\llm-rl-environments-lil-course",
+        "category": "internal",
+        "status": "B"
+    },
+    "locally-uncensored": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\locally-uncensored",
+        "category": "internal",
+        "status": "B"
+    },
+    "lucebox-hub": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\lucebox-hub",
+        "category": "internal",
+        "status": "B"
+    },
+    "mempalace": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\mempalace",
+        "category": "internal",
+        "status": "B"
+    },
+    "ml-intern": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\ml-intern",
+        "category": "internal",
+        "status": "B"
+    },
+    "neocortex": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\neocortex",
+        "category": "internal",
+        "status": "B"
+    },
+    "no-mistakes": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\no-mistakes",
+        "category": "internal",
+        "status": "B"
+    },
+    "obscura": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\obscura",
+        "category": "internal",
+        "status": "B"
+    },
+    "openclaw": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\openclaw",
+        "category": "internal",
+        "status": "B"
+    },
+    "openfang": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\openfang",
+        "category": "internal",
+        "status": "B"
+    },
+    "openhuman": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\openhuman",
+        "category": "internal",
+        "status": "B"
+    },
+    "OpenMythos": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\OpenMythos",
+        "category": "internal",
+        "status": "B"
+    },
+    "parrot": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\parrot",
+        "category": "internal",
+        "status": "B"
+    },
+    "ra-h_os": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\ra-h_os",
+        "category": "internal",
+        "status": "B"
+    },
+    "ralph": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\tools\\ralph",
+        "category": "tools",
+        "status": "B"
+    },
+    "rlm": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\rlm",
+        "category": "internal",
+        "status": "B"
+    },
+    "shannon": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\shannon",
+        "category": "internal",
+        "status": "B"
+    },
+    "skills": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\skills",
+        "category": "internal",
+        "status": "B"
+    },
+    "understand-anything": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\understand-anything",
+        "category": "internal",
+        "status": "B"
+    },
+    "Windows-MCP": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\Windows-MCP",
+        "category": "internal",
+        "status": "B"
+    },
+    "wrkflw": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\integrations\\wrkflw",
+        "category": "internal",
+        "status": "B"
+    },
+    "kali-memory": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\tools\\kali-memory",
+        "category": "tools",
+        "status": "B"
+    },
+    "verification": {
+        "path": "C:\\Users\\adity\\code\\Project-K\\tools\\verification",
+        "category": "tools",
+        "status": "B"
+    }
+}

@@ -1,0 +1,1 @@
+FROM ./models/phi3_mini.gguf

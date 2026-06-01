@@ -1,0 +1,17 @@
+{
+  "biometrics": {
+    "neural_tension": 0.5518721046763511,
+    "alignment": 98.2,
+    "heart_rate": 87,
+    "respiration": 17,
+    "gsr": 0.6414976837410808,
+    "timestamp": 1780143657.7767255
+  },
+  "hardware": {
+    "cpu_usage": 0.0,
+    "memory_usage": 77.0,
+    "disk_usage": 82.4
+  },
+  "timestamp": 1780143657.778923,
+  "status": "SOVEREIGN_CONNECTED"
+}

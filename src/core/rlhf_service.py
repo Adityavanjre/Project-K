@@ -96,9 +96,23 @@ class RLHFService:
 
     def get_alignment_status(self) -> Dict[str, Any]:
         """Provides real-time cognitive alignment telemetry."""
+        state_path = os.path.join(self.project_root, "modules", "kali_trainer", "state.json")
+        try:
+            with open(state_path, "r") as f:
+                state = json.load(f)
+                retention_scores = state.get("retention_scores", {})
+                latest_scores = []
+                for lesson, scores in retention_scores.items():
+                    if scores:
+                        latest_scores.append(scores[-1])
+                if latest_scores:
+                    self.alignment_score = sum(latest_scores) / len(latest_scores)
+        except Exception:
+            pass
+
         return {
-            "alignment_score": self.alignment_score,
+            "alignment_score": round(self.alignment_score, 1),
             "bias_count": len(self.bias_flags),
-            "top_model_weight": max(self.weights.values()),
+            "top_model_weight": max(self.weights.values()) if self.weights else 1.0,
             "status": "ALIGNMENT_OPTIMAL" if self.alignment_score > 90 else "ALIGNMENT_DRIFT"
         }
