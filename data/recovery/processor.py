@@ -837,8 +837,9 @@ class DoubtProcessor:
             "reviewer_status": getattr(self, "review_service", None) and self.review_service.get_reviewer_status() if hasattr(self, "review_service") else None,
             "sovereignty_score": self.shadow_eval.get_sovereignty_score(),
             "local_node_ready": self.local_ai.is_available(),
-            "wealth": f"${self.wealth.state.get('total_earned_usd', 0.0):.2f}",
-            "missions": self.wealth.state.get("total_earned_usd", 0) > 0 and len(self.wealth.state.get("payout_history", [])) or 0
+            "wealth": f"${self.wealth.state.get('total_transferred_usd', 0.0):.2f}",
+            "missions": self.wealth.state.get("total_earned_usd", 0) > 0 and len(self.wealth.state.get("payout_history", [])) or 0,
+            "capabilities": len(self.swarm_service.nodes)
         }
 
     def process_project_mentor(self, idea: str) -> Dict[str, Any]:
